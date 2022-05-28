@@ -1,7 +1,7 @@
 # MyEvent REST API Workflow
 
 name: MyEvent REST API CI Github Action
-on: [push, pull_request]
+on: [pull]
 jobs:
   checkstyle:
     name: runner / checkstyle
