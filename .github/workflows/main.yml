@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Run check style
         env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.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 }}
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.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 }}
         uses: nikitasavinov/checkstyle-action@master
         with:
           reporter: 'github-pr-review'
