@@ -27,7 +27,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtRequestFilter jwtRequestFilter;
 
-  /** Autowiring by constructor. */
   @Autowired
   public WebSecurityConfig(
       JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
