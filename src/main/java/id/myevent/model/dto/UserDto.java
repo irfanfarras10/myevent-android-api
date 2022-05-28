@@ -3,7 +3,7 @@ package id.myevent.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/** User DTO. */
+
 @Data
 @AllArgsConstructor
 public class UserDto {
