@@ -12,6 +12,5 @@ jobs:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.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 }}
         uses: nikitasavinov/checkstyle-action@master
         with:
-          github_token: ${{ secrets.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 }}
           reporter: 'github-pr-check'
           tool_name: 'testtool'
