@@ -1,7 +1,12 @@
 package id.myevent.controller;
 
+import id.myevent.exception.ConflictException;
+import id.myevent.model.DAO.UserDAO;
+import id.myevent.model.DTO.UserDTO;
 import id.myevent.model.api_request.SignInApiRequest;
+import id.myevent.model.api_response.ApiResponse;
 import id.myevent.model.api_response.SignInApiResponse;
+import id.myevent.repository.UserRepository;
 import id.myevent.service.UserService;
 import id.myevent.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +31,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
     private void authenticate(String username, String password) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -41,8 +47,8 @@ public class UserController {
         return "Hello World";
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody SignInApiRequest signInApiRequest) throws Exception {
+    @PostMapping("/auth/signin")
+    public ResponseEntity<SignInApiResponse> signIn(@RequestBody SignInApiRequest signInApiRequest) throws Exception {
 
         authenticate(signInApiRequest.getUsername(), signInApiRequest.getPassword());
 
@@ -51,5 +57,16 @@ public class UserController {
         final String token = jwtTokenUtil.generateToken(userDetails);
 
         return ResponseEntity.ok(new SignInApiResponse(token));
+    }
+
+    @PostMapping("/auth/signup")
+    public ResponseEntity<ApiResponse> signUp(@RequestBody UserDTO signUpApiRequest) throws Exception{
+        try{
+            UserDAO registerUser = userService.insert(signUpApiRequest);
+        }catch (Exception e){
+            throw new ConflictException("Registrasi Gagal", e);
+        }
+
+        return ResponseEntity.ok(new ApiResponse("Registrasi Berhasil"));
     }
 }

@@ -33,7 +33,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     //bypass spring security filter
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return new AntPathMatcher().match("/api/signin", request.getServletPath());
+        return new AntPathMatcher().match("/api/auth/*", request.getServletPath());
     }
 
     //filter every http request
