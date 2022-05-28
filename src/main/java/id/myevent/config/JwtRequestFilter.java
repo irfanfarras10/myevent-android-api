@@ -53,9 +53,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch(Exception e){
+                logger.warn("fail to reading token");
                 globalUtil.handleFilterError(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR, "Unauthorized", response);
             }
         } else {
+            logger.warn("token not started with bearer");
             globalUtil.handleFilterError(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR, "Unauthorized", response);
         }
 

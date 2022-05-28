@@ -1,5 +1,6 @@
 package id.myevent.service;
 
+import id.myevent.exception.ConflictException;
 import id.myevent.model.DAO.UserDAO;
 import id.myevent.model.DTO.UserDTO;
 import id.myevent.repository.UserRepository;
@@ -23,13 +24,11 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if ("javainuse".equals(username)) {
-            return new User("javainuse", "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
-                    new ArrayList<>()
-            );
-        } else {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+        UserDAO user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User tidak ditemukan");
         }
+        return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
     }
 
     public UserDAO insert(UserDTO user){
