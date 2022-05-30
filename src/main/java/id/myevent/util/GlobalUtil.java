@@ -29,4 +29,8 @@ public class GlobalUtil {
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.getWriter().write(convertObjectToJson(errorResponse));
   }
+
+  public Boolean isBlankString(String string) {
+    return string == null || string.trim().isEmpty();
+  }
 }

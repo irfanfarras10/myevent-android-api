@@ -65,12 +65,7 @@ public class UserController {
   /** Sign Up Endpoint. */
   @PostMapping("/auth/signup")
   public ResponseEntity<ApiResponse> signUp(@RequestBody UserDto signUpApiRequest) {
-    try {
-      userService.insert(signUpApiRequest);
-    } catch (Exception e) {
-      throw new ConflictException("Registrasi Gagal", e);
-    }
-
+    userService.insert(signUpApiRequest);
     return ResponseEntity.ok(new ApiResponse("Registrasi Berhasil"));
   }
 }
