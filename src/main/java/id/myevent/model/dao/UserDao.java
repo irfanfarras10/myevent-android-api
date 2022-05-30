@@ -17,18 +17,18 @@ public class UserDao {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Column(unique = true, name = "username")
+  @Column(unique = true, name = "username", nullable = false)
   private String username;
 
-  @Column(unique = true, name = "email")
+  @Column(unique = true, name = "email", nullable = false)
   private String email;
 
-  @Column(name = "password")
+  @Column(name = "password", nullable = false)
   private String password;
 
-  @Column(name = "organizer_name")
+  @Column(name = "organizer_name", nullable = false)
   private String organizerName;
 
-  @Column(name = "phone_number")
+  @Column(name = "phone_number", nullable = false)
   private String phoneNumber;
 }
