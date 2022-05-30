@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar -Dspring.profiles.active=heroku target/*.jar --server.port=$PORT
+web: java -jar build/libs/myevent-android-api-0.0.1-SNAPSHOT.jar
