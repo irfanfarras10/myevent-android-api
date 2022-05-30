@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
         throw new ConflictException("Nomor telepon harus diisi");
       }
       return userRepository.save(newUser);
-      // catch field value not unique
+      // catch username or email value not unique
     } catch (DataIntegrityViolationException e) {
       String exceptionMessage = e.getMostSpecificCause().getMessage();
       String message = null;
