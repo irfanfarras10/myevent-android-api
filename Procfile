@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* Main
+web: java -jar target/myevent-android-api-1.0.0.jar
