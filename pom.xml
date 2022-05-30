@@ -63,12 +63,6 @@
 				<!-- Build an executable JAR -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-jar</id>
-						<phase/>
-					</execution>
-				</executions>
 				<configuration>
 					<skipIfEmpty>true</skipIfEmpty>
 					<archive>
