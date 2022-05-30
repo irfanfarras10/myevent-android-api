@@ -1,1 +1,1 @@
-web: java -jar target/myevent-android-api-1.0.0.jar
+web: java -Dserver.port=$PORT -jar jbot-example/target/jbot-example-1.0.0-SNAPSHOT.jar
