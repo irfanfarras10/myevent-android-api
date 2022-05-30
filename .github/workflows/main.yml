@@ -13,5 +13,5 @@ jobs:
         uses: nikitasavinov/checkstyle-action@master
         with:
           reporter: 'github-pr-review'
-          tool_name: 'testtool'
+          tool_name: 'checkstyle inspection'
           level: error

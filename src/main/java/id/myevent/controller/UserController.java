@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 /** User REST Controller. */
@@ -27,22 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class UserController {
-  private final AuthenticationManager authenticationManager;
+  @Autowired private AuthenticationManager authenticationManager;
 
-  private final JwtTokenUtil jwtTokenUtil;
+  @Autowired private JwtTokenUtil jwtTokenUtil;
 
-  private final UserService userService;
-
-  /** Autowiring by constructor. */
-  @Autowired
-  public UserController(
-      AuthenticationManager authenticationManager,
-      JwtTokenUtil jwtTokenUtil,
-      UserService userService) {
-    this.authenticationManager = authenticationManager;
-    this.jwtTokenUtil = jwtTokenUtil;
-    this.userService = userService;
-  }
+  @Autowired private UserService userService;
 
   private void authenticate(String username, String password) throws Exception {
     try {

@@ -12,20 +12,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 /** User Service. */
 @Service
 public class UserService implements UserDetailsService {
-  private final UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-  private final PasswordEncoder bcryptEncoder;
-
-  /** Autowiring by constructor. */
-  @Autowired
-  public UserService(UserRepository userRepository, PasswordEncoder bcryptEncoder) {
-    this.userRepository = userRepository;
-    this.bcryptEncoder = bcryptEncoder;
-  }
+  @Autowired private PasswordEncoder bcryptEncoder;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -21,20 +21,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /** Handle JWT checking for every request. */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-  private final UserService userService;
+  @Autowired private UserService userService = new UserService();
 
-  private final JwtTokenUtil jwtTokenUtil;
+  @Autowired private JwtTokenUtil jwtTokenUtil;
 
-  private final GlobalUtil globalUtil;
-
-  /** Autowiring by constructor. */
-  @Autowired
-  public JwtRequestFilter(
-      UserService userService, JwtTokenUtil jwtTokenUtil, GlobalUtil globalUtil) {
-    this.userService = userService;
-    this.jwtTokenUtil = jwtTokenUtil;
-    this.globalUtil = globalUtil;
-  }
+  @Autowired private GlobalUtil globalUtil;
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
