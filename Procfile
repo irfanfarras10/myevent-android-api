@@ -1,1 +1,0 @@
-web: java -jar build/libs/myevent-api-1.0.0-SNAPSHOT.jar
