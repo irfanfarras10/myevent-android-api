@@ -4,9 +4,8 @@ import id.myevent.exception.ConflictException;
 import id.myevent.model.dao.UserDao;
 import id.myevent.model.dto.UserDto;
 import id.myevent.repository.UserRepository;
-import java.util.ArrayList;
-
 import id.myevent.util.GlobalUtil;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -66,12 +65,9 @@ public class UserService implements UserDetailsService {
     } catch (DataIntegrityViolationException e) {
       String exceptionMessage = e.getMostSpecificCause().getMessage();
       String message = null;
-      // duplicate username
       if (exceptionMessage.contains("username")) {
         message = "Username sudah digunakan";
-      }
-      // duplicate email
-      else if (exceptionMessage.contains("email")) {
+      } else if (exceptionMessage.contains("email")) {
         message = "E-mail sudah digunakan";
       }
       throw new ConflictException(message);
