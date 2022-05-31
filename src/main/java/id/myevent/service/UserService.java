@@ -28,7 +28,7 @@ public class UserService implements UserDetailsService {
   @Autowired private GlobalUtil globalUtil;
 
   @Override
-  public UserDetails loadUserByUsername(String username){
+  public UserDetails loadUserByUsername(String username) {
     UserDao user = userRepository.findByUsername(username);
     if (user == null) {
       throw new UnauthorizedException("Username atau password salah");
