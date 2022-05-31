@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /** HTTP Error Conflict Exception. */
 @ResponseStatus(value = HttpStatus.CONFLICT)
 public class ConflictException extends RuntimeException {
-  String message;
+  private String message;
   Throwable cause;
 
   public ConflictException(String message) {

@@ -43,11 +43,6 @@ public class UserController {
     }
   }
 
-  @GetMapping("/hello")
-  public String hello() {
-    return "Hello World";
-  }
-
   /** Sign In Endpoint. */
   @PostMapping("/auth/signin")
   public ResponseEntity<SignInApiResponse> signIn(@RequestBody SignInApiRequest signInApiRequest)
