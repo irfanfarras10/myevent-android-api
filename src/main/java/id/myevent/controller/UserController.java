@@ -3,10 +3,12 @@ package id.myevent.controller;
 import id.myevent.model.apirequest.SignInApiRequest;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.SignInApiResponse;
+import id.myevent.model.auth.AuthUserDetails;
 import id.myevent.model.dao.UserDao;
 import id.myevent.model.dto.UserDto;
 import id.myevent.service.UserService;
 import id.myevent.util.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class UserController {
   @Autowired private AuthenticationManager authenticationManager;
 
@@ -52,7 +55,7 @@ public class UserController {
 
     authenticate(signInApiRequest.getUsername(), signInApiRequest.getPassword());
 
-    final UserDetails userDetails = userService.loadUserByUsername(signInApiRequest.getUsername());
+    final AuthUserDetails userDetails = userService.loadUserByUsername(signInApiRequest.getUsername());
 
     final String token = jwtTokenUtil.generateToken(userDetails);
 
