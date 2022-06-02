@@ -1,9 +1,9 @@
 package id.myevent.controller;
 
-import id.myevent.exception.ConflictException;
 import id.myevent.model.apirequest.SignInApiRequest;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.SignInApiResponse;
+import id.myevent.model.dao.UserDao;
 import id.myevent.model.dto.UserDto;
 import id.myevent.service.UserService;
 import id.myevent.util.JwtTokenUtil;
@@ -14,12 +14,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /** User REST Controller. */
 @CrossOrigin
@@ -62,5 +57,11 @@ public class UserController {
   public ResponseEntity<ApiResponse> signUp(@RequestBody UserDto signUpApiRequest) {
     userService.insert(signUpApiRequest);
     return ResponseEntity.ok(new ApiResponse("Registrasi Berhasil"));
+  }
+
+  /** View Profile Endpoint. */
+  @GetMapping("/users/{username}")
+  public UserDao viewProfile(@PathVariable("username") String username){
+    return userService.getProfile(username);
   }
 }

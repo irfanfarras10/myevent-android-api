@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /** User DAO. */
@@ -23,6 +25,7 @@ public class UserDao {
   @Column(unique = true, name = "email", nullable = false)
   private String email;
 
+  @JsonIgnore
   @Column(name = "password", nullable = false)
   private String password;
 
