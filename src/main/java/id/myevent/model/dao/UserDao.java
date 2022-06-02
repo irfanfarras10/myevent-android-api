@@ -1,5 +1,6 @@
 package id.myevent.model.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,6 +24,7 @@ public class UserDao {
   @Column(unique = true, name = "email", nullable = false)
   private String email;
 
+  @JsonIgnore
   @Column(name = "password", nullable = false)
   private String password;
 
