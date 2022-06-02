@@ -1,6 +1,5 @@
 package id.myevent.util;
 
-import id.myevent.model.auth.AuthUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,10 +34,10 @@ public class JwtTokenUtil {
     return expiration.before(new Date());
   }
 
-  private String doGenerateToken(Map<String, Object> claims, Long subject) {
+  private String doGenerateToken(Map<String, Object> claims, String subject) {
     return Jwts.builder()
         .setClaims(claims)
-        .setSubject(subject.toString())
+        .setSubject(subject)
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + tokenValidity * 1000))
         .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -53,9 +52,9 @@ public class JwtTokenUtil {
     return getClaimFromToken(token, Claims::getExpiration);
   }
 
-  public String generateToken(AuthUserDetails authUserDetails) {
+  public String generateToken(UserDetails userDetails) {
     Map<String, Object> claims = new HashMap<>();
-    return doGenerateToken(claims, authUserDetails.getId());
+    return doGenerateToken(claims, userDetails.getUsername());
   }
 
   public Boolean validateToken(String token, UserDetails userDetails) {

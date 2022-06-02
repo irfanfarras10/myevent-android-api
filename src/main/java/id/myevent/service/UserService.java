@@ -2,11 +2,11 @@ package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
 import id.myevent.exception.UnauthorizedException;
-import id.myevent.model.auth.AuthUserDetails;
 import id.myevent.model.dao.UserDao;
 import id.myevent.model.dto.UserDto;
 import id.myevent.repository.UserRepository;
 import id.myevent.util.GlobalUtil;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,8 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 /** User Service. */
 @Service
@@ -29,12 +27,12 @@ public class UserService implements UserDetailsService {
   @Autowired private GlobalUtil globalUtil;
 
   @Override
-  public AuthUserDetails loadUserByUsername(String username) {
+  public UserDetails loadUserByUsername(String username) {
     UserDao user = userRepository.findByUsername(username);
     if (user == null) {
       throw new UnauthorizedException("Username atau password salah");
     }
-    return new AuthUserDetails(user.getId(), user.getUsername(), user.getPassword(), new ArrayList<>());
+    return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
   }
 
   /** Insert User Data to Database. */
