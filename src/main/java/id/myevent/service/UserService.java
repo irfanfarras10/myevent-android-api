@@ -74,7 +74,7 @@ public class UserService implements UserDetailsService {
     }
   }
 
-  public UserDao getProfile(String username){
+  public UserDao getProfile(String username) {
     return userRepository.findByUsername(username);
   }
 }
