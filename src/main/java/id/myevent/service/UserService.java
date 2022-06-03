@@ -3,6 +3,7 @@ package id.myevent.service;
 import id.myevent.exception.ConflictException;
 import id.myevent.exception.UnauthorizedException;
 import id.myevent.model.dao.UserDao;
+import id.myevent.model.dto.UserAuthDto;
 import id.myevent.model.dto.UserDto;
 import id.myevent.repository.UserRepository;
 import id.myevent.util.GlobalUtil;
@@ -27,12 +28,12 @@ public class UserService implements UserDetailsService {
   @Autowired private GlobalUtil globalUtil;
 
   @Override
-  public UserDetails loadUserByUsername(String username) {
+  public UserAuthDto loadUserByUsername(String username) {
     UserDao user = userRepository.findByUsername(username);
     if (user == null) {
       throw new UnauthorizedException("Username atau password salah");
     }
-    return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
+    return new UserAuthDto(user.getId(), user.getUsername(), user.getPassword(), new ArrayList<>());
   }
 
   /** Insert User Data to Database. */

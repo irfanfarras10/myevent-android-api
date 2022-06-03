@@ -4,6 +4,7 @@ import id.myevent.model.apirequest.SignInApiRequest;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.SignInApiResponse;
 import id.myevent.model.dao.UserDao;
+import id.myevent.model.dto.UserAuthDto;
 import id.myevent.model.dto.UserDto;
 import id.myevent.service.UserService;
 import id.myevent.util.JwtTokenUtil;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 
 /** User REST Controller. */
 @CrossOrigin
@@ -52,9 +52,9 @@ public class UserController {
 
     authenticate(signInApiRequest.getUsername(), signInApiRequest.getPassword());
 
-    final UserDetails userDetails = userService.loadUserByUsername(signInApiRequest.getUsername());
+    final UserAuthDto userAuthDto = userService.loadUserByUsername(signInApiRequest.getUsername());
 
-    final String token = jwtTokenUtil.generateToken(userDetails);
+    final String token = jwtTokenUtil.generateToken(userAuthDto);
 
     return ResponseEntity.ok(new SignInApiResponse(token));
   }
@@ -64,5 +64,10 @@ public class UserController {
   public ResponseEntity<ApiResponse> signUp(@RequestBody UserDto signUpApiRequest) {
     userService.insert(signUpApiRequest);
     return ResponseEntity.ok(new ApiResponse("Registrasi Berhasil"));
+  }
+
+  @GetMapping("/hello")
+  public String helloWorld() {
+    return "Hello World";
   }
 }
