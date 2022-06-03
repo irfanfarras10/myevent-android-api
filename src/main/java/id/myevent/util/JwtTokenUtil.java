@@ -53,12 +53,14 @@ public class JwtTokenUtil {
     return getClaimFromToken(token, Claims::getExpiration);
   }
 
+  /** generate token. */
   public String generateToken(UserAuthDto userAuthDto) {
-    Map<String, Object> claims = new HashMap<String, Object>(){
-      {
-        put("username", userAuthDto.getUsername());
-      }
-    };
+    Map<String, Object> claims =
+        new HashMap<String, Object>() {
+          {
+            put("username", userAuthDto.getUsername());
+          }
+        };
     return doGenerateToken(claims, userAuthDto.getId().toString());
   }
 
