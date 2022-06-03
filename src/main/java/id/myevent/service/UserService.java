@@ -47,6 +47,9 @@ public class UserService implements UserDetailsService {
       if (globalUtil.isBlankString(user.getUsername())) {
         throw new ConflictException("Username harus diisi");
       }
+      if (!globalUtil.isEmail(user.getEmail())) {
+        throw new ConflictException("Format e-mail tidak sesuai");
+      }
       if (globalUtil.isBlankString(user.getEmail())) {
         throw new ConflictException("E-mail harus diisi");
       }
