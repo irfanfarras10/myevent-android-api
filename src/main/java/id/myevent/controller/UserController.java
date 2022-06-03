@@ -65,10 +65,4 @@ public class UserController {
     userService.insert(signUpApiRequest);
     return ResponseEntity.ok(new ApiResponse("Registrasi Berhasil"));
   }
-
-  /** View Profile Endpoint. */
-  @GetMapping("/users/{username}")
-  public UserDao viewProfile(@PathVariable("username") String username) {
-    return userService.getProfile(username);
-  }
 }

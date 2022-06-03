@@ -73,8 +73,4 @@ public class UserService implements UserDetailsService {
       throw new ConflictException(message);
     }
   }
-
-  public UserDao getProfile(String username) {
-    return userRepository.findByUsername(username);
-  }
 }
