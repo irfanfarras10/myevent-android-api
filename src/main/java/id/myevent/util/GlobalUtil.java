@@ -33,4 +33,13 @@ public class GlobalUtil {
   public Boolean isBlankString(String string) {
     return string == null || string.trim().isEmpty();
   }
+
+  /** E-mail validation. */
+  public Boolean isEmail(String email) {
+    String emailRegexPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+    if (email.matches(emailRegexPattern)) {
+      return true;
+    }
+    return false;
+  }
 }
