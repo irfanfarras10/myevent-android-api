@@ -1,7 +1,6 @@
 package id.myevent.model.dto;
 
 import java.util.Collection;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
