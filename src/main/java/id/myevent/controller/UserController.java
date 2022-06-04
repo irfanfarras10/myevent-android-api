@@ -8,6 +8,7 @@ import id.myevent.model.dto.UserAuthDto;
 import id.myevent.model.dto.UserDto;
 import id.myevent.service.UserService;
 import id.myevent.util.JwtTokenUtil;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
 
 /** User REST Controller. */
 @CrossOrigin
@@ -72,9 +72,17 @@ public class UserController {
     return "Hello World";
   }
 
+  /** View Profile Endpoint */
   @GetMapping("/users/profile")
   public Optional<UserDao> viewProfile() {
     return userService.getProfile();
+  }
+
+  /** Edit Profile Endpoint */
+  @PutMapping("/users/profile")
+  public ResponseEntity<ApiResponse> editProfile(@RequestBody UserDto user) {
+    userService.update(user);
+    return ResponseEntity.ok(new ApiResponse("Profil Berhasil di Update"));
   }
 
 }
