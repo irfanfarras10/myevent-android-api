@@ -8,12 +8,17 @@ import id.myevent.model.dto.UserDto;
 import id.myevent.repository.UserRepository;
 import id.myevent.util.GlobalUtil;
 import java.util.ArrayList;
+import java.util.Optional;
+
+import id.myevent.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /** User Service. */
 @Service
@@ -24,6 +29,8 @@ public class UserService implements UserDetailsService {
   @Autowired private PasswordEncoder bcryptEncoder;
 
   @Autowired private GlobalUtil globalUtil;
+
+  @Autowired private JwtTokenUtil jwtTokenUtil;
 
   @Override
   public UserAuthDto loadUserByUsername(String username) {
@@ -74,5 +81,13 @@ public class UserService implements UserDetailsService {
       }
       throw new ConflictException(message);
     }
+  }
+
+  public Optional<UserDao> getProfile() {
+    String tokenHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+            .getRequest().getHeader("Authorization");
+
+    String id = jwtTokenUtil.getSubjectFromToken(globalUtil.parseToken(tokenHeader));
+    return userRepository.findById(Long.parseLong(id));
   }
 }
