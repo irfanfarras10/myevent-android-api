@@ -43,7 +43,7 @@ public class GlobalUtil {
     return false;
   }
 
-  public String parseToken(String token){
+  public String parseToken(String token) {
     return token.substring(7);
   }
 }
