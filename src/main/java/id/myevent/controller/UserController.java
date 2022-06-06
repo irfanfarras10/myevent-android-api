@@ -1,5 +1,6 @@
 package id.myevent.controller;
 
+import id.myevent.exception.UnauthorizedException;
 import id.myevent.model.apirequest.SignInApiRequest;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.SignInApiResponse;
@@ -9,6 +10,7 @@ import id.myevent.model.dto.UserDto;
 import id.myevent.service.UserService;
 import id.myevent.util.JwtTokenUtil;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class UserController {
   @Autowired private AuthenticationManager authenticationManager;
 
@@ -35,14 +38,14 @@ public class UserController {
 
   @Autowired private UserService userService;
 
-  private void authenticate(String username, String password) throws Exception {
+  private void authenticate(String username, String password) throws UnauthorizedException {
     try {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(username, password));
     } catch (DisabledException e) {
-      throw new Exception("USER_DISABLED", e);
+      throw new UnauthorizedException("User dinonaktifkan");
     } catch (BadCredentialsException e) {
-      throw new Exception("INVALID_CREDENTIALS", e);
+      throw new UnauthorizedException("Username atau password salah");
     }
   }
 
@@ -72,13 +75,13 @@ public class UserController {
     return "Hello World";
   }
 
-  /** View Profile Endpoint */
+  /** View Profile Endpoint. */
   @GetMapping("/users/profile")
   public Optional<UserDao> viewProfile() {
     return userService.getProfile();
   }
 
-  /** Edit Profile Endpoint */
+  /** Edit Profile Endpoint. */
   @PutMapping("/users/profile")
   public ResponseEntity<ApiResponse> editProfile(@RequestBody UserDto user) {
     userService.update(user);
