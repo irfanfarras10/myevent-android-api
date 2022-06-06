@@ -53,21 +53,7 @@ public class UserService implements UserDetailsService {
       if (globalUtil.isBlankString(user.getUsername())) {
         throw new ConflictException("Username harus diisi");
       }
-      if (!globalUtil.isEmail(user.getEmail())) {
-        throw new ConflictException("Format e-mail tidak sesuai");
-      }
-      if (globalUtil.isBlankString(user.getEmail())) {
-        throw new ConflictException("E-mail harus diisi");
-      }
-      if (globalUtil.isBlankString(user.getPassword())) {
-        throw new ConflictException("Password harus diisi");
-      }
-      if (globalUtil.isBlankString(user.getOrganizerName())) {
-        throw new ConflictException("Nama Event Organizer harus diisi");
-      }
-      if (globalUtil.isBlankString(user.getPhoneNumber())) {
-        throw new ConflictException("Nomor telepon harus diisi");
-      }
+      validateUserData(user);
       return userRepository.save(newUser);
       // catch username or email value not unique
     } catch (DataIntegrityViolationException e) {
@@ -90,10 +76,12 @@ public class UserService implements UserDetailsService {
     return id;
   }
 
+  /**  View User Data. */
   public Optional<UserDao> getProfile() {
     return userRepository.findById(Long.parseLong(getUserId()));
   }
 
+  /** Update User Data. */
   public void update(UserDto user) {
 
     Optional<UserDao> currentUser = userRepository.findById(Long.parseLong(getUserId()));
@@ -103,21 +91,7 @@ public class UserService implements UserDetailsService {
     newUser.setOrganizerName(user.getOrganizerName());
     newUser.setPhoneNumber(user.getPhoneNumber());
     try {
-      if (!globalUtil.isEmail(user.getEmail())) {
-        throw new ConflictException("Format e-mail tidak sesuai");
-      }
-      if (globalUtil.isBlankString(user.getEmail())) {
-        throw new ConflictException("E-mail harus diisi");
-      }
-      if (globalUtil.isBlankString(user.getPassword())) {
-        throw new ConflictException("Password harus diisi");
-      }
-      if (globalUtil.isBlankString(user.getOrganizerName())) {
-        throw new ConflictException("Nama Event Organizer harus diisi");
-      }
-      if (globalUtil.isBlankString(user.getPhoneNumber())) {
-        throw new ConflictException("Nomor telepon harus diisi");
-      }
+      validateUserData(user);
       userRepository.save(newUser);
       // catch username or email value not unique
     } catch (DataIntegrityViolationException e) {
@@ -127,6 +101,24 @@ public class UserService implements UserDetailsService {
         message = "E-mail sudah digunakan";
       }
       throw new ConflictException(message);
+    }
+  }
+
+  private void validateUserData(UserDto user) {
+    if (!globalUtil.isEmail(user.getEmail())) {
+      throw new ConflictException("Format e-mail tidak sesuai");
+    }
+    if (globalUtil.isBlankString(user.getEmail())) {
+      throw new ConflictException("E-mail harus diisi");
+    }
+    if (globalUtil.isBlankString(user.getPassword())) {
+      throw new ConflictException("Password harus diisi");
+    }
+    if (globalUtil.isBlankString(user.getOrganizerName())) {
+      throw new ConflictException("Nama Event Organizer harus diisi");
+    }
+    if (globalUtil.isBlankString(user.getPhoneNumber())) {
+      throw new ConflictException("Nomor telepon harus diisi");
     }
   }
 }
