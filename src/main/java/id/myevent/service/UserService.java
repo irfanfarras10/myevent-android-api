@@ -1,7 +1,7 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
-import id.myevent.exception.UnauthorizedException;
+import id.myevent.exception.ForbiddenException;
 import id.myevent.model.dao.UserDao;
 import id.myevent.model.dto.UserAuthDto;
 import id.myevent.model.dto.UserDto;
@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
   public UserAuthDto loadUserByUsername(String username) {
     UserDao user = userRepository.findByUsername(username);
     if (user == null) {
-      throw new UnauthorizedException("Username atau password salah");
+      throw new ForbiddenException("Username atau password salah");
     }
     return new UserAuthDto(user.getId(), user.getUsername(), user.getPassword(), new ArrayList<>());
   }
