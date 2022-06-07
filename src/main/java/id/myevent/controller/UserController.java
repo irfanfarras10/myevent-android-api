@@ -1,5 +1,6 @@
 package id.myevent.controller;
 
+import id.myevent.exception.ForbiddenException;
 import id.myevent.exception.UnauthorizedException;
 import id.myevent.model.apirequest.SignInApiRequest;
 import id.myevent.model.apiresponse.ApiResponse;
@@ -43,9 +44,9 @@ public class UserController {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(username, password));
     } catch (DisabledException e) {
-      throw new UnauthorizedException("User dinonaktifkan");
+      throw new ForbiddenException("User dinonaktifkan");
     } catch (BadCredentialsException e) {
-      throw new UnauthorizedException("Username atau password salah");
+      throw new ForbiddenException("Username atau password salah");
     }
   }
 
