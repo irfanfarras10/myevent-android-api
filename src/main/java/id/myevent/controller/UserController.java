@@ -27,23 +27,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 /** User REST Controller. */
-@CrossOrigin
-@RestController
-@RequestMapping("/api")
+@CrossOrigin 
+@RestController 
+@RequestMapping("/api") 
 @Slf4j
 public class UserController {
-  @Autowired private AuthenticationManager authenticationManager;
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
-  @Autowired private JwtTokenUtil jwtTokenUtil;
+  @Autowired
+  private JwtTokenUtil jwtTokenUtil;
 
-  @Autowired private UserService userService;
+  @Autowired
+  private UserService userService;
 
   private void authenticate(String username, String password) throws UnauthorizedException {
     try {
-      authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(username, password));
+      authenticationManager
+          .authenticate(new UsernamePasswordAuthenticationToken(username, password));
     } catch (DisabledException e) {
       throw new ForbiddenException("User dinonaktifkan");
     } catch (BadCredentialsException e) {
@@ -67,9 +69,12 @@ public class UserController {
 
   /** Sign Up Endpoint. */
   @PostMapping("/auth/signup")
-  public ResponseEntity<String> signUp(@RequestBody UserDto signUpApiRequest) {
+  public ResponseEntity<ApiResponse> signUp(@RequestBody UserDto signUpApiRequest) {
     userService.insert(signUpApiRequest);
-    return new ResponseEntity<String>("Registrasi Berhasil", HttpStatus.CREATED);
+    return new ResponseEntity<ApiResponse>(
+        new ApiResponse("Registrasi Berhasil"), 
+        HttpStatus.CREATED
+    );
   }
 
   @GetMapping("/hello")
