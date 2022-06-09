@@ -11,13 +11,16 @@ import org.springframework.security.core.userdetails.User;
 @Getter
 public class UserAuthDto extends User {
   private Long id;
+  private String organizerName;
 
   public UserAuthDto(
       Long id,
       String username,
       String password,
+      String organizerName,
       Collection<? extends GrantedAuthority> authorities) {
     super(username, password, authorities);
     this.id = id;
+    this.organizerName = organizerName;
   }
 }

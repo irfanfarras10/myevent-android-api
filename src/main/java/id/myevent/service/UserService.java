@@ -37,7 +37,13 @@ public class UserService implements UserDetailsService {
     if (user == null) {
       throw new ForbiddenException("Username atau password salah");
     }
-    return new UserAuthDto(user.getId(), user.getUsername(), user.getPassword(), new ArrayList<>());
+    return new UserAuthDto(
+        user.getId(), 
+        user.getUsername(), 
+        user.getPassword(), 
+        user.getOrganizerName(), 
+        new ArrayList<>()
+    );
   }
 
   /** Insert User Data to Database. */

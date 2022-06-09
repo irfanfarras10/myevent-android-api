@@ -10,4 +10,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SignInApiResponse {
   private String token;
+  private String organizerName;
 }

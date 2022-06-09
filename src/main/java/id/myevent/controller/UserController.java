@@ -64,7 +64,7 @@ public class UserController {
 
     final String token = jwtTokenUtil.generateToken(userAuthDto);
 
-    return ResponseEntity.ok(new SignInApiResponse(token));
+    return ResponseEntity.ok(new SignInApiResponse(token, userAuthDto.getOrganizerName()));
   }
 
   /** Sign Up Endpoint. */
