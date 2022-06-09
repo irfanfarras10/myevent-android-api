@@ -13,6 +13,7 @@ import id.myevent.util.JwtTokenUtil;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -66,9 +67,9 @@ public class UserController {
 
   /** Sign Up Endpoint. */
   @PostMapping("/auth/signup")
-  public ResponseEntity<ApiResponse> signUp(@RequestBody UserDto signUpApiRequest) {
+  public ResponseEntity<String> signUp(@RequestBody UserDto signUpApiRequest) {
     userService.insert(signUpApiRequest);
-    return ResponseEntity.ok(new ApiResponse("Registrasi Berhasil"));
+    return new ResponseEntity<String>("Registrasi Berhasil", HttpStatus.CREATED);
   }
 
   @GetMapping("/hello")
