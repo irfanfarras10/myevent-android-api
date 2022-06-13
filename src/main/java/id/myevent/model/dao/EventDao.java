@@ -15,7 +15,7 @@ import lombok.Data;
 
 /** Event DAO. */
 @Entity
-@Table(name = "category")
+@Table(name = "event")
 @Data
 public class EventDao {
   @Id
@@ -50,17 +50,17 @@ public class EventDao {
   private String dateTimeRegistrationEnd;
   
   @ManyToOne
-  @JoinColumn(name = "id", nullable = false)
+  @JoinColumn(name = "category_id", nullable = false)
   private CategoryDao category;
   
   @ManyToOne
-  @JoinColumn(name = "id", nullable = false)
+  @JoinColumn(name = "payment_category_id", nullable = false)
   private PaymentCategoryDao paymentCategory;
   
   @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
   private Set<ContactPersonDao> contactPersons;
   
   @ManyToOne
-  @JoinColumn(name = "id", nullable = false)
+  @JoinColumn(name = "event_organizer_id", nullable = false)
   private UserDao eventOrganizer;
 }

@@ -5,13 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Data;
 
 /** Contact Person DAO. */
 @Entity
-@Table(name = "category")
+@Table(name = "contact_person")
 @Data
 public class ContactPersonDao {
   @Id
@@ -27,6 +28,7 @@ public class ContactPersonDao {
   @Column(name = "social_media_name", nullable = false)
   private String socialMediaName;
   
-  @ManyToOne()
+  @ManyToOne
+  @JoinColumn(name = "event_id", nullable = false)
   private EventDao event;
 }
