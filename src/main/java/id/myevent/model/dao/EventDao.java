@@ -27,9 +27,6 @@ public class EventDao {
   
   @Column(name = "description", nullable = false)
   private String description;
- 
-  @Column(name = "status", nullable = false)
-  private String status;
   
   @Column(name = "datetime_event_start", nullable = false)
   private int dateTimeEventStart;
@@ -48,6 +45,10 @@ public class EventDao {
   
   @Column(name = "datetime_registration_end", nullable = false)
   private String dateTimeRegistrationEnd;
+  
+  @ManyToOne
+  @JoinColumn(name = "status_id", nullable = false)
+  private EventStatusDao status;
   
   @ManyToOne
   @JoinColumn(name = "category_id", nullable = false)
