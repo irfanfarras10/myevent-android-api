@@ -1,15 +1,16 @@
 package id.myevent.model.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 /** User DAO. */
 @Entity
@@ -36,4 +37,7 @@ public class UserDao {
 
   @Column(name = "phone_number", nullable = false)
   private String phoneNumber;
+  
+  @OneToMany(mappedBy = "eventOrganizer", cascade = CascadeType.ALL)
+  private Set<EventDao> events;
 }
