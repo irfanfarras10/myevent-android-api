@@ -38,12 +38,11 @@ public class EventOrganizerService implements UserDetailsService {
       throw new ForbiddenException("Username atau password salah");
     }
     return new EventOrganizerAuthDto(
-        user.getId(), 
-        user.getUsername(), 
-        user.getPassword(), 
-        user.getOrganizerName(), 
-        new ArrayList<>()
-    );
+        user.getId(),
+        user.getUsername(),
+        user.getPassword(),
+        user.getOrganizerName(),
+        new ArrayList<>());
   }
 
   /** Insert User Data to Database. */
@@ -75,14 +74,16 @@ public class EventOrganizerService implements UserDetailsService {
   }
 
   private String getUserId() {
-    String tokenHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-            .getRequest().getHeader("Authorization");
+    String tokenHeader =
+        ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+            .getRequest()
+            .getHeader("Authorization");
 
     String id = jwtTokenUtil.getSubjectFromToken(globalUtil.parseToken(tokenHeader));
     return id;
   }
 
-  /**  View User Data. */
+  /** View User Data. */
   public Optional<EventOrganizerDao> getProfile() {
     return eventOrganizerRepository.findById(Long.parseLong(getUserId()));
   }
@@ -90,7 +91,8 @@ public class EventOrganizerService implements UserDetailsService {
   /** Update User Data. */
   public void update(EventOrganizerDto user) {
 
-    Optional<EventOrganizerDao> currentUser = eventOrganizerRepository.findById(Long.parseLong(getUserId()));
+    Optional<EventOrganizerDao> currentUser =
+        eventOrganizerRepository.findById(Long.parseLong(getUserId()));
     EventOrganizerDao newUser = currentUser.get();
     newUser.setEmail(user.getEmail());
     newUser.setPassword(user.getPassword());

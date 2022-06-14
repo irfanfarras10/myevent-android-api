@@ -7,14 +7,15 @@ import lombok.Data;
 public class EventDto {
   private String name;
   private String description;
-  private int dateTimeEventStart;
-  private int dateTimeEventEnd;
-  private String location;
+  private Integer dateTimeEventStart;
+  private Integer dateTimeEventEnd;
+  private String venue;
   private byte[] bannerPhoto;
-  private int dateTimeRegistrationStart;
-  private int dateTimeRegistrationEnd;
-  private long eventStatusId;
-  private long eventCategoryId;
-  private long eventPaymentCategoryId;
-  private long eventOrganizerId;
+  private Integer dateTimeRegistrationStart;
+  private Integer dateTimeRegistrationEnd;
+  private Long eventStatusId;
+  private Long eventCategoryId;
+  private Long eventVenueCategoryId;
+  private Long eventPaymentCategoryId;
+  private Long eventOrganizerId;
 }

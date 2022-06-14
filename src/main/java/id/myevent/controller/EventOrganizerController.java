@@ -28,24 +28,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /** User REST Controller. */
-@CrossOrigin 
-@RestController 
-@RequestMapping("/api") 
+@CrossOrigin
+@RestController
+@RequestMapping("/api")
 @Slf4j
 public class EventOrganizerController {
-  @Autowired
-  private AuthenticationManager authenticationManager;
+  @Autowired private AuthenticationManager authenticationManager;
 
-  @Autowired
-  private JwtTokenUtil jwtTokenUtil;
+  @Autowired private JwtTokenUtil jwtTokenUtil;
 
-  @Autowired
-  private EventOrganizerService eventOrganizerService;
+  @Autowired private EventOrganizerService eventOrganizerService;
 
   private void authenticate(String username, String password) throws UnauthorizedException {
     try {
-      authenticationManager
-          .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(username, password));
     } catch (DisabledException e) {
       throw new ForbiddenException("User dinonaktifkan");
     } catch (BadCredentialsException e) {
@@ -60,11 +57,13 @@ public class EventOrganizerController {
 
     authenticate(signInApiRequest.getUsername(), signInApiRequest.getPassword());
 
-    final EventOrganizerAuthDto eventOrganizerAuthDto = eventOrganizerService.loadUserByUsername(signInApiRequest.getUsername());
+    final EventOrganizerAuthDto eventOrganizerAuthDto =
+        eventOrganizerService.loadUserByUsername(signInApiRequest.getUsername());
 
     final String token = jwtTokenUtil.generateToken(eventOrganizerAuthDto);
 
-    return ResponseEntity.ok(new SignInApiResponse(token, eventOrganizerAuthDto.getOrganizerName()));
+    return ResponseEntity.ok(
+        new SignInApiResponse(token, eventOrganizerAuthDto.getOrganizerName()));
   }
 
   /** Sign Up Endpoint. */
@@ -72,9 +71,7 @@ public class EventOrganizerController {
   public ResponseEntity<ApiResponse> signUp(@RequestBody EventOrganizerDto signUpApiRequest) {
     eventOrganizerService.insert(signUpApiRequest);
     return new ResponseEntity<ApiResponse>(
-        new ApiResponse("Registrasi Berhasil"), 
-        HttpStatus.CREATED
-    );
+        new ApiResponse("Registrasi Berhasil"), HttpStatus.CREATED);
   }
 
   @GetMapping("/hello")
@@ -94,5 +91,4 @@ public class EventOrganizerController {
     eventOrganizerService.update(user);
     return ResponseEntity.ok(new ApiResponse("Profil Berhasil di Update"));
   }
-
 }
