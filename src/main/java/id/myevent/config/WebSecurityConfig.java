@@ -1,6 +1,6 @@
 package id.myevent.config;
 
-import id.myevent.service.UserService;
+import id.myevent.service.EventOrganizerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-  @Autowired private UserService userService;
+  @Autowired private EventOrganizerService eventOrganizerService;
 
   @Autowired private JwtRequestFilter jwtRequestFilter;
 
@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // configure AuthenticationManager so that it knows from where to load
     // user for matching credentials
     // Use BCryptPasswordEncoder
-    auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+    auth.userDetailsService(eventOrganizerService).passwordEncoder(passwordEncoder());
   }
 
   @Bean

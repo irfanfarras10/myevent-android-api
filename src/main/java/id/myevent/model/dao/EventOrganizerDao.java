@@ -10,13 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import lombok.Data;
 
-/** User DAO. */
+/** Event Organizer DAO. */
 @Entity
 @Table(name = "event_organizer")
 @Data
-public class UserDao {
+public class EventOrganizerDao {
   @Id
   @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +29,6 @@ public class UserDao {
   @Column(unique = true, name = "email", nullable = false)
   private String email;
 
-  @JsonIgnore
   @Column(name = "password", nullable = false)
   private String password;
 

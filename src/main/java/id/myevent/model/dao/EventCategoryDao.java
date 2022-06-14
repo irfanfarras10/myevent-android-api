@@ -11,11 +11,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
 
-/** Payment Category DAO. */
+/** Category DAO. */
 @Entity
-@Table(name = "payment_category")
+@Table(name = "event_category")
 @Data
-public class PaymentCategoryDao {
+public class EventCategoryDao {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -23,6 +23,6 @@ public class PaymentCategoryDao {
   @Column(unique = true, name = "name", nullable = false)
   private String name;
   
-  @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "eventCategory", cascade = CascadeType.ALL)
   private Set<EventDao> events;
 }

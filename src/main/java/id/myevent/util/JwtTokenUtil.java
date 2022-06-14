@@ -1,6 +1,6 @@
 package id.myevent.util;
 
-import id.myevent.model.dto.UserAuthDto;
+import id.myevent.model.dto.EventOrganizerAuthDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -58,14 +58,14 @@ public class JwtTokenUtil {
   }
 
   /** generate token. */
-  public String generateToken(UserAuthDto userAuthDto) {
+  public String generateToken(EventOrganizerAuthDto eventOrganizerAuthDto) {
     Map<String, Object> claims =
         new HashMap<String, Object>() {
           {
-            put("username", userAuthDto.getUsername());
+            put("username", eventOrganizerAuthDto.getUsername());
           }
         };
-    return doGenerateToken(claims, userAuthDto.getId().toString());
+    return doGenerateToken(claims, eventOrganizerAuthDto.getId().toString());
   }
 
   public Boolean validateToken(String token, UserDetails userDetails) {

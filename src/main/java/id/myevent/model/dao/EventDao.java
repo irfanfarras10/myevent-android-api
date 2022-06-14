@@ -37,31 +37,31 @@ public class EventDao {
   @Column(name = "location", nullable = false)
   private String location;
   
-  @Column(name = "banner_photo", nullable = false)
-  private String bannerPhoto;
+  @Column(name = "banner_photo", unique = false, length = 100000, nullable = false)
+  private byte[] bannerPhoto;
   
   @Column(name = "datetime_registration_start", nullable = false)
-  private String dateTimeRegistrationStart;
+  private int dateTimeRegistrationStart;
   
   @Column(name = "datetime_registration_end", nullable = false)
-  private String dateTimeRegistrationEnd;
+  private int dateTimeRegistrationEnd;
   
-  @ManyToOne
-  @JoinColumn(name = "status_id", nullable = false)
-  private EventStatusDao status;
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "event_status_id", referencedColumnName = "id", nullable = false)
+  private EventStatusDao eventStatus;
   
-  @ManyToOne
-  @JoinColumn(name = "category_id", nullable = false)
-  private CategoryDao category;
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "event_category_id", referencedColumnName = "id", nullable = false)
+  private EventCategoryDao eventCategory;
   
-  @ManyToOne
-  @JoinColumn(name = "payment_category_id", nullable = false)
-  private PaymentCategoryDao paymentCategory;
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "event_payment_category_id", referencedColumnName = "id", nullable = false)
+  private EventPaymentCategoryDao eventPaymentCategory;
   
   @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-  private Set<ContactPersonDao> contactPersons;
+  private Set<EventContactPersonDao> eventContactPersons;
   
-  @ManyToOne
-  @JoinColumn(name = "event_organizer_id", nullable = false)
-  private UserDao eventOrganizer;
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "event_organizer_id", referencedColumnName = "id", nullable = false)
+  private EventOrganizerDao eventOrganizer;
 }

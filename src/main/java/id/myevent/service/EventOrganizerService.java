@@ -2,10 +2,10 @@ package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
 import id.myevent.exception.ForbiddenException;
-import id.myevent.model.dao.UserDao;
-import id.myevent.model.dto.UserAuthDto;
-import id.myevent.model.dto.UserDto;
-import id.myevent.repository.UserRepository;
+import id.myevent.model.dao.EventOrganizerDao;
+import id.myevent.model.dto.EventOrganizerAuthDto;
+import id.myevent.model.dto.EventOrganizerDto;
+import id.myevent.repository.EventOrganizerRepository;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.JwtTokenUtil;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /** User Service. */
 @Service
 @Slf4j
-public class UserService implements UserDetailsService {
-  @Autowired private UserRepository userRepository;
+public class EventOrganizerService implements UserDetailsService {
+  @Autowired private EventOrganizerRepository eventOrganizerRepository;
 
   @Autowired private PasswordEncoder bcryptEncoder;
 
@@ -32,12 +32,12 @@ public class UserService implements UserDetailsService {
   @Autowired private JwtTokenUtil jwtTokenUtil;
 
   @Override
-  public UserAuthDto loadUserByUsername(String username) {
-    UserDao user = userRepository.findByUsername(username);
+  public EventOrganizerAuthDto loadUserByUsername(String username) {
+    EventOrganizerDao user = eventOrganizerRepository.findByUsername(username);
     if (user == null) {
       throw new ForbiddenException("Username atau password salah");
     }
-    return new UserAuthDto(
+    return new EventOrganizerAuthDto(
         user.getId(), 
         user.getUsername(), 
         user.getPassword(), 
@@ -47,8 +47,8 @@ public class UserService implements UserDetailsService {
   }
 
   /** Insert User Data to Database. */
-  public UserDao insert(UserDto user) {
-    UserDao newUser = new UserDao();
+  public void insert(EventOrganizerDto user) {
+    EventOrganizerDao newUser = new EventOrganizerDao();
     newUser.setUsername(user.getUsername());
     newUser.setEmail(user.getEmail());
     newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
@@ -60,7 +60,7 @@ public class UserService implements UserDetailsService {
         throw new ConflictException("Username harus diisi");
       }
       validateUserData(user);
-      return userRepository.save(newUser);
+      eventOrganizerRepository.save(newUser);
       // catch username or email value not unique
     } catch (DataIntegrityViolationException e) {
       String exceptionMessage = e.getMostSpecificCause().getMessage();
@@ -83,22 +83,22 @@ public class UserService implements UserDetailsService {
   }
 
   /**  View User Data. */
-  public Optional<UserDao> getProfile() {
-    return userRepository.findById(Long.parseLong(getUserId()));
+  public Optional<EventOrganizerDao> getProfile() {
+    return eventOrganizerRepository.findById(Long.parseLong(getUserId()));
   }
 
   /** Update User Data. */
-  public void update(UserDto user) {
+  public void update(EventOrganizerDto user) {
 
-    Optional<UserDao> currentUser = userRepository.findById(Long.parseLong(getUserId()));
-    UserDao newUser = currentUser.get();
+    Optional<EventOrganizerDao> currentUser = eventOrganizerRepository.findById(Long.parseLong(getUserId()));
+    EventOrganizerDao newUser = currentUser.get();
     newUser.setEmail(user.getEmail());
     newUser.setPassword(user.getPassword());
     newUser.setOrganizerName(user.getOrganizerName());
     newUser.setPhoneNumber(user.getPhoneNumber());
     try {
       validateUserData(user);
-      userRepository.save(newUser);
+      eventOrganizerRepository.save(newUser);
       // catch username or email value not unique
     } catch (DataIntegrityViolationException e) {
       String exceptionMessage = e.getMostSpecificCause().getMessage();
@@ -110,7 +110,7 @@ public class UserService implements UserDetailsService {
     }
   }
 
-  private void validateUserData(UserDto user) {
+  private void validateUserData(EventOrganizerDto user) {
     if (!globalUtil.isEmail(user.getEmail())) {
       throw new ConflictException("Format e-mail tidak sesuai");
     }

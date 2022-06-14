@@ -3,10 +3,10 @@ package id.myevent.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/** User DTO. */
+/** Event Organizer DTO. */
 @Data
 @AllArgsConstructor
-public class UserDto {
+public class EventOrganizerDto {
   private long id;
   private String username;
   private String email;

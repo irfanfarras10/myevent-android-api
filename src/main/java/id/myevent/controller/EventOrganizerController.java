@@ -5,10 +5,10 @@ import id.myevent.exception.UnauthorizedException;
 import id.myevent.model.apirequest.SignInApiRequest;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.SignInApiResponse;
-import id.myevent.model.dao.UserDao;
-import id.myevent.model.dto.UserAuthDto;
-import id.myevent.model.dto.UserDto;
-import id.myevent.service.UserService;
+import id.myevent.model.dao.EventOrganizerDao;
+import id.myevent.model.dto.EventOrganizerAuthDto;
+import id.myevent.model.dto.EventOrganizerDto;
+import id.myevent.service.EventOrganizerService;
 import id.myevent.util.JwtTokenUtil;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController 
 @RequestMapping("/api") 
 @Slf4j
-public class UserController {
+public class EventOrganizerController {
   @Autowired
   private AuthenticationManager authenticationManager;
 
@@ -40,7 +40,7 @@ public class UserController {
   private JwtTokenUtil jwtTokenUtil;
 
   @Autowired
-  private UserService userService;
+  private EventOrganizerService eventOrganizerService;
 
   private void authenticate(String username, String password) throws UnauthorizedException {
     try {
@@ -60,17 +60,17 @@ public class UserController {
 
     authenticate(signInApiRequest.getUsername(), signInApiRequest.getPassword());
 
-    final UserAuthDto userAuthDto = userService.loadUserByUsername(signInApiRequest.getUsername());
+    final EventOrganizerAuthDto eventOrganizerAuthDto = eventOrganizerService.loadUserByUsername(signInApiRequest.getUsername());
 
-    final String token = jwtTokenUtil.generateToken(userAuthDto);
+    final String token = jwtTokenUtil.generateToken(eventOrganizerAuthDto);
 
-    return ResponseEntity.ok(new SignInApiResponse(token, userAuthDto.getOrganizerName()));
+    return ResponseEntity.ok(new SignInApiResponse(token, eventOrganizerAuthDto.getOrganizerName()));
   }
 
   /** Sign Up Endpoint. */
   @PostMapping("/auth/signup")
-  public ResponseEntity<ApiResponse> signUp(@RequestBody UserDto signUpApiRequest) {
-    userService.insert(signUpApiRequest);
+  public ResponseEntity<ApiResponse> signUp(@RequestBody EventOrganizerDto signUpApiRequest) {
+    eventOrganizerService.insert(signUpApiRequest);
     return new ResponseEntity<ApiResponse>(
         new ApiResponse("Registrasi Berhasil"), 
         HttpStatus.CREATED
@@ -84,14 +84,14 @@ public class UserController {
 
   /** View Profile Endpoint. */
   @GetMapping("/users/profile")
-  public Optional<UserDao> viewProfile() {
-    return userService.getProfile();
+  public Optional<EventOrganizerDao> viewProfile() {
+    return eventOrganizerService.getProfile();
   }
 
   /** Edit Profile Endpoint. */
   @PutMapping("/users/profile")
-  public ResponseEntity<ApiResponse> editProfile(@RequestBody UserDto user) {
-    userService.update(user);
+  public ResponseEntity<ApiResponse> editProfile(@RequestBody EventOrganizerDto user) {
+    eventOrganizerService.update(user);
     return ResponseEntity.ok(new ApiResponse("Profil Berhasil di Update"));
   }
 

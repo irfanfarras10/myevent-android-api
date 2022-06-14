@@ -9,11 +9,12 @@ import org.springframework.security.core.userdetails.User;
 /** Custom UserDetails for Auth. */
 @Setter
 @Getter
-public class UserAuthDto extends User {
+public class EventOrganizerAuthDto extends User {
   private Long id;
   private String organizerName;
 
-  public UserAuthDto(
+  /** Event Organizer Auth DTO. */
+  public EventOrganizerAuthDto(
       Long id,
       String username,
       String password,

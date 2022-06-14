@@ -13,9 +13,9 @@ import lombok.Data;
 
 /** Event Status DAO. */
 @Entity
-@Table(name = "social_media")
+@Table(name = "event_social_media")
 @Data
-public class SocialMediaDao {
+public class EventSocialMediaDao {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -23,6 +23,6 @@ public class SocialMediaDao {
   @Column(name = "name", nullable = false)
   private String name;
   
-  @OneToMany(mappedBy = "socialMedia", cascade = CascadeType.ALL)
-  private Set<ContactPersonDao> contactPersons;
+  @OneToMany(mappedBy = "eventSocialMedia", cascade = CascadeType.ALL)
+  private Set<EventContactPersonDao> eventContactPersons;
 }

@@ -23,6 +23,6 @@ public class EventStatusDao {
   @Column(name = "name", nullable = false)
   private String name;
   
-  @OneToMany(mappedBy = "status", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "eventStatus", cascade = CascadeType.ALL)
   private Set<EventDao> events;
 }

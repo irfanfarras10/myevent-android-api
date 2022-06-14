@@ -1,6 +1,6 @@
 package id.myevent.config;
 
-import id.myevent.service.UserService;
+import id.myevent.service.EventOrganizerService;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.JwtTokenUtil;
 import java.io.IOException;
@@ -21,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /** Handle JWT checking for every request. */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-  @Autowired private UserService userService = new UserService();
+  @Autowired private EventOrganizerService eventOrganizerService = new EventOrganizerService();
 
   @Autowired private JwtTokenUtil jwtTokenUtil;
 
@@ -65,7 +65,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     // Once we get the token validate it.
     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-      UserDetails userDetails = this.userService.loadUserByUsername(username);
+      UserDetails userDetails = this.eventOrganizerService.loadUserByUsername(username);
 
       // if token is valid configure Spring Security to manually set authentication
       if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
