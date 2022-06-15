@@ -62,8 +62,7 @@ public class EventOrganizerController {
 
     final String token = jwtTokenUtil.generateToken(eventOrganizerAuthDto);
 
-    return ResponseEntity.ok(
-        new SignInApiResponse(token, eventOrganizerAuthDto.getOrganizerName()));
+    return ResponseEntity.ok(new SignInApiResponse(token));
   }
 
   /** Sign Up Endpoint. */
@@ -73,20 +72,15 @@ public class EventOrganizerController {
     return new ResponseEntity<ApiResponse>(
         new ApiResponse("Registrasi Berhasil"), HttpStatus.CREATED);
   }
-
-  @GetMapping("/hello")
-  public String helloWorld() {
-    return "Hello World";
-  }
-
+  
   /** View Profile Endpoint. */
-  @GetMapping("/users/profile")
+  @GetMapping("/organizer/profile")
   public Optional<EventOrganizerDao> viewProfile() {
     return eventOrganizerService.getProfile();
   }
 
   /** Edit Profile Endpoint. */
-  @PutMapping("/users/profile")
+  @PutMapping("/organizer/profile")
   public ResponseEntity<ApiResponse> editProfile(@RequestBody EventOrganizerDto user) {
     eventOrganizerService.update(user);
     return ResponseEntity.ok(new ApiResponse("Profil Berhasil di Update"));

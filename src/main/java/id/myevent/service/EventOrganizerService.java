@@ -41,7 +41,6 @@ public class EventOrganizerService implements UserDetailsService {
         user.getId(),
         user.getUsername(),
         user.getPassword(),
-        user.getOrganizerName(),
         new ArrayList<>());
   }
 

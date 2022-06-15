@@ -18,7 +18,6 @@ public class EventOrganizerAuthDto extends User {
       Long id,
       String username,
       String password,
-      String organizerName,
       Collection<? extends GrantedAuthority> authorities) {
     super(username, password, authorities);
     this.id = id;
