@@ -8,14 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-/** User DAO. */
+/** Event Organizer DAO. */
 @Entity
 @Table(name = "event_organizer")
 @Data
-public class UserDao {
+public class EventOrganizerDao {
   @Id
   @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
