@@ -1,5 +1,6 @@
 package id.myevent.model.dao;
 
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,7 +16,7 @@ import lombok.EqualsAndHashCode;
 /** Event Status DAO. */
 @Entity
 @Table(name = "event_status")
-@EqualsAndHashCode(exclude = "events")
+@Data
 public class EventStatusDao {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,30 +25,7 @@ public class EventStatusDao {
   @Column(name = "name", nullable = false)
   private String name;
   
-  @OneToMany(mappedBy = "eventStatus", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<EventDao> events;
+  @OneToMany(mappedBy = "eventStatus", cascade = CascadeType.ALL)
+  private List<EventDao> events;
 
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Set<EventDao> getEvents() {
-    return events;
-  }
-
-  public void setEvents(Set<EventDao> events) {
-    this.events = events;
-  }
 }
