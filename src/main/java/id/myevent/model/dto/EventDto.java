@@ -11,6 +11,8 @@ public class EventDto {
   private Integer dateTimeEventEnd;
   private String venue;
   private byte[] bannerPhoto;
+  private String bannerPhotoName;
+  private String bannerPhotoType;
   private Integer dateTimeRegistrationStart;
   private Integer dateTimeRegistrationEnd;
   private Long eventStatusId;

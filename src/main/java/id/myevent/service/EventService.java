@@ -1,6 +1,7 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
+import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.dao.EventCategoryDao;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dao.EventOrganizerDao;
@@ -16,11 +17,16 @@ import id.myevent.repository.EventStatusRepository;
 import id.myevent.repository.EventVenueCategoryRepository;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.ImageUtil;
-import java.util.Optional;
+
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /** User Service. */
 @Service
@@ -60,6 +66,8 @@ public class EventService {
     newEvent.setDateTimeEventEnd(eventData.getDateTimeEventEnd());
     newEvent.setVenue(eventData.getVenue());
     newEvent.setBannerPhoto(ImageUtil.compressImage(eventData.getBannerPhoto()));
+    newEvent.setBannerPhotoName(generateUniqueImageName());
+    newEvent.setBannerPhotoType(eventData.getBannerPhotoType());
     newEvent.setDateTimeRegistrationStart(eventData.getDateTimeRegistrationStart());
     newEvent.setDateTimeRegistrationEnd(eventData.getDateTimeRegistrationEnd());
     newEvent.setEventStatus(eventStatus.get());
@@ -93,6 +101,57 @@ public class EventService {
       eventRepository.deleteById(id);
     }
 
+  }
+
+  /** View Event Draft Data. */
+  public List<ViewEventApiResponse> getDraftEvent() {
+    List<EventDao> event = eventRepository.findByStatus(1L);
+    List<ViewEventApiResponse> newEvent = new ArrayList<>();
+    ViewEventApiResponse eventData = new ViewEventApiResponse();
+
+    for(int i=0; i<event.size(); i++){
+      eventData.setName(event.get(i).getName());
+      eventData.setDescription(event.get(i).getDescription());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
+      eventData.setVenue(event.get(i).getVenue());
+      eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
+      eventData.setDateTimeRegistrationStart(event.get(i).getDateTimeRegistrationStart());
+      eventData.setDateTimeRegistrationEnd(event.get(i).getDateTimeRegistrationEnd());
+      eventData.setEventStatus(event.get(i).getEventStatus());
+      eventData.setEventCategory(event.get(i).getEventCategory());
+      eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
+      eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
+      eventData.setEventOrganizer(event.get(i).getEventOrganizer());
+
+      newEvent.add(eventData);
+    }
+
+      return newEvent;
+  }
+
+  private String generateBannerPhotoUrl(String filename){
+    String url = "";
+    url = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    url+="/api/events/image/"+filename;
+    return url;
+  }
+
+  private String generateUniqueImageName() {
+    String filename = "";
+    long millis = System.currentTimeMillis();
+    String datetime = new Date().toGMTString();
+    datetime = datetime.replace(" ", "");
+    datetime = datetime.replace(":", "");
+    String uuid = UUID.randomUUID().toString();
+    filename = uuid + "_" + datetime + "_" + millis;
+    return filename;
+  }
+
+  public EventDao getImage(String imageName){
+    final Optional<EventDao> event = eventRepository.findByImageName(imageName);
+
+    return event.get();
   }
 
   private void validateEventData(EventDto event) {

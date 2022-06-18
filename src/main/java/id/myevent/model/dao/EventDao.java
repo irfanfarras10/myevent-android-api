@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /** Event DAO. */
@@ -37,9 +39,18 @@ public class EventDao {
   
   @Column(name = "venue")
   private String venue;
-  
+
+  @JsonIgnore
   @Column(name = "banner_photo", unique = false, length = 100000, nullable = false)
   private byte[] bannerPhoto;
+
+  @JsonIgnore
+  @Column(name = "banner_photo_name", nullable = false)
+  private String bannerPhotoName;
+
+  @JsonIgnore
+  @Column(name = "banner_photo_type", nullable = false)
+  private String bannerPhotoType;
   
   @Column(name = "datetime_registration_start", nullable = false)
   private int dateTimeRegistrationStart;

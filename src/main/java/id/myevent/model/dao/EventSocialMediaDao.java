@@ -23,7 +23,5 @@ public class EventSocialMediaDao {
   
   @Column(name = "name", nullable = false)
   private String name;
-  
-  @OneToMany(mappedBy = "eventSocialMedia", cascade = CascadeType.ALL)
-  private List<EventContactPersonDao> eventContactPersons;
+
 }

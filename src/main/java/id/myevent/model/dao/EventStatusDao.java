@@ -24,8 +24,5 @@ public class EventStatusDao {
   
   @Column(name = "name", nullable = false)
   private String name;
-  
-  @OneToMany(mappedBy = "eventStatus", cascade = CascadeType.ALL)
-  private List<EventDao> events;
 
 }
