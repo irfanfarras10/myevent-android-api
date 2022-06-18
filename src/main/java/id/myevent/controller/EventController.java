@@ -1,9 +1,15 @@
 package id.myevent.controller;
 
 import id.myevent.model.apiresponse.ApiResponse;
+import id.myevent.model.apiresponse.ViewEventApiResponse;
+import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
 import id.myevent.service.EventService;
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import id.myevent.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,6 +54,7 @@ public class EventController {
     eventData.setDateTimeEventEnd(dateTimeEventEnd);
     eventData.setVenue(location);
     eventData.setBannerPhoto(bannerPhoto.getBytes());
+    eventData.setBannerPhotoType(bannerPhoto.getContentType());
     eventData.setDateTimeRegistrationStart(dateTimeRegistrationStart);
     eventData.setDateTimeRegistrationEnd(dateTimeRegistrationEnd);
     eventData.setEventStatusId(eventStatusId);
@@ -65,10 +72,29 @@ public class EventController {
   /**
    * delete event.
    */
-  @DeleteMapping("/event/{id}")
+  @DeleteMapping("/events/{id}")
   public ResponseEntity<ApiResponse> deleteEvent(@PathVariable("id") Long id) throws IOException{
     eventService.deleteEvent(id);
     return new ResponseEntity<ApiResponse>(
             new ApiResponse("Event Berhasil Dihapus"), HttpStatus.OK);
+  }
+
+  /**
+   * get draft event.
+   */
+  @GetMapping("events/draft")
+  public List<ViewEventApiResponse> getEventDraft(){
+    return eventService.getDraftEvent();
+  }
+
+  @GetMapping(path = {"/events/image/{name}"})
+  public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
+
+    EventDao image = eventService.getImage(name);
+
+    return ResponseEntity
+            .ok()
+            .contentType(MediaType.valueOf(image.getBannerPhotoType()))
+            .body(ImageUtil.decompressImage(image.getBannerPhoto()));
   }
 }

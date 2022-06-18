@@ -23,7 +23,5 @@ public class EventCategoryDao {
   
   @Column(unique = true, name = "name", nullable = false)
   private String name;
-  
-  @OneToMany(mappedBy = "eventCategory", cascade = CascadeType.ALL)
-  private List<EventDao> events;
+
 }

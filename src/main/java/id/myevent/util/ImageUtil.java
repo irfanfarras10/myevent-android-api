@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /** Image Util. */
 @Slf4j
