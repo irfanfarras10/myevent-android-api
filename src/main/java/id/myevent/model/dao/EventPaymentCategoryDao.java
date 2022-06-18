@@ -1,5 +1,6 @@
 package id.myevent.model.dao;
 
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,5 +25,5 @@ public class EventPaymentCategoryDao {
   private String name;
   
   @OneToMany(mappedBy = "eventPaymentCategory", cascade = CascadeType.ALL)
-  private Set<EventDao> events;
+  private List<EventDao> events;
 }

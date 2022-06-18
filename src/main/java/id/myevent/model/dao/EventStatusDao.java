@@ -1,5 +1,6 @@
 package id.myevent.model.dao;
 
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /** Event Status DAO. */
 @Entity
@@ -24,5 +26,6 @@ public class EventStatusDao {
   private String name;
   
   @OneToMany(mappedBy = "eventStatus", cascade = CascadeType.ALL)
-  private Set<EventDao> events;
+  private List<EventDao> events;
+
 }

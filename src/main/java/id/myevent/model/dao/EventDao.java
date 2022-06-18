@@ -1,5 +1,6 @@
 package id.myevent.model.dao;
 
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,26 +47,26 @@ public class EventDao {
   @Column(name = "datetime_registration_end", nullable = false)
   private int dateTimeRegistrationEnd;
   
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne()
   @JoinColumn(name = "event_status_id", referencedColumnName = "id", nullable = false)
   private EventStatusDao eventStatus;
   
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne()
   @JoinColumn(name = "event_category_id", referencedColumnName = "id", nullable = false)
   private EventCategoryDao eventCategory;
 
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne()
   @JoinColumn(name = "event_venue_category", referencedColumnName = "id", nullable = false)
   private EventVenueCategoryDao eventVenueCategory;
   
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne()
   @JoinColumn(name = "event_payment_category_id", referencedColumnName = "id", nullable = false)
   private EventPaymentCategoryDao eventPaymentCategory;
   
   @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-  private Set<EventContactPersonDao> eventContactPersons;
+  private List<EventContactPersonDao> eventContactPersons;
   
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne()
   @JoinColumn(name = "event_organizer_id", referencedColumnName = "id", nullable = false)
   private EventOrganizerDao eventOrganizer;
 }

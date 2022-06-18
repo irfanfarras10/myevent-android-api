@@ -82,6 +82,19 @@ public class EventService {
     }
   }
 
+  public void deleteEvent(Long id){
+
+    Optional<EventDao> newEvents = eventRepository.findById(id);
+
+    Long status = newEvents.get().getEventStatus().getId();
+    log.warn(status.toString());
+
+    if(status == 1){
+      eventRepository.deleteById(id);
+    }
+
+  }
+
   private void validateEventData(EventDto event) {
     if (globalUtil.isBlankString(event.getName())) {
       throw new ConflictException("Nama event harus diisi");

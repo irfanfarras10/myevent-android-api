@@ -1,5 +1,6 @@
 package id.myevent.model.dao;
 
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,5 +25,5 @@ public class EventSocialMediaDao {
   private String name;
   
   @OneToMany(mappedBy = "eventSocialMedia", cascade = CascadeType.ALL)
-  private Set<EventContactPersonDao> eventContactPersons;
+  private List<EventContactPersonDao> eventContactPersons;
 }
