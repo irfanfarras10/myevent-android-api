@@ -57,7 +57,7 @@ public class EventOrganizerService implements UserDetailsService {
       if (globalUtil.isBlankString(user.getUsername())) {
         throw new ConflictException("Username harus diisi");
       }
-      validateUserData(user);
+      validateUserDataForSignUp(user);
       eventOrganizerRepository.save(newUser);
       // catch username or email value not unique
     } catch (DataIntegrityViolationException e) {
@@ -98,7 +98,7 @@ public class EventOrganizerService implements UserDetailsService {
     newUser.setOrganizerName(user.getOrganizerName());
     newUser.setPhoneNumber(user.getPhoneNumber());
     try {
-      validateUserData(user);
+      validateUserDataForSignIn(user);
       eventOrganizerRepository.save(newUser);
       // catch username or email value not unique
     } catch (DataIntegrityViolationException e) {
@@ -111,7 +111,7 @@ public class EventOrganizerService implements UserDetailsService {
     }
   }
 
-  private void validateUserData(EventOrganizerDto user) {
+  private void validateUserDataForSignUp(EventOrganizerDto user) {
     if (!globalUtil.isEmail(user.getEmail())) {
       throw new ConflictException("Format e-mail tidak sesuai");
     }
@@ -120,6 +120,21 @@ public class EventOrganizerService implements UserDetailsService {
     }
     if (globalUtil.isBlankString(user.getPassword())) {
       throw new ConflictException("Password harus diisi");
+    }
+    if (globalUtil.isBlankString(user.getOrganizerName())) {
+      throw new ConflictException("Nama Event Organizer harus diisi");
+    }
+    if (globalUtil.isBlankString(user.getPhoneNumber())) {
+      throw new ConflictException("Nomor telepon harus diisi");
+    }
+  }
+  
+  private void validateUserDataForSignIn(EventOrganizerDto user) {
+    if (!globalUtil.isEmail(user.getEmail())) {
+      throw new ConflictException("Format e-mail tidak sesuai");
+    }
+    if (globalUtil.isBlankString(user.getEmail())) {
+      throw new ConflictException("E-mail harus diisi");
     }
     if (globalUtil.isBlankString(user.getOrganizerName())) {
       throw new ConflictException("Nama Event Organizer harus diisi");
