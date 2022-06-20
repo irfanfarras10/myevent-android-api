@@ -74,13 +74,13 @@ public class EventOrganizerController {
   }
   
   /** View Profile Endpoint. */
-  @GetMapping("/organizer/profile")
+  @GetMapping("/organizer")
   public Optional<EventOrganizerDao> viewProfile() {
     return eventOrganizerService.getProfile();
   }
 
   /** Edit Profile Endpoint. */
-  @PutMapping("/organizer/profile")
+  @PutMapping("/organizer")
   public ResponseEntity<ApiResponse> editProfile(@RequestBody EventOrganizerDto user) {
     eventOrganizerService.update(user);
     return ResponseEntity.ok(new ApiResponse("Profil Berhasil di Update"));
