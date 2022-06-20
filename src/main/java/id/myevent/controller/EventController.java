@@ -4,11 +4,9 @@ import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
-import id.myevent.model.dto.EventOrganizerDto;
 import id.myevent.service.EventService;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import id.myevent.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -86,6 +84,38 @@ public class EventController {
   @GetMapping("events/draft")
   public List<ViewEventApiResponse> getEventDraft(){
     return eventService.getDraftEvent();
+  }
+
+  /**
+   * get published event.
+   */
+  @GetMapping("events/published")
+  public List<ViewEventApiResponse> getEventPublished(){
+    return eventService.getPublisedEvent();
+  }
+
+  /**
+   * get live event.
+   */
+  @GetMapping("events/live")
+  public List<ViewEventApiResponse> getEventLive(){
+    return eventService.getLiveEvent();
+  }
+
+  /**
+   * get passed event.
+   */
+  @GetMapping("events/passed")
+  public List<ViewEventApiResponse> getEventPassed(){
+    return eventService.getPassedEvent();
+  }
+
+  /**
+   * get detail event.
+   */
+  @GetMapping("events/{id}")
+  public ViewEventApiResponse getDetailEvent(@PathVariable("id") Long id) {
+    return eventService.getDetailEvent(id);
   }
 
   /**
