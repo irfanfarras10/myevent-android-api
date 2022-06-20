@@ -93,7 +93,6 @@ public class EventOrganizerService implements UserDetailsService {
     Optional<EventOrganizerDao> currentUser =
         eventOrganizerRepository.findById(Long.parseLong(getUserId()));
     EventOrganizerDao newUser = currentUser.get();
-    newUser.setUsername(user.getUsername());
     newUser.setEmail(user.getEmail());
     newUser.setOrganizerName(user.getOrganizerName());
     newUser.setPhoneNumber(user.getPhoneNumber());
@@ -133,9 +132,6 @@ public class EventOrganizerService implements UserDetailsService {
   }
   
   private void validateUserDataForUpdate(EventOrganizerDto user) {
-    if(globalUtil.isBlankString(user.getUsername())) {
-      throw new ConflictException("Username harus diisi");
-    }
     if (!globalUtil.isEmail(user.getEmail())) {
       throw new ConflictException("Format e-mail tidak sesuai");
     }
