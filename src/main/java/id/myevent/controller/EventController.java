@@ -2,6 +2,7 @@ package id.myevent.controller;
 
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
+import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
 import id.myevent.service.EventService;
@@ -75,26 +76,32 @@ public class EventController {
 
   /** get draft event. */
   @GetMapping("events/draft")
-  public List<ViewEventApiResponse> getEventDraft() {
+  public List<ViewEventListApiResponse> getEventDraft() {
     return eventService.getDraftEvent();
   }
 
   /** get published event. */
   @GetMapping("events/published")
-  public List<ViewEventApiResponse> getEventPublished() {
+  public List<ViewEventListApiResponse> getEventPublished() {
     return eventService.getPublisedEvent();
   }
 
   /** get live event. */
   @GetMapping("events/live")
-  public List<ViewEventApiResponse> getEventLive() {
+  public List<ViewEventListApiResponse> getEventLive() {
     return eventService.getLiveEvent();
   }
 
   /** get passed event. */
   @GetMapping("events/passed")
-  public List<ViewEventApiResponse> getEventPassed() {
+  public List<ViewEventListApiResponse> getEventPassed() {
     return eventService.getPassedEvent();
+  }
+
+  /** get cancel event. */
+  @GetMapping("events/cancel")
+  public List<ViewEventListApiResponse> getEventCancel() {
+    return eventService.getCancelEvent();
   }
 
   /** get detail event. */
