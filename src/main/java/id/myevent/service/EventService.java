@@ -51,11 +51,6 @@ public class EventService {
         eventCategoryRepository.findById(eventData.getEventCategoryId());
     final Optional<EventVenueCategoryDao> eventVenueCategory =
         eventVenueCategoryRepository.findById(eventData.getEventVenueCategoryId());
-    Optional<EventPaymentCategoryDao> eventPaymentCategory = null;
-    if (eventData.getEventPaymentCategoryId() != null) {
-      eventPaymentCategory =
-          eventPaymentCategoryRepository.findById(eventData.getEventPaymentCategoryId());
-    }
     final Optional<EventOrganizerDao> eventOrganizer =
         eventOrganizerRepository.findById(eventData.getEventOrganizerId());
 
@@ -67,17 +62,12 @@ public class EventService {
     newEvent.setBannerPhoto(ImageUtil.compressImage(eventData.getBannerPhoto()));
     newEvent.setBannerPhotoName(generateUniqueImageName());
     newEvent.setBannerPhotoType(eventData.getBannerPhotoType());
-    newEvent.setDateTimeRegistrationStart(eventData.getDateTimeRegistrationStart());
-    newEvent.setDateTimeRegistrationEnd(eventData.getDateTimeRegistrationEnd());
     newEvent.setEventStatus(eventStatus.get());
     newEvent.setEventCategory(eventCategory.get());
     newEvent.setEventVenueCategory(eventVenueCategory.get());
-    if (eventPaymentCategory != null) {
-      newEvent.setEventPaymentCategory(eventPaymentCategory.get());
-    }
     newEvent.setEventOrganizer(eventOrganizer.get());
     try {
-      validateEventData(eventData);
+      validateEventDataForInsert(eventData);
       eventRepository.save(newEvent);
     } catch (DataIntegrityViolationException exception) {
       String exceptionMessage = exception.getMostSpecificCause().getMessage();
@@ -268,7 +258,7 @@ public class EventService {
       newEvent.setEventPaymentCategory(eventPaymentCategory.get());
     }
     try {
-      validateEventData(event);
+      validateEventDataForUpdate(event);
       eventRepository.save(newEvent);
     } catch (DataIntegrityViolationException e) {
       String exceptionMessage = e.getMostSpecificCause().getMessage();
@@ -300,7 +290,43 @@ public class EventService {
     return event.get();
   }
 
-  private void validateEventData(EventDto event) {
+  private void validateEventDataForInsert(EventDto event) {
+    if (globalUtil.isBlankString(event.getName())) {
+      throw new ConflictException("Nama event harus diisi");
+    }
+    if (globalUtil.isBlankString(event.getDescription())) {
+      throw new ConflictException("Deskripsi event harus diisi");
+    }
+    if (event.getDateTimeEventStart() == null) {
+      throw new ConflictException("Tanggal mulai event harus diisi");
+    }
+    if (event.getDateTimeEventStart() > event.getDateTimeEventEnd()) {
+      throw new ConflictException("Tanggal mulai tidak boleh melebihi tanggal selesai");
+    }
+    if (event.getDateTimeEventEnd() == null) {
+      throw new ConflictException("Tanggal berakhir event harus diisi");
+    }
+    if (event.getDateTimeEventEnd() < event.getDateTimeEventStart()) {
+      throw new ConflictException("Tanggal selesai tidak boleh sebelum dari tanggal mulai");
+    }
+    if (event.getBannerPhoto() == null) {
+      throw new ConflictException("Foto event harus di unggah");
+    }
+    if (event.getEventStatusId() == null) {
+      throw new ConflictException("Status event harus dilpilih");
+    }
+    if (event.getEventCategoryId() == null) {
+      throw new ConflictException("Kategori event harus dilpilih");
+    }
+    if (event.getEventVenueCategoryId() == null) {
+      throw new ConflictException("Jenis tempat event harus dilpilih");
+    }
+    if (event.getEventOrganizerId() == null) {
+      throw new ConflictException("Tidak terdapat event organizer ID");
+    }
+  }
+
+  private void validateEventDataForUpdate(EventDto event) {
     if (globalUtil.isBlankString(event.getName())) {
       throw new ConflictException("Nama event harus diisi");
     }
