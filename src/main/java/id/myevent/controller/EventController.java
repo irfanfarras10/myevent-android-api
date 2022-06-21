@@ -7,7 +7,6 @@ import id.myevent.model.dto.EventDto;
 import id.myevent.service.EventService;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import id.myevent.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +86,41 @@ public class EventController {
     return eventService.getDraftEvent();
   }
 
+  /**
+   * get published event.
+   */
+  @GetMapping("events/published")
+  public List<ViewEventApiResponse> getEventPublished(){
+    return eventService.getPublisedEvent();
+  }
+
+  /**
+   * get live event.
+   */
+  @GetMapping("events/live")
+  public List<ViewEventApiResponse> getEventLive(){
+    return eventService.getLiveEvent();
+  }
+
+  /**
+   * get passed event.
+   */
+  @GetMapping("events/passed")
+  public List<ViewEventApiResponse> getEventPassed(){
+    return eventService.getPassedEvent();
+  }
+
+  /**
+   * get detail event.
+   */
+  @GetMapping("events/{id}")
+  public ViewEventApiResponse getDetailEvent(@PathVariable("id") Long id) {
+    return eventService.getDetailEvent(id);
+  }
+
+  /**
+   * get image event.
+   */
   @GetMapping(path = {"/events/image/{name}"})
   public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
 
@@ -96,5 +130,45 @@ public class EventController {
             .ok()
             .contentType(MediaType.valueOf(image.getBannerPhotoType()))
             .body(ImageUtil.decompressImage(image.getBannerPhoto()));
+  }
+
+  /** Edit Event Endpoint. */
+  @PutMapping("/events/update/{id}")
+  public ResponseEntity<ApiResponse> editEvent(
+          @PathVariable("id") Long id,
+          @RequestParam("name") String name,
+          @RequestParam("description") String description,
+          @RequestParam("dateTimeEventStart") Integer dateTimeEventStart,
+          @RequestParam("dateTimeEventEnd") Integer dateTimeEventEnd,
+          @RequestParam("location") String location,
+          @RequestParam("bannerPhoto") MultipartFile bannerPhoto,
+          @RequestParam("dateTimeRegistrationStart") Integer dateTimeRegistrationStart,
+          @RequestParam("dateTimeRegistrationEnd") Integer dateTimeRegistrationEnd,
+          @RequestParam("eventStatusId") Long eventStatusId,
+          @RequestParam("eventCategoryId") Long eventCategoryId,
+          @RequestParam("eventVenueCategoryId") Long eventVenueCategoryId,
+          @RequestParam("eventPaymentCategoryId") Long eventPaymentCategoryId,
+          @RequestParam("eventOrganizerId") Long eventOrganizerId)
+          throws IOException {
+
+    EventDto eventUpdate = new EventDto();
+    eventUpdate.setName(name);
+    eventUpdate.setDescription(description);
+    eventUpdate.setDateTimeEventStart(dateTimeEventStart);
+    eventUpdate.setDateTimeEventEnd(dateTimeEventEnd);
+    eventUpdate.setVenue(location);
+    eventUpdate.setBannerPhoto(bannerPhoto.getBytes());
+    eventUpdate.setBannerPhotoType(bannerPhoto.getContentType());
+    eventUpdate.setDateTimeRegistrationStart(dateTimeRegistrationStart);
+    eventUpdate.setDateTimeRegistrationEnd(dateTimeRegistrationEnd);
+    eventUpdate.setEventStatusId(eventStatusId);
+    eventUpdate.setEventCategoryId(eventCategoryId);
+    eventUpdate.setEventVenueCategoryId(eventVenueCategoryId);
+    if (eventPaymentCategoryId != null) {
+      eventUpdate.setEventPaymentCategoryId(eventPaymentCategoryId);
+    }
+    eventUpdate.setEventOrganizerId(eventOrganizerId);
+    eventService.eventUpdate(id, eventUpdate);
+    return ResponseEntity.ok(new ApiResponse("Event Berhasil di Update"));
   }
 }

@@ -18,7 +18,6 @@ import id.myevent.repository.EventVenueCategoryRepository;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.ImageUtil;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -90,6 +89,7 @@ public class EventService {
     }
   }
 
+  /** Delete Event. */
   public void deleteEvent(Long id){
 
     Optional<EventDao> newEvents = eventRepository.findById(id);
@@ -100,16 +100,45 @@ public class EventService {
     if(status == 1){
       eventRepository.deleteById(id);
     }
-
+    else{
+      String message = "Event tidak bisa dihapus";
+      throw new ConflictException(message);
+    }
   }
 
   /** View Event Draft Data. */
   public List<ViewEventApiResponse> getDraftEvent() {
-    List<EventDao> event = eventRepository.findByStatus(1L);
     List<ViewEventApiResponse> newEvent = new ArrayList<>();
-    ViewEventApiResponse eventData = new ViewEventApiResponse();
+    List<EventDao> event = eventRepository.findByStatus(1L);
+
+   for(int i=0; i<event.size(); i++){
+     ViewEventApiResponse eventData = new ViewEventApiResponse();
+
+     eventData.setName(event.get(i).getName());
+     eventData.setDescription(event.get(i).getDescription());
+     eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+     eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
+     eventData.setVenue(event.get(i).getVenue());
+     eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
+     eventData.setDateTimeRegistrationStart(event.get(i).getDateTimeRegistrationStart());
+     eventData.setDateTimeRegistrationEnd(event.get(i).getDateTimeRegistrationEnd());
+     eventData.setEventStatus(event.get(i).getEventStatus());
+     eventData.setEventCategory(event.get(i).getEventCategory());
+     eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
+     eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
+     eventData.setEventOrganizer(event.get(i).getEventOrganizer());
+     newEvent.add(eventData);
+   }
+    return newEvent;
+   }
+
+  /** View Event Published Data. */
+  public List<ViewEventApiResponse> getPublisedEvent() {
+    List<EventDao> event = eventRepository.findByStatus(2L);
+    List<ViewEventApiResponse> newEvent = new ArrayList<>();
 
     for(int i=0; i<event.size(); i++){
+      ViewEventApiResponse eventData = new ViewEventApiResponse();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
@@ -127,7 +156,124 @@ public class EventService {
       newEvent.add(eventData);
     }
 
-      return newEvent;
+    return newEvent;
+  }
+
+  /** View Event Live Data. */
+  public List<ViewEventApiResponse> getLiveEvent() {
+    List<EventDao> event = eventRepository.findByStatus(3L);
+    List<ViewEventApiResponse> newEvent = new ArrayList<>();
+
+    for(int i=0; i<event.size(); i++){
+      ViewEventApiResponse eventData = new ViewEventApiResponse();
+      eventData.setName(event.get(i).getName());
+      eventData.setDescription(event.get(i).getDescription());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
+      eventData.setVenue(event.get(i).getVenue());
+      eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
+      eventData.setDateTimeRegistrationStart(event.get(i).getDateTimeRegistrationStart());
+      eventData.setDateTimeRegistrationEnd(event.get(i).getDateTimeRegistrationEnd());
+      eventData.setEventStatus(event.get(i).getEventStatus());
+      eventData.setEventCategory(event.get(i).getEventCategory());
+      eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
+      eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
+      eventData.setEventOrganizer(event.get(i).getEventOrganizer());
+
+      newEvent.add(eventData);
+    }
+
+    return newEvent;
+  }
+  /** View Event Passed Data. */
+  public List<ViewEventApiResponse> getPassedEvent() {
+    List<EventDao> event = eventRepository.findByStatus(4L);
+    List<ViewEventApiResponse> newEvent = new ArrayList<>();
+
+    for(int i=0; i<event.size(); i++){
+      ViewEventApiResponse eventData = new ViewEventApiResponse();
+      eventData.setName(event.get(i).getName());
+      eventData.setDescription(event.get(i).getDescription());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
+      eventData.setVenue(event.get(i).getVenue());
+      eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
+      eventData.setDateTimeRegistrationStart(event.get(i).getDateTimeRegistrationStart());
+      eventData.setDateTimeRegistrationEnd(event.get(i).getDateTimeRegistrationEnd());
+      eventData.setEventStatus(event.get(i).getEventStatus());
+      eventData.setEventCategory(event.get(i).getEventCategory());
+      eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
+      eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
+      eventData.setEventOrganizer(event.get(i).getEventOrganizer());
+
+      newEvent.add(eventData);
+    }
+
+    return newEvent;
+  }
+
+  /**
+   * View Detail Event
+   */
+  public ViewEventApiResponse getDetailEvent(Long id) {
+    ViewEventApiResponse newEvent = new ViewEventApiResponse();
+    Optional<EventDao> eventData = eventRepository.findById(id);
+    newEvent.setName(eventData.get().getName());
+    newEvent.setDescription(eventData.get().getDescription());
+    newEvent.setDateTimeEventStart(eventData.get().getDateTimeEventStart());
+    newEvent.setDateTimeEventEnd(eventData.get().getDateTimeEventEnd());
+    newEvent.setVenue(eventData.get().getVenue());
+    newEvent.setBannerPhoto(generateBannerPhotoUrl(eventData.get().getBannerPhotoName()));
+    newEvent.setDateTimeRegistrationStart(eventData.get().getDateTimeRegistrationStart());
+    newEvent.setDateTimeRegistrationEnd(eventData.get().getDateTimeRegistrationEnd());
+    newEvent.setEventStatus(eventData.get().getEventStatus());
+    newEvent.setEventCategory(eventData.get().getEventCategory());
+    newEvent.setEventVenueCategory(eventData.get().getEventVenueCategory());
+    newEvent.setEventPaymentCategory(eventData.get().getEventPaymentCategory());
+    newEvent.setEventOrganizer(eventData.get().getEventOrganizer());
+    return newEvent;
+  }
+
+  /** Update event. */
+  public void eventUpdate(Long id, EventDto event){
+    Optional<EventDao> currentEvent = eventRepository.findById(id);
+
+    final Optional<EventStatusDao> eventStatus =
+            eventStatusRepository.findById(event.getEventStatusId());
+    final Optional<EventCategoryDao> eventCategory =
+            eventCategoryRepository.findById(event.getEventCategoryId());
+    final Optional<EventVenueCategoryDao> eventVenueCategory =
+            eventVenueCategoryRepository.findById(event.getEventVenueCategoryId());
+    Optional<EventPaymentCategoryDao> eventPaymentCategory = null;
+    if (event.getEventPaymentCategoryId() != null) {
+      eventPaymentCategory = eventPaymentCategoryRepository.findById(event.getEventPaymentCategoryId());
+    }
+
+    EventDao newEvent = currentEvent.get();
+    newEvent.setName(event.getName());
+    newEvent.setDescription(event.getDescription());
+    newEvent.setDateTimeEventStart(event.getDateTimeEventStart());
+    newEvent.setDateTimeEventEnd(event.getDateTimeEventEnd());
+    newEvent.setVenue(event.getVenue());
+    newEvent.setBannerPhoto(event.getBannerPhoto());
+    newEvent.setBannerPhotoName(generateUniqueImageName());
+    newEvent.setBannerPhotoType(event.getBannerPhotoType());
+    newEvent.setDateTimeRegistrationStart(event.getDateTimeRegistrationStart());
+    newEvent.setDateTimeRegistrationEnd(event.getDateTimeRegistrationEnd());
+    newEvent.setEventStatus(eventStatus.get());
+    newEvent.setEventCategory(eventCategory.get());
+    newEvent.setEventVenueCategory(eventVenueCategory.get());
+
+    if (eventPaymentCategory != null) {
+      newEvent.setEventPaymentCategory(eventPaymentCategory.get());
+    }
+    try {
+      validateEventData(event);
+      eventRepository.save(newEvent);
+    } catch (DataIntegrityViolationException e) {
+      String exceptionMessage = e.getMostSpecificCause().getMessage();
+      throw new ConflictException(exceptionMessage);
+    }
   }
 
   private String generateBannerPhotoUrl(String filename){
