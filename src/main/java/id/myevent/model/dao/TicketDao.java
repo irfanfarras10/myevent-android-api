@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /** Event DAO. */
@@ -19,7 +21,7 @@ public class TicketDao {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Column(name = "name", unique = true)
+  @Column(name = "name")
   private String name;
 
   @Column(name = "price", nullable = false)
@@ -31,6 +33,7 @@ public class TicketDao {
   @Column(name = "quota_total", nullable = false)
   private long quotaTotal;
 
+  @JsonIgnore
   @ManyToOne()
   @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
   private EventDao event;

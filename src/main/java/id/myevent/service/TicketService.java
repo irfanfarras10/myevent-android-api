@@ -27,8 +27,7 @@ public class TicketService {
   public void create(Long eventId, TicketDto ticketData) {
     // update event data (payment category and date time registration start and end)
     final EventDao eventData = eventRepository.findById(eventId).get();
-    final Long eventCategoryId =
-        ticketData.getPrice() > 0 || ticketData.getPrice() != null ? 2L : 1L;
+    final Long eventCategoryId = ticketData.getPrice() > 0 ? 2L : 1L;
     final EventPaymentCategoryDao eventPaymentCategory =
         eventPaymentCategoryRepository.findById(eventCategoryId).get();
 
@@ -53,11 +52,7 @@ public class TicketService {
       ticketRepository.save(ticket);
     } catch (DataIntegrityViolationException exception) {
       String exceptionMessage = exception.getMostSpecificCause().getMessage();
-      String message = null;
-      if (exceptionMessage.contains("name")) {
-        message = "Tiket sudah dibuat sebelumnya";
-      }
-      throw new ConflictException(message);
+      throw new ConflictException(exceptionMessage);
     }
   }
 

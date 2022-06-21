@@ -71,7 +71,10 @@ public class EventDao {
   @ManyToOne()
   @JoinColumn(name = "event_payment_category_id", referencedColumnName = "id")
   private EventPaymentCategoryDao eventPaymentCategory;
-  
+
+  @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+  private List<TicketDao> eventTicket;
+
   @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
   private List<EventContactPersonDao> eventContactPersons;
   

@@ -1,11 +1,9 @@
 package id.myevent.model.apiresponse;
 
-import id.myevent.model.dao.EventCategoryDao;
-import id.myevent.model.dao.EventOrganizerDao;
-import id.myevent.model.dao.EventPaymentCategoryDao;
-import id.myevent.model.dao.EventStatusDao;
-import id.myevent.model.dao.EventVenueCategoryDao;
+import id.myevent.model.dao.*;
 import lombok.Data;
+
+import java.util.List;
 
 /** View Event Api Response. */
 @Data
@@ -23,4 +21,6 @@ public class ViewEventApiResponse {
   private EventVenueCategoryDao eventVenueCategory;
   private EventPaymentCategoryDao eventPaymentCategory;
   private EventOrganizerDao eventOrganizer;
+  private List<EventContactPersonDao> eventContactPerson;
+  private List<TicketDao> ticket;
 }

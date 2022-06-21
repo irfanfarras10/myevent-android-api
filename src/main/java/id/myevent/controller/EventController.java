@@ -2,6 +2,7 @@ package id.myevent.controller;
 
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
+import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
 import id.myevent.service.EventService;
@@ -75,26 +76,32 @@ public class EventController {
 
   /** get draft event. */
   @GetMapping("events/draft")
-  public List<ViewEventApiResponse> getEventDraft() {
+  public List<ViewEventListApiResponse> getEventDraft() {
     return eventService.getDraftEvent();
   }
 
   /** get published event. */
   @GetMapping("events/published")
-  public List<ViewEventApiResponse> getEventPublished() {
+  public List<ViewEventListApiResponse> getEventPublished() {
     return eventService.getPublisedEvent();
   }
 
   /** get live event. */
   @GetMapping("events/live")
-  public List<ViewEventApiResponse> getEventLive() {
+  public List<ViewEventListApiResponse> getEventLive() {
     return eventService.getLiveEvent();
   }
 
   /** get passed event. */
   @GetMapping("events/passed")
-  public List<ViewEventApiResponse> getEventPassed() {
+  public List<ViewEventListApiResponse> getEventPassed() {
     return eventService.getPassedEvent();
+  }
+
+  /** get cancel event. */
+  @GetMapping("events/cancel")
+  public List<ViewEventListApiResponse> getEventCancel() {
+    return eventService.getCancelEvent();
   }
 
   /** get detail event. */
@@ -124,12 +131,9 @@ public class EventController {
       @RequestParam("dateTimeEventEnd") Integer dateTimeEventEnd,
       @RequestParam("location") String location,
       @RequestParam("bannerPhoto") MultipartFile bannerPhoto,
-      @RequestParam("dateTimeRegistrationStart") Integer dateTimeRegistrationStart,
-      @RequestParam("dateTimeRegistrationEnd") Integer dateTimeRegistrationEnd,
       @RequestParam("eventStatusId") Long eventStatusId,
       @RequestParam("eventCategoryId") Long eventCategoryId,
       @RequestParam("eventVenueCategoryId") Long eventVenueCategoryId,
-      @RequestParam("eventPaymentCategoryId") Long eventPaymentCategoryId,
       @RequestParam("eventOrganizerId") Long eventOrganizerId)
       throws IOException {
 
@@ -141,14 +145,9 @@ public class EventController {
     eventUpdate.setVenue(location);
     eventUpdate.setBannerPhoto(bannerPhoto.getBytes());
     eventUpdate.setBannerPhotoType(bannerPhoto.getContentType());
-    eventUpdate.setDateTimeRegistrationStart(dateTimeRegistrationStart);
-    eventUpdate.setDateTimeRegistrationEnd(dateTimeRegistrationEnd);
     eventUpdate.setEventStatusId(eventStatusId);
     eventUpdate.setEventCategoryId(eventCategoryId);
     eventUpdate.setEventVenueCategoryId(eventVenueCategoryId);
-    if (eventPaymentCategoryId != null) {
-      eventUpdate.setEventPaymentCategoryId(eventPaymentCategoryId);
-    }
     eventUpdate.setEventOrganizerId(eventOrganizerId);
     eventService.eventUpdate(id, eventUpdate);
     return ResponseEntity.ok(new ApiResponse("Event Berhasil di Update"));

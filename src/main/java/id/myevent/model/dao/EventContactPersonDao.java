@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /** Contact Person DAO. */
@@ -29,7 +31,8 @@ public class EventContactPersonDao {
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "event_social_media_id", referencedColumnName = "id", nullable = false)
   private EventSocialMediaDao eventSocialMedia;
-  
+
+  @JsonIgnore
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
   private EventDao event;
