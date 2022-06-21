@@ -22,6 +22,9 @@ public class EventContactPersonDao {
   
   @Column(name = "name", nullable = false)
   private String name;
+
+  @Column(name = "contact", nullable = false)
+  private String contact;
   
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "event_social_media_id", referencedColumnName = "id", nullable = false)

@@ -38,10 +38,7 @@ public class EventOrganizerService implements UserDetailsService {
       throw new ForbiddenException("Username atau password salah");
     }
     return new EventOrganizerAuthDto(
-        user.getId(),
-        user.getUsername(),
-        user.getPassword(),
-        new ArrayList<>());
+        user.getId(), user.getUsername(), user.getPassword(), new ArrayList<>());
   }
 
   /** Insert User Data to Database. */
@@ -111,7 +108,7 @@ public class EventOrganizerService implements UserDetailsService {
   }
 
   private void validateUserDataForSignUp(EventOrganizerDto user) {
-    if(globalUtil.isBlankString(user.getUsername())) {
+    if (globalUtil.isBlankString(user.getUsername())) {
       throw new ConflictException("Username harus diisi");
     }
     if (!globalUtil.isEmail(user.getEmail())) {
@@ -130,7 +127,7 @@ public class EventOrganizerService implements UserDetailsService {
       throw new ConflictException("Nomor telepon harus diisi");
     }
   }
-  
+
   private void validateUserDataForUpdate(EventOrganizerDto user) {
     if (!globalUtil.isEmail(user.getEmail())) {
       throw new ConflictException("Format e-mail tidak sesuai");
