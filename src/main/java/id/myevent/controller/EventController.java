@@ -5,16 +5,23 @@ import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
 import id.myevent.service.EventService;
+import id.myevent.util.ImageUtil;
 import java.io.IOException;
 import java.util.List;
-
-import id.myevent.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /** User REST Controller. */
@@ -25,9 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class EventController {
   @Autowired EventService eventService;
 
-  /**
-   * create event.
-   */
+  /** create event. */
   @PostMapping(
       value = "/events/create",
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -60,88 +65,73 @@ public class EventController {
         new ApiResponse("Event Berhasil Dibuat"), HttpStatus.CREATED);
   }
 
-  /**
-   * delete event.
-   */
+  /** delete event. */
   @DeleteMapping("/events/{id}")
-  public ResponseEntity<ApiResponse> deleteEvent(@PathVariable("id") Long id) throws IOException{
+  public ResponseEntity<ApiResponse> deleteEvent(@PathVariable("id") Long id) throws IOException {
     eventService.deleteEvent(id);
     return new ResponseEntity<ApiResponse>(
-            new ApiResponse("Event Berhasil Dihapus"), HttpStatus.OK);
+        new ApiResponse("Event Berhasil Dihapus"), HttpStatus.OK);
   }
 
-  /**
-   * get draft event.
-   */
+  /** get draft event. */
   @GetMapping("events/draft")
-  public List<ViewEventApiResponse> getEventDraft(){
+  public List<ViewEventApiResponse> getEventDraft() {
     return eventService.getDraftEvent();
   }
 
-  /**
-   * get published event.
-   */
+  /** get published event. */
   @GetMapping("events/published")
-  public List<ViewEventApiResponse> getEventPublished(){
+  public List<ViewEventApiResponse> getEventPublished() {
     return eventService.getPublisedEvent();
   }
 
-  /**
-   * get live event.
-   */
+  /** get live event. */
   @GetMapping("events/live")
-  public List<ViewEventApiResponse> getEventLive(){
+  public List<ViewEventApiResponse> getEventLive() {
     return eventService.getLiveEvent();
   }
 
-  /**
-   * get passed event.
-   */
+  /** get passed event. */
   @GetMapping("events/passed")
-  public List<ViewEventApiResponse> getEventPassed(){
+  public List<ViewEventApiResponse> getEventPassed() {
     return eventService.getPassedEvent();
   }
 
-  /**
-   * get detail event.
-   */
+  /** get detail event. */
   @GetMapping("events/{id}")
   public ViewEventApiResponse getDetailEvent(@PathVariable("id") Long id) {
     return eventService.getDetailEvent(id);
   }
 
-  /**
-   * get image event.
-   */
+  /** get image event. */
   @GetMapping(path = {"/events/image/{name}"})
   public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
 
     EventDao image = eventService.getImage(name);
 
-    return ResponseEntity
-            .ok()
-            .contentType(MediaType.valueOf(image.getBannerPhotoType()))
-            .body(ImageUtil.decompressImage(image.getBannerPhoto()));
+    return ResponseEntity.ok()
+        .contentType(MediaType.valueOf(image.getBannerPhotoType()))
+        .body(ImageUtil.decompressImage(image.getBannerPhoto()));
   }
 
   /** Edit Event Endpoint. */
   @PutMapping("/events/update/{id}")
   public ResponseEntity<ApiResponse> editEvent(
-          @PathVariable("id") Long id,
-          @RequestParam("name") String name,
-          @RequestParam("description") String description,
-          @RequestParam("dateTimeEventStart") Integer dateTimeEventStart,
-          @RequestParam("dateTimeEventEnd") Integer dateTimeEventEnd,
-          @RequestParam("location") String location,
-          @RequestParam("bannerPhoto") MultipartFile bannerPhoto,
-          @RequestParam("dateTimeRegistrationStart") Integer dateTimeRegistrationStart,
-          @RequestParam("dateTimeRegistrationEnd") Integer dateTimeRegistrationEnd,
-          @RequestParam("eventStatusId") Long eventStatusId,
-          @RequestParam("eventCategoryId") Long eventCategoryId,
-          @RequestParam("eventVenueCategoryId") Long eventVenueCategoryId,
-          @RequestParam("eventPaymentCategoryId") Long eventPaymentCategoryId,
-          @RequestParam("eventOrganizerId") Long eventOrganizerId)
-          throws IOException {
+      @PathVariable("id") Long id,
+      @RequestParam("name") String name,
+      @RequestParam("description") String description,
+      @RequestParam("dateTimeEventStart") Integer dateTimeEventStart,
+      @RequestParam("dateTimeEventEnd") Integer dateTimeEventEnd,
+      @RequestParam("location") String location,
+      @RequestParam("bannerPhoto") MultipartFile bannerPhoto,
+      @RequestParam("dateTimeRegistrationStart") Integer dateTimeRegistrationStart,
+      @RequestParam("dateTimeRegistrationEnd") Integer dateTimeRegistrationEnd,
+      @RequestParam("eventStatusId") Long eventStatusId,
+      @RequestParam("eventCategoryId") Long eventCategoryId,
+      @RequestParam("eventVenueCategoryId") Long eventVenueCategoryId,
+      @RequestParam("eventPaymentCategoryId") Long eventPaymentCategoryId,
+      @RequestParam("eventOrganizerId") Long eventOrganizerId)
+      throws IOException {
 
     EventDto eventUpdate = new EventDto();
     eventUpdate.setName(name);

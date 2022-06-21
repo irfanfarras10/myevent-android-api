@@ -1,7 +1,5 @@
 package id.myevent.model.dao;
 
-import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,29 +8,30 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.Data;
 
 /** Event DAO. */
 @Entity
 @Table(name = "ticket")
 @Data
 public class TicketDao {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    @Column(name = "name", unique = true)
-    private String name;
+  @Column(name = "name", unique = true)
+  private String name;
 
-    @Column(name = "price", nullable = false)
-    private long price;
+  @Column(name = "price", nullable = false)
+  private long price;
 
-    @Column(name = "quota_per_day")
-    private long quotaPerDay;
+  @Column(name = "quota_per_day")
+  private long quotaPerDay;
 
-    @Column(name = "quota_total", nullable = false)
-    private long quotaTotal;
+  @Column(name = "quota_total", nullable = false)
+  private long quotaTotal;
 
-    @ManyToOne()
-    @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
-    private EventDao event;
+  @ManyToOne()
+  @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
+  private EventDao event;
 }

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-/** Ticket Service */
+/** Ticket Service. */
 @Service
 @Slf4j
 public class TicketService {
@@ -23,6 +23,7 @@ public class TicketService {
 
   @Autowired EventRepository eventRepository;
 
+  /** Create Ticket. */
   public void create(Long eventId, TicketDto ticketData) {
     // update event data (payment category and date time registration start and end)
     final EventDao eventData = eventRepository.findById(eventId).get();
@@ -50,7 +51,7 @@ public class TicketService {
     try {
       validateTicket(ticketData, eventData);
       ticketRepository.save(ticket);
-    } catch (DataIntegrityViolationException exception){
+    } catch (DataIntegrityViolationException exception) {
       String exceptionMessage = exception.getMostSpecificCause().getMessage();
       String message = null;
       if (exceptionMessage.contains("name")) {
@@ -60,11 +61,12 @@ public class TicketService {
     }
   }
 
-  private void validateTicket(TicketDto ticketData, EventDao eventData){
-    if(ticketData.getDateTimeRegistrationStart() >= ticketData.getDateTimeRegistrationEnd()){
-      throw new ConflictException("Tanggal registrasi awal tidak boleh melebihi tanggal registrasi akhir");
+  private void validateTicket(TicketDto ticketData, EventDao eventData) {
+    if (ticketData.getDateTimeRegistrationStart() >= ticketData.getDateTimeRegistrationEnd()) {
+      throw new ConflictException(
+          "Tanggal registrasi awal tidak boleh melebihi tanggal registrasi akhir");
     }
-    if(ticketData.getDateTimeRegistrationStart() >= eventData.getDateTimeEventStart()){
+    if (ticketData.getDateTimeRegistrationStart() >= eventData.getDateTimeEventStart()) {
       throw new ConflictException("Tanggal registrasi harus sebelum tanggal pelaksanaan event");
     }
   }
