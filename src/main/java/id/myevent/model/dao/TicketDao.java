@@ -19,7 +19,7 @@ public class TicketDao {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Column(name = "name", unique = true)
+  @Column(name = "name")
   private String name;
 
   @Column(name = "price", nullable = false)
