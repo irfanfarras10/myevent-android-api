@@ -38,12 +38,9 @@ public class EventController {
       @RequestParam("dateTimeEventEnd") Integer dateTimeEventEnd,
       @RequestParam("location") String location,
       @RequestParam("bannerPhoto") MultipartFile bannerPhoto,
-      @RequestParam("dateTimeRegistrationStart") Integer dateTimeRegistrationStart,
-      @RequestParam("dateTimeRegistrationEnd") Integer dateTimeRegistrationEnd,
       @RequestParam("eventStatusId") Long eventStatusId,
       @RequestParam("eventCategoryId") Long eventCategoryId,
       @RequestParam("eventVenueCategoryId") Long eventVenueCategoryId,
-      @RequestParam(value = "eventPaymentCategoryId", required = false) Long eventPaymentCategoryId,
       @RequestParam("eventOrganizerId") Long eventOrganizerId)
       throws IOException {
     EventDto eventData = new EventDto();
@@ -54,14 +51,9 @@ public class EventController {
     eventData.setVenue(location);
     eventData.setBannerPhoto(bannerPhoto.getBytes());
     eventData.setBannerPhotoType(bannerPhoto.getContentType());
-    eventData.setDateTimeRegistrationStart(dateTimeRegistrationStart);
-    eventData.setDateTimeRegistrationEnd(dateTimeRegistrationEnd);
     eventData.setEventStatusId(eventStatusId);
     eventData.setEventCategoryId(eventCategoryId);
     eventData.setEventVenueCategoryId(eventVenueCategoryId);
-    if (eventPaymentCategoryId != null) {
-      eventData.setEventPaymentCategoryId(eventPaymentCategoryId);
-    }
     eventData.setEventOrganizerId(eventOrganizerId);
     eventService.insertEvent(eventData);
     return new ResponseEntity<ApiResponse>(

@@ -52,10 +52,10 @@ public class EventDao {
   @Column(name = "banner_photo_type", nullable = false)
   private String bannerPhotoType;
   
-  @Column(name = "datetime_registration_start", nullable = false)
+  @Column(name = "datetime_registration_start")
   private int dateTimeRegistrationStart;
   
-  @Column(name = "datetime_registration_end", nullable = false)
+  @Column(name = "datetime_registration_end")
   private int dateTimeRegistrationEnd;
   
   @ManyToOne()
@@ -71,7 +71,7 @@ public class EventDao {
   private EventVenueCategoryDao eventVenueCategory;
   
   @ManyToOne()
-  @JoinColumn(name = "event_payment_category_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "event_payment_category_id", referencedColumnName = "id")
   private EventPaymentCategoryDao eventPaymentCategory;
   
   @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
