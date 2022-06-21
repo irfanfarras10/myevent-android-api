@@ -240,11 +240,6 @@ public class EventService {
         eventCategoryRepository.findById(event.getEventCategoryId());
     final Optional<EventVenueCategoryDao> eventVenueCategory =
         eventVenueCategoryRepository.findById(event.getEventVenueCategoryId());
-    Optional<EventPaymentCategoryDao> eventPaymentCategory = null;
-    if (event.getEventPaymentCategoryId() != null) {
-      eventPaymentCategory =
-          eventPaymentCategoryRepository.findById(event.getEventPaymentCategoryId());
-    }
 
     EventDao newEvent = currentEvent.get();
     newEvent.setName(event.getName());
@@ -255,15 +250,10 @@ public class EventService {
     newEvent.setBannerPhoto(event.getBannerPhoto());
     newEvent.setBannerPhotoName(generateUniqueImageName());
     newEvent.setBannerPhotoType(event.getBannerPhotoType());
-    newEvent.setDateTimeRegistrationStart(event.getDateTimeRegistrationStart());
-    newEvent.setDateTimeRegistrationEnd(event.getDateTimeRegistrationEnd());
     newEvent.setEventStatus(eventStatus.get());
     newEvent.setEventCategory(eventCategory.get());
     newEvent.setEventVenueCategory(eventVenueCategory.get());
 
-    if (eventPaymentCategory != null) {
-      newEvent.setEventPaymentCategory(eventPaymentCategory.get());
-    }
     try {
       validateEventDataForUpdate(event);
       eventRepository.save(newEvent);
@@ -356,36 +346,6 @@ public class EventService {
     if (event.getBannerPhoto() == null) {
       throw new ConflictException("Foto event harus di unggah");
     }
-    if (event.getDateTimeRegistrationStart() == null) {
-      throw new ConflictException("Tanggal mulai registrasi harus diisi");
-    }
-    if (event.getDateTimeRegistrationStart() < event.getDateTimeRegistrationEnd()) {
-      throw new ConflictException(
-          "Tanggal mulai registrasi tidak boleh sebelum dari tanggal selesai registrasi");
-    }
-    if (event.getDateTimeRegistrationStart() > event.getDateTimeEventStart()) {
-      throw new ConflictException(
-          "Tanggal mulai registrasi tidak boleh melebihi tinggal mulai event");
-    }
-    if (event.getDateTimeRegistrationStart() > event.getDateTimeEventEnd()) {
-      throw new ConflictException(
-          "Tanggal mulai registrasi tidak boleh melebihi tinggal selesai event");
-    }
-    if (event.getDateTimeRegistrationEnd() == null) {
-      throw new ConflictException("Tanggal selesai registrasi harus diisi");
-    }
-    if (event.getDateTimeRegistrationEnd() < event.getDateTimeRegistrationStart()) {
-      throw new ConflictException(
-          "Tanggal selesai registrasi tidak boleh sebelum dari tanggal mulai registrasi");
-    }
-    if (event.getDateTimeRegistrationEnd() > event.getDateTimeEventStart()) {
-      throw new ConflictException(
-          "Tanggal selesai registrasi tidak boleh melebihi tanggal mulai event");
-    }
-    if (event.getDateTimeRegistrationEnd() > event.getDateTimeEventEnd()) {
-      throw new ConflictException(
-          "Tanggal selesai registrasi tidak boleh melebihi tanggal selesai event");
-    }
     if (event.getEventStatusId() == null) {
       throw new ConflictException("Status event harus dilpilih");
     }
@@ -394,9 +354,6 @@ public class EventService {
     }
     if (event.getEventVenueCategoryId() == null) {
       throw new ConflictException("Jenis tempat event harus dilpilih");
-    }
-    if (event.getEventPaymentCategoryId() == null) {
-      throw new ConflictException("Jenis pembayaran event harus dilpilih");
     }
     if (event.getEventOrganizerId() == null) {
       throw new ConflictException("Tidak terdapat event organizer ID");

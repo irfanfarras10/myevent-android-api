@@ -131,12 +131,9 @@ public class EventController {
       @RequestParam("dateTimeEventEnd") Integer dateTimeEventEnd,
       @RequestParam("location") String location,
       @RequestParam("bannerPhoto") MultipartFile bannerPhoto,
-      @RequestParam("dateTimeRegistrationStart") Integer dateTimeRegistrationStart,
-      @RequestParam("dateTimeRegistrationEnd") Integer dateTimeRegistrationEnd,
       @RequestParam("eventStatusId") Long eventStatusId,
       @RequestParam("eventCategoryId") Long eventCategoryId,
       @RequestParam("eventVenueCategoryId") Long eventVenueCategoryId,
-      @RequestParam("eventPaymentCategoryId") Long eventPaymentCategoryId,
       @RequestParam("eventOrganizerId") Long eventOrganizerId)
       throws IOException {
 
@@ -148,14 +145,9 @@ public class EventController {
     eventUpdate.setVenue(location);
     eventUpdate.setBannerPhoto(bannerPhoto.getBytes());
     eventUpdate.setBannerPhotoType(bannerPhoto.getContentType());
-    eventUpdate.setDateTimeRegistrationStart(dateTimeRegistrationStart);
-    eventUpdate.setDateTimeRegistrationEnd(dateTimeRegistrationEnd);
     eventUpdate.setEventStatusId(eventStatusId);
     eventUpdate.setEventCategoryId(eventCategoryId);
     eventUpdate.setEventVenueCategoryId(eventVenueCategoryId);
-    if (eventPaymentCategoryId != null) {
-      eventUpdate.setEventPaymentCategoryId(eventPaymentCategoryId);
-    }
     eventUpdate.setEventOrganizerId(eventOrganizerId);
     eventService.eventUpdate(id, eventUpdate);
     return ResponseEntity.ok(new ApiResponse("Event Berhasil di Update"));
