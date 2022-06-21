@@ -100,7 +100,10 @@ public class EventService {
     if(status == 1){
       eventRepository.deleteById(id);
     }
-
+    else{
+      String message = "Event tidak bisa dihapus";
+      throw new ConflictException(message);
+    }
   }
 
   /** View Event Draft Data. */
