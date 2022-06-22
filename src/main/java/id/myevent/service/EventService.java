@@ -3,9 +3,19 @@ package id.myevent.service;
 import id.myevent.exception.ConflictException;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
-import id.myevent.model.dao.*;
+import id.myevent.model.dao.EventCategoryDao;
+import id.myevent.model.dao.EventDao;
+import id.myevent.model.dao.EventOrganizerDao;
+import id.myevent.model.dao.EventStatusDao;
+import id.myevent.model.dao.EventVenueCategoryDao;
 import id.myevent.model.dto.EventDto;
-import id.myevent.repository.*;
+import id.myevent.repository.EventCategoryRepository;
+import id.myevent.repository.EventOrganizerRepository;
+import id.myevent.repository.EventPaymentCategoryRepository;
+import id.myevent.repository.EventRepository;
+import id.myevent.repository.EventStatusRepository;
+import id.myevent.repository.EventVenueCategoryRepository;
+import id.myevent.repository.TicketRepository;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.ImageUtil;
 import java.util.ArrayList;
@@ -19,22 +29,34 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-/** User Service. */
+/**
+ * User Service.
+ */
 @Service
 @Slf4j
 public class EventService {
-  @Autowired EventStatusRepository eventStatusRepository;
-  @Autowired EventCategoryRepository eventCategoryRepository;
+  @Autowired
+  EventStatusRepository eventStatusRepository;
+  @Autowired
+  EventCategoryRepository eventCategoryRepository;
 
-  @Autowired EventVenueCategoryRepository eventVenueCategoryRepository;
-  @Autowired EventPaymentCategoryRepository eventPaymentCategoryRepository;
-  @Autowired EventOrganizerRepository eventOrganizerRepository;
-  @Autowired EventRepository eventRepository;
-  @Autowired TicketRepository ticketRepository;
+  @Autowired
+  EventVenueCategoryRepository eventVenueCategoryRepository;
+  @Autowired
+  EventPaymentCategoryRepository eventPaymentCategoryRepository;
+  @Autowired
+  EventOrganizerRepository eventOrganizerRepository;
+  @Autowired
+  EventRepository eventRepository;
+  @Autowired
+  TicketRepository ticketRepository;
 
-  @Autowired GlobalUtil globalUtil;
+  @Autowired
+  GlobalUtil globalUtil;
 
-  /** insert event. */
+  /**
+   * insert event.
+   */
   public void insertEvent(EventDto eventData) {
     EventDao newEvent = new EventDao();
 
@@ -72,7 +94,9 @@ public class EventService {
     }
   }
 
-  /** Delete Event. */
+  /**
+   * Delete Event.
+   */
   public void deleteEvent(Long id) {
 
     Optional<EventDao> newEvents = eventRepository.findById(id);
@@ -88,7 +112,9 @@ public class EventService {
     }
   }
 
-  /** View Event Draft Data. */
+  /**
+   * View Event Draft Data.
+   */
   public List<ViewEventListApiResponse> getDraftEvent() {
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
     List<EventDao> event = eventRepository.findByStatus(1L);
@@ -112,7 +138,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Event Published Data. */
+  /**
+   * View Event Published Data.
+   */
   public List<ViewEventListApiResponse> getPublisedEvent() {
     List<EventDao> event = eventRepository.findByStatus(2L);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
@@ -135,7 +163,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Event Live Data. */
+  /**
+   * View Event Live Data.
+   */
   public List<ViewEventListApiResponse> getLiveEvent() {
     List<EventDao> event = eventRepository.findByStatus(3L);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
@@ -159,7 +189,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Event Passed Data. */
+  /**
+   * View Event Passed Data.
+   */
   public List<ViewEventListApiResponse> getPassedEvent() {
     List<EventDao> event = eventRepository.findByStatus(4L);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
@@ -183,7 +215,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Event Cancel Data. */
+  /**
+   * View Event Cancel Data.
+   */
   public List<ViewEventListApiResponse> getCancelEvent() {
     List<EventDao> event = eventRepository.findByStatus(5L);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
@@ -207,7 +241,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Detail Event. */
+  /**
+   * View Detail Event.
+   */
   public ViewEventApiResponse getDetailEvent(Long id) {
     ViewEventApiResponse newEvent = new ViewEventApiResponse();
     Optional<EventDao> eventData = eventRepository.findById(id);
@@ -231,7 +267,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** Update event. */
+  /**
+   * Update event.
+   */
   public void eventUpdate(Long id, EventDto event) {
     Optional<EventDao> currentEvent = eventRepository.findById(id);
 
@@ -282,7 +320,9 @@ public class EventService {
     return filename;
   }
 
-  /** Get Event Image. */
+  /**
+   * Get Event Image.
+   */
   public EventDao getImage(String imageName) {
     final Optional<EventDao> event = eventRepository.findByImageName(imageName);
 
