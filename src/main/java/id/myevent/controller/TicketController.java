@@ -24,8 +24,8 @@ public class TicketController {
     return new ResponseEntity(new ApiResponse("Tiket Tersimpan"), HttpStatus.CREATED);
   }
 
-  @PutMapping("/events/{id}/ticket/{id}")
-  public ResponseEntity<ApiResponse> editTicket(@PathVariable("id") Long eventId, @PathVariable("id") Long ticketId, @RequestBody TicketDto ticketDto){
+  @PutMapping("/events/{eventId}/ticket/{ticketId}")
+  public ResponseEntity<ApiResponse> editTicket(@PathVariable("eventId") Long eventId, @PathVariable("ticketId") Long ticketId, @RequestBody TicketDto ticketDto){
     ticketService.updateTicket(eventId, ticketId, ticketDto);
     return new ResponseEntity(new ApiResponse("Tiket Berhasil di Update"), HttpStatus.OK);
   }

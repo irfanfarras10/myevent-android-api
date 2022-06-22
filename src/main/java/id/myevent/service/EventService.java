@@ -185,7 +185,7 @@ public class EventService {
 
   /** View Event Cancel Data. */
   public List<ViewEventListApiResponse> getCancelEvent() {
-    List<EventDao> event = eventRepository.findByStatus(4L);
+    List<EventDao> event = eventRepository.findByStatus(5L);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
 
     for (int i = 0; i < event.size(); i++) {
