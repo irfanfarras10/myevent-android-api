@@ -30,9 +30,9 @@ public class EventContactPersonController {
     }
 
     /** Update Contact Person*/
-    @PutMapping("/events/{id}/contact-person/{id}")
-    public ResponseEntity<ApiResponse> updateCP(@PathVariable("id") Long eventId,
-                                                @PathVariable("id") Long cpId,
+    @PutMapping("/events/{eventId}/contact-person/{cpId}")
+    public ResponseEntity<ApiResponse> updateCP(@PathVariable("eventId") Long eventId,
+                                                @PathVariable("cpId") Long cpId,
                                                 @RequestBody EventContactPersonDto eventContactPersonDto) {
         eventContactPersonService.update(eventId, cpId, eventContactPersonDto);
         return new ResponseEntity(new ApiResponse("Contact Person Berhasil di Update"), HttpStatus.CREATED);
