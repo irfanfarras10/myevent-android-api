@@ -7,12 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /** Ticket REST Controller. */
 @CrossOrigin
@@ -27,5 +22,11 @@ public class TicketController {
   public ResponseEntity create(@PathVariable("id") Long id, @RequestBody TicketDto ticketDto) {
     ticketService.create(id, ticketDto);
     return new ResponseEntity(new ApiResponse("Tiket Tersimpan"), HttpStatus.CREATED);
+  }
+
+  @PutMapping("/events/{id}/ticket/{id}")
+  public ResponseEntity<ApiResponse> editTicket(@PathVariable("id") Long eventId, @PathVariable("id") Long ticketId, @RequestBody TicketDto ticketDto){
+    ticketService.updateTicket(eventId, ticketId, ticketDto);
+    return new ResponseEntity(new ApiResponse("Tiket Berhasil di Update"), HttpStatus.OK);
   }
 }
