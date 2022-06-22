@@ -227,6 +227,7 @@ public class EventService {
     newEvent.setEventOrganizer(eventData.get().getEventOrganizer());
     newEvent.setEventContactPerson(eventData.get().getEventContactPersons());
     newEvent.setTicket(eventData.get().getEventTicket());
+    newEvent.setEventGuest(eventData.get().getEventGuest());
     return newEvent;
   }
 
