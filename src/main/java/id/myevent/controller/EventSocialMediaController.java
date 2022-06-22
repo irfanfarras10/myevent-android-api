@@ -1,5 +1,6 @@
 package id.myevent.controller;
 
+import id.myevent.model.apiresponse.ViewEventSocialMediaApiResponse;
 import id.myevent.model.dao.EventSocialMediaDao;
 import id.myevent.service.EventSocialMediaService;
 import java.util.List;
@@ -20,8 +21,8 @@ public class EventSocialMediaController {
   @Autowired
   EventSocialMediaService eventSocialMediaService;
 
-  @GetMapping("/events/social-media")
-  public List<EventSocialMediaDao> getSocialMedia() {
+  @GetMapping("/events/social-medias")
+  public ViewEventSocialMediaApiResponse getSocialMedia() {
     return eventSocialMediaService.getEventSocialMedia();
   }
 }
