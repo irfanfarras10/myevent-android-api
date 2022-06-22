@@ -1,5 +1,6 @@
 package id.myevent.controller;
 
+import id.myevent.model.apiresponse.ViewEventCategoryApiResponse;
 import id.myevent.model.dao.EventCategoryDao;
 import id.myevent.service.EventCategoryService;
 import java.util.List;
@@ -20,8 +21,8 @@ public class EventCategoryController {
   @Autowired
   EventCategoryService eventCategoryService;
 
-  @GetMapping("/events/category")
-  public List<EventCategoryDao> getCategoryEvent() {
-    return eventCategoryService.getEventCategory();
+  @GetMapping("/events/categories")
+  public ViewEventCategoryApiResponse getEventCategories() {
+    return eventCategoryService.getEventCategories();
   }
 }
