@@ -1,6 +1,5 @@
 package id.myevent.service;
 
-import com.sun.glass.events.ViewEvent;
 import id.myevent.model.apiresponse.ViewEventCategoryApiResponse;
 import id.myevent.model.dao.EventCategoryDao;
 import id.myevent.repository.EventCategoryRepository;
