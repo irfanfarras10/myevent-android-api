@@ -23,4 +23,5 @@ public class ViewEventApiResponse {
   private EventOrganizerDao eventOrganizer;
   private List<EventContactPersonDao> eventContactPerson;
   private List<TicketDao> ticket;
+  private List<EventGuestDao> eventGuest;
 }
