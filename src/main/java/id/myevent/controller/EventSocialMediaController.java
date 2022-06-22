@@ -1,7 +1,7 @@
 package id.myevent.controller;
 
-import id.myevent.model.dao.EventCategoryDao;
-import id.myevent.service.EventCategoryService;
+import id.myevent.model.dao.EventSocialMediaDao;
+import id.myevent.service.EventSocialMediaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,13 +15,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @Slf4j
-public class EventCategoryController {
+public class EventSocialMediaController {
 
     @Autowired
-    EventCategoryService eventCategoryService;
+    EventSocialMediaService eventSocialMediaService;
 
-    @GetMapping("/events/category")
-    public List<EventCategoryDao> getCategoryEvent() {
-        return eventCategoryService.getEventCategory();
+    @GetMapping("/events/social-media")
+    public List<EventSocialMediaDao> getSocialMedia() {
+        return eventSocialMediaService.getEventSocialMedia();
     }
 }
