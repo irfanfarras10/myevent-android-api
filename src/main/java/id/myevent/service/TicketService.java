@@ -1,29 +1,37 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
-import id.myevent.model.dao.*;
+import id.myevent.model.dao.EventDao;
+import id.myevent.model.dao.EventPaymentCategoryDao;
+import id.myevent.model.dao.TicketDao;
 import id.myevent.model.dto.TicketDto;
 import id.myevent.repository.EventPaymentCategoryRepository;
 import id.myevent.repository.EventRepository;
 import id.myevent.repository.TicketRepository;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
-/** Ticket Service. */
+/**
+ * Ticket Service.
+ */
 @Service
 @Slf4j
 public class TicketService {
-  @Autowired TicketRepository ticketRepository;
+  @Autowired
+  TicketRepository ticketRepository;
 
-  @Autowired EventPaymentCategoryRepository eventPaymentCategoryRepository;
+  @Autowired
+  EventPaymentCategoryRepository eventPaymentCategoryRepository;
 
-  @Autowired EventRepository eventRepository;
+  @Autowired
+  EventRepository eventRepository;
 
-  /** Create Ticket. */
+  /**
+   * Create Ticket.
+   */
   public void create(Long eventId, TicketDto ticketData) {
     // update event data (payment category and date time registration start and end)
     final EventDao eventData = eventRepository.findById(eventId).get();
@@ -56,39 +64,42 @@ public class TicketService {
     }
   }
 
-  /** Update Ticket*/
-  public void updateTicket(Long eventId, Long ticketId, TicketDto ticketData){
+  /**
+   * Update Ticket.
+   */
+  public void updateTicket(Long eventId, Long ticketId, TicketDto ticketData) {
     Optional<TicketDao> currentTicket = ticketRepository.findById(ticketId);
     EventDao eventData = eventRepository.findById(eventId).get();
     TicketDao newTicket = currentTicket.get();
 
-    if(eventData.getEventStatus().getId()<=2){
+    if (eventData.getEventStatus().getId() <= 2) {
 
-      if(eventData.getEventStatus().getId()==1){
-        if (ticketData.getPrice()!=null){
+      if (eventData.getEventStatus().getId() == 1) {
+        if (ticketData.getPrice() != null) {
           final Long eventCategoryId = ticketData.getPrice() > 0 ? 2L : 1L;
           final EventPaymentCategoryDao eventPaymentCategory =
-                  eventPaymentCategoryRepository.findById(eventCategoryId).get();
+              eventPaymentCategoryRepository.findById(eventCategoryId).get();
           eventData.setEventPaymentCategory(eventPaymentCategory);
         }
-        if(ticketData.getDateTimeRegistrationStart()!=null && ticketData.getDateTimeRegistrationEnd()!=null){
+        if (ticketData.getDateTimeRegistrationStart() != null
+            && ticketData.getDateTimeRegistrationEnd() != null) {
           eventData.setDateTimeRegistrationStart(ticketData.getDateTimeRegistrationStart());
           eventData.setDateTimeRegistrationEnd(ticketData.getDateTimeRegistrationEnd());
-          validateTicket(ticketData,eventData);
+          validateTicket(ticketData, eventData);
         }
         eventRepository.save(eventData);
       }
 
-      if(ticketData.getName() != null){
+      if (ticketData.getName() != null) {
         newTicket.setName(ticketData.getName());
       }
-      if(ticketData.getPrice() != null){
+      if (ticketData.getPrice() != null) {
         newTicket.setPrice(ticketData.getPrice());
       }
-      if(ticketData.getQuotaPerDay() != null){
+      if (ticketData.getQuotaPerDay() != null) {
         newTicket.setQuotaPerDay(ticketData.getQuotaPerDay());
       }
-      if(ticketData.getQuotaTotal() != null){
+      if (ticketData.getQuotaTotal() != null) {
         newTicket.setQuotaTotal(ticketData.getQuotaTotal());
       }
       try {

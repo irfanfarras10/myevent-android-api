@@ -8,22 +8,28 @@ import id.myevent.model.dto.EventContactPersonDto;
 import id.myevent.repository.EventContactPersonRepository;
 import id.myevent.repository.EventRepository;
 import id.myevent.repository.EventSocialMediaRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
-/** Event Contact Person Service. */
+/**
+ * Event Contact Person Service.
+ */
 @Service
 public class EventContactPersonService {
-  @Autowired EventSocialMediaRepository eventSocialMediaRepository;
+  @Autowired
+  EventSocialMediaRepository eventSocialMediaRepository;
 
-  @Autowired EventRepository eventRepository;
+  @Autowired
+  EventRepository eventRepository;
 
-  @Autowired EventContactPersonRepository eventContactPersonRepository;
+  @Autowired
+  EventContactPersonRepository eventContactPersonRepository;
 
-  /** Create Event Social Media. */
+  /**
+   * Create Event Social Media.
+   */
   public void create(Long eventId, EventContactPersonDto eventData) {
     final EventSocialMediaDao eventSocialMedia =
         eventSocialMediaRepository.findById(eventData.getEventSocialMediaId()).get();
@@ -43,27 +49,29 @@ public class EventContactPersonService {
     }
   }
 
-  /** Update Event Social Media. */
-  public void update(Long eventId, Long cpId, EventContactPersonDto cpData){
-    Optional<EventContactPersonDao> currentCP = eventContactPersonRepository.findById(cpId);
-    EventContactPersonDao newCP = currentCP.get();
+  /**
+   * Update Event Social Media.
+   */
+  public void update(Long eventId, Long cpId, EventContactPersonDto cpData) {
+    Optional<EventContactPersonDao> currentCp = eventContactPersonRepository.findById(cpId);
+    EventContactPersonDao newCp = currentCp.get();
     final EventDao event = eventRepository.findById(eventId).get();
 
-    if(cpData.getName()!=null){
-      newCP.setName(cpData.getName());
+    if (cpData.getName() != null) {
+      newCp.setName(cpData.getName());
     }
-    if(cpData.getContact()!=null){
-      newCP.setContact(cpData.getContact());
+    if (cpData.getContact() != null) {
+      newCp.setContact(cpData.getContact());
     }
-    if(cpData.getEventSocialMediaId()!=null){
+    if (cpData.getEventSocialMediaId() != null) {
       final Optional<EventSocialMediaDao> eventSocialMedia =
-              eventSocialMediaRepository.findById(cpData.getEventSocialMediaId());
-      newCP.setEventSocialMedia(eventSocialMedia.get());
+          eventSocialMediaRepository.findById(cpData.getEventSocialMediaId());
+      newCp.setEventSocialMedia(eventSocialMedia.get());
     }
-    newCP.setEvent(event);
+    newCp.setEvent(event);
 
     try {
-      eventContactPersonRepository.save(newCP);
+      eventContactPersonRepository.save(newCp);
     } catch (DataIntegrityViolationException exception) {
       String exceptionMessage = exception.getMostSpecificCause().getMessage();
       throw new ConflictException(exceptionMessage);
