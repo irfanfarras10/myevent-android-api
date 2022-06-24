@@ -1,6 +1,7 @@
 package id.myevent.controller;
 
 import id.myevent.model.apiresponse.ApiResponse;
+import id.myevent.model.apiresponse.CreateEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventDao;
@@ -37,7 +38,7 @@ public class EventController {
   @PostMapping(
       value = "/events/create",
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  public ResponseEntity<ApiResponse> createEvent(
+  public ResponseEntity<CreateEventApiResponse> createEvent(
       @RequestParam("name") String name,
       @RequestParam("description") String description,
       @RequestParam("dateTimeEventStart") Long dateTimeEventStart,
@@ -61,9 +62,9 @@ public class EventController {
     eventData.setEventCategoryId(eventCategoryId);
     eventData.setEventVenueCategoryId(eventVenueCategoryId);
     eventData.setEventOrganizerId(eventOrganizerId);
-    eventService.insertEvent(eventData);
-    return new ResponseEntity<ApiResponse>(
-        new ApiResponse("Event Berhasil Dibuat"), HttpStatus.CREATED);
+    long insertEventId = eventService.insertEvent(eventData);
+    return new ResponseEntity<CreateEventApiResponse>(
+        new CreateEventApiResponse("Data Tersimpan", insertEventId), HttpStatus.CREATED);
   }
 
   /** delete event. */
