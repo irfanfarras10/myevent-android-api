@@ -7,8 +7,8 @@ import lombok.Data;
 public class  TicketDto {
   private String name;
   private Long price;
-  private Integer dateTimeRegistrationStart;
-  private Integer dateTimeRegistrationEnd;
+  private Long dateTimeRegistrationStart;
+  private Long dateTimeRegistrationEnd;
   private Long quotaPerDay;
   private Long quotaTotal;
 }

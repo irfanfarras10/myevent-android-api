@@ -30,10 +30,10 @@ public class EventDao {
   private String description;
   
   @Column(name = "datetime_event_start", nullable = false)
-  private int dateTimeEventStart;
+  private long dateTimeEventStart;
   
   @Column(name = "datetime_event_end", nullable = false)
-  private int dateTimeEventEnd;
+  private long dateTimeEventEnd;
   
   @Column(name = "venue")
   private String venue;
@@ -51,10 +51,10 @@ public class EventDao {
   private String bannerPhotoType;
   
   @Column(name = "datetime_registration_start")
-  private int dateTimeRegistrationStart;
+  private long dateTimeRegistrationStart;
   
   @Column(name = "datetime_registration_end")
-  private int dateTimeRegistrationEnd;
+  private long dateTimeRegistrationEnd;
   
   @ManyToOne()
   @JoinColumn(name = "event_status_id", referencedColumnName = "id", nullable = false)

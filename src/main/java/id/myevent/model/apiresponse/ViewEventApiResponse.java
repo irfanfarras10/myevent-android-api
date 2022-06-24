@@ -16,12 +16,12 @@ import lombok.Data;
 public class ViewEventApiResponse {
   private String name;
   private String description;
-  private Integer dateTimeEventStart;
-  private Integer dateTimeEventEnd;
+  private Long dateTimeEventStart;
+  private Long dateTimeEventEnd;
   private String venue;
   private String bannerPhoto;
-  private Integer dateTimeRegistrationStart;
-  private Integer dateTimeRegistrationEnd;
+  private Long dateTimeRegistrationStart;
+  private Long dateTimeRegistrationEnd;
   private EventStatusDao eventStatus;
   private EventCategoryDao eventCategory;
   private EventVenueCategoryDao eventVenueCategory;
