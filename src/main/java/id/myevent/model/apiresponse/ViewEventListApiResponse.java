@@ -14,8 +14,8 @@ import lombok.Data;
 public class ViewEventListApiResponse {
   private String name;
   private String description;
-  private Integer dateTimeEventStart;
-  private Integer dateTimeEventEnd;
+  private Long dateTimeEventStart;
+  private Long dateTimeEventEnd;
   private String venue;
   private String bannerPhoto;
   private EventStatusDao eventStatus;
