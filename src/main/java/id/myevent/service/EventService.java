@@ -57,7 +57,7 @@ public class EventService {
   /**
    * insert event.
    */
-  public void insertEvent(EventDto eventData) {
+  public long insertEvent(EventDto eventData) {
     EventDao newEvent = new EventDao();
 
     final Optional<EventStatusDao> eventStatus =
@@ -84,6 +84,7 @@ public class EventService {
     try {
       validateEventDataForInsert(eventData);
       eventRepository.save(newEvent);
+      return newEvent.getId();
     } catch (DataIntegrityViolationException exception) {
       String exceptionMessage = exception.getMostSpecificCause().getMessage();
       String message = null;
