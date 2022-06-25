@@ -5,6 +5,7 @@ import id.myevent.model.dao.EventContactPersonDao;
 import id.myevent.model.dao.EventGuestDao;
 import id.myevent.model.dao.EventOrganizerDao;
 import id.myevent.model.dao.EventPaymentCategoryDao;
+import id.myevent.model.dao.EventPaymentDao;
 import id.myevent.model.dao.EventStatusDao;
 import id.myevent.model.dao.EventVenueCategoryDao;
 import id.myevent.model.dao.TicketDao;
@@ -30,4 +31,5 @@ public class ViewEventApiResponse {
   private List<EventContactPersonDao> eventContactPerson;
   private List<TicketDao> ticket;
   private List<EventGuestDao> eventGuest;
+  private List<EventPaymentDao> eventPayment;
 }
