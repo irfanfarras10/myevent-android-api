@@ -159,4 +159,11 @@ public class EventController {
     eventService.eventUpdate(id, eventUpdate);
     return ResponseEntity.ok(new ApiResponse("Event Berhasil di Update"));
   }
+
+  /** Publish Event. */
+  @PostMapping("/events/{id}/publish")
+  public ResponseEntity<ApiResponse> publish(@PathVariable long id) {
+    eventService.publish(id);
+    return ResponseEntity.ok(new ApiResponse("Event Berhasil Di Publish"));
+  }
 }
