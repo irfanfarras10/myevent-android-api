@@ -265,6 +265,33 @@ public class EventService {
     newEvent.setEventContactPerson(eventData.get().getEventContactPersons());
     newEvent.setTicket(eventData.get().getEventTicket());
     newEvent.setEventGuest(eventData.get().getEventGuest());
+    newEvent.setEventPayment(eventData.get().getEventPayment());
+    return newEvent;
+  }
+
+  /**
+   * View Event By Name.
+   */
+  public List<ViewEventListApiResponse> getEventByName(String name) {
+    List<EventDao> event = eventRepository.findByName(name);
+    List<ViewEventListApiResponse> newEvent = new ArrayList<>();
+
+    for (int i = 0; i < event.size(); i++) {
+      ViewEventListApiResponse eventData = new ViewEventListApiResponse();
+      eventData.setName(event.get(i).getName());
+      eventData.setDescription(event.get(i).getDescription());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
+      eventData.setVenue(event.get(i).getVenue());
+      eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
+      eventData.setEventStatus(event.get(i).getEventStatus());
+      eventData.setEventCategory(event.get(i).getEventCategory());
+      eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
+      eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
+      eventData.setEventOrganizer(event.get(i).getEventOrganizer());
+      newEvent.add(eventData);
+    }
+
     return newEvent;
   }
 

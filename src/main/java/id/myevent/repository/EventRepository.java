@@ -17,4 +17,7 @@ public interface EventRepository extends CrudRepository<EventDao, Long> {
 
   @Query("SELECT event FROM EventDao event where event.bannerPhotoName = :imageName")
   public Optional<EventDao> findByImageName(@Param("imageName") String imageName);
+
+  @Query("SELECT event FROM EventDao event WHERE event.name LIKE %:name%")
+  List<EventDao> findByName(@Param("name") String name);
 }

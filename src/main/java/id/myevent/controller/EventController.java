@@ -111,6 +111,12 @@ public class EventController {
     return eventService.getDetailEvent(id);
   }
 
+  /** get event by name. */
+  @GetMapping("events/name")
+  public List<ViewEventListApiResponse> getEventByName(@RequestParam("name") String name) {
+    return eventService.getEventByName(name);
+  }
+
   /** get image event. */
   @GetMapping(path = {"/events/image/{name}"})
   public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
