@@ -17,7 +17,6 @@ import lombok.Data;
 @Data
 public class EventSocialMediaDao {
   @Id
-  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
