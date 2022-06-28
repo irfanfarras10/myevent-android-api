@@ -1,8 +1,8 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
-import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.EventData;
+import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventCategoryDao;
 import id.myevent.model.dao.EventDao;
@@ -166,9 +166,11 @@ public class EventService {
   /**
    * View Event Published Data.
    */
-  public List<EventData> getPublisedEvent() {
+  public ViewEventListApiResponse getPublisedEvent() {
+
     List<EventDao> event = eventRepository.findByStatus(2L);
-    List<EventData> newEvent = new ArrayList<>();
+    List<EventData> newEventData = new ArrayList<>();
+    ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
     for (int i = 0; i < event.size(); i++) {
       EventData eventData = new EventData();
@@ -183,17 +185,21 @@ public class EventService {
       eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
       eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
       eventData.setEventOrganizer(event.get(i).getEventOrganizer());
-      newEvent.add(eventData);
+      newEventData.add(eventData);
     }
+
+    newEvent.setEventDataList(newEventData);
     return newEvent;
   }
 
   /**
    * View Event Live Data.
    */
-  public List<EventData> getLiveEvent() {
+  public ViewEventListApiResponse getLiveEvent() {
+
     List<EventDao> event = eventRepository.findByStatus(3L);
-    List<EventData> newEvent = new ArrayList<>();
+    List<EventData> newEventData = new ArrayList<>();
+    ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
     for (int i = 0; i < event.size(); i++) {
       EventData eventData = new EventData();
@@ -208,18 +214,20 @@ public class EventService {
       eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
       eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
       eventData.setEventOrganizer(event.get(i).getEventOrganizer());
-      newEvent.add(eventData);
+      newEventData.add(eventData);
     }
 
+    newEvent.setEventDataList(newEventData);
     return newEvent;
   }
 
   /**
    * View Event Passed Data.
    */
-  public List<EventData> getPassedEvent() {
+  public ViewEventListApiResponse getPassedEvent() {
     List<EventDao> event = eventRepository.findByStatus(4L);
-    List<EventData> newEvent = new ArrayList<>();
+    List<EventData> newEventData = new ArrayList<>();
+    ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
     for (int i = 0; i < event.size(); i++) {
       EventData eventData = new EventData();
@@ -234,18 +242,20 @@ public class EventService {
       eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
       eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
       eventData.setEventOrganizer(event.get(i).getEventOrganizer());
-      newEvent.add(eventData);
+      newEventData.add(eventData);
     }
 
+    newEvent.setEventDataList(newEventData);
     return newEvent;
   }
 
   /**
    * View Event Cancel Data.
    */
-  public List<EventData> getCancelEvent() {
+  public ViewEventListApiResponse getCancelEvent() {
     List<EventDao> event = eventRepository.findByStatus(5L);
-    List<EventData> newEvent = new ArrayList<>();
+    List<EventData> newEventData = new ArrayList<>();
+    ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
     for (int i = 0; i < event.size(); i++) {
       EventData eventData = new EventData();
@@ -260,9 +270,9 @@ public class EventService {
       eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
       eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
       eventData.setEventOrganizer(event.get(i).getEventOrganizer());
-      newEvent.add(eventData);
+      newEventData.add(eventData);
     }
-
+    newEvent.setEventDataList(newEventData);
     return newEvent;
   }
 
@@ -296,9 +306,10 @@ public class EventService {
   /**
    * View Event By Name.
    */
-  public List<EventData> getEventByName(String name) {
+  public ViewEventListApiResponse getEventByName(String name) {
     List<EventDao> event = eventRepository.findByName(name);
-    List<EventData> newEvent = new ArrayList<>();
+    List<EventData> newEventData = new ArrayList<>();
+    ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
     for (int i = 0; i < event.size(); i++) {
       EventData eventData = new EventData();
@@ -313,9 +324,10 @@ public class EventService {
       eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
       eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
       eventData.setEventOrganizer(event.get(i).getEventOrganizer());
-      newEvent.add(eventData);
+      newEventData.add(eventData);
     }
 
+    newEvent.setEventDataList(newEventData);
     return newEvent;
   }
 

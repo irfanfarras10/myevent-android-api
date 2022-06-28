@@ -4,7 +4,6 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.CreateEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
-import id.myevent.model.apiresponse.EventData;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
@@ -92,25 +91,25 @@ public class EventController {
 
   /** get published event. */
   @GetMapping("events/published")
-  public List<EventData> getEventPublished() {
+  public ViewEventListApiResponse getEventPublished() {
     return eventService.getPublisedEvent();
   }
 
   /** get live event. */
   @GetMapping("events/live")
-  public List<EventData> getEventLive() {
+  public ViewEventListApiResponse getEventLive() {
     return eventService.getLiveEvent();
   }
 
   /** get passed event. */
   @GetMapping("events/passed")
-  public List<EventData> getEventPassed() {
+  public ViewEventListApiResponse getEventPassed() {
     return eventService.getPassedEvent();
   }
 
   /** get cancel event. */
   @GetMapping("events/cancel")
-  public List<EventData> getEventCancel() {
+  public ViewEventListApiResponse getEventCancel() {
     return eventService.getCancelEvent();
   }
 
@@ -122,7 +121,7 @@ public class EventController {
 
   /** get event by name. */
   @GetMapping("events/name")
-  public List<EventData> getEventByName(@RequestParam("name") String name) {
+  public ViewEventListApiResponse getEventByName(@RequestParam("name") String name) {
     return eventService.getEventByName(name);
   }
 
