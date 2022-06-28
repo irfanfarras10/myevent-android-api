@@ -2,6 +2,7 @@ package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
+import id.myevent.model.apiresponse.EventData;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventCategoryDao;
 import id.myevent.model.dao.EventDao;
@@ -134,38 +135,43 @@ public class EventService {
   /**
    * View Event Draft Data.
    */
-  public List<ViewEventListApiResponse> getDraftEvent() {
-    List<ViewEventListApiResponse> newEvent = new ArrayList<>();
-    List<EventDao> event = eventRepository.findByStatus(1L);
+  public ViewEventListApiResponse getDraftEvent() {
 
-    for (int i = 0; i < event.size(); i++) {
-      ViewEventListApiResponse eventData = new ViewEventListApiResponse();
+    List<EventDao> eventDraft = eventRepository.findByStatus(1L);
+    List<EventData> newEventData = new ArrayList<>();
+    ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
-      eventData.setName(event.get(i).getName());
-      eventData.setDescription(event.get(i).getDescription());
-      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
-      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
-      eventData.setVenue(event.get(i).getVenue());
-      eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
-      eventData.setEventStatus(event.get(i).getEventStatus());
-      eventData.setEventCategory(event.get(i).getEventCategory());
-      eventData.setEventVenueCategory(event.get(i).getEventVenueCategory());
-      eventData.setEventPaymentCategory(event.get(i).getEventPaymentCategory());
-      eventData.setEventOrganizer(event.get(i).getEventOrganizer());
-      newEvent.add(eventData);
+    for (int i = 0; i < eventDraft.size(); i++) {
+      EventData eventData = new EventData();
+
+      eventData.setName(eventDraft.get(i).getName());
+      eventData.setDescription(eventDraft.get(i).getDescription());
+      eventData.setDateTimeEventStart(eventDraft.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(eventDraft.get(i).getDateTimeEventEnd());
+      eventData.setVenue(eventDraft.get(i).getVenue());
+      eventData.setBannerPhoto(generateBannerPhotoUrl(eventDraft.get(i).getBannerPhotoName()));
+      eventData.setEventStatus(eventDraft.get(i).getEventStatus());
+      eventData.setEventCategory(eventDraft.get(i).getEventCategory());
+      eventData.setEventVenueCategory(eventDraft.get(i).getEventVenueCategory());
+      eventData.setEventPaymentCategory(eventDraft.get(i).getEventPaymentCategory());
+      eventData.setEventOrganizer(eventDraft.get(i).getEventOrganizer());
+
+      newEventData.add(eventData);
     }
+
+    newEvent.setEventDataList(newEventData);
     return newEvent;
   }
 
   /**
    * View Event Published Data.
    */
-  public List<ViewEventListApiResponse> getPublisedEvent() {
+  public List<EventData> getPublisedEvent() {
     List<EventDao> event = eventRepository.findByStatus(2L);
-    List<ViewEventListApiResponse> newEvent = new ArrayList<>();
+    List<EventData> newEvent = new ArrayList<>();
 
     for (int i = 0; i < event.size(); i++) {
-      ViewEventListApiResponse eventData = new ViewEventListApiResponse();
+      EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
@@ -185,12 +191,12 @@ public class EventService {
   /**
    * View Event Live Data.
    */
-  public List<ViewEventListApiResponse> getLiveEvent() {
+  public List<EventData> getLiveEvent() {
     List<EventDao> event = eventRepository.findByStatus(3L);
-    List<ViewEventListApiResponse> newEvent = new ArrayList<>();
+    List<EventData> newEvent = new ArrayList<>();
 
     for (int i = 0; i < event.size(); i++) {
-      ViewEventListApiResponse eventData = new ViewEventListApiResponse();
+      EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
@@ -211,12 +217,12 @@ public class EventService {
   /**
    * View Event Passed Data.
    */
-  public List<ViewEventListApiResponse> getPassedEvent() {
+  public List<EventData> getPassedEvent() {
     List<EventDao> event = eventRepository.findByStatus(4L);
-    List<ViewEventListApiResponse> newEvent = new ArrayList<>();
+    List<EventData> newEvent = new ArrayList<>();
 
     for (int i = 0; i < event.size(); i++) {
-      ViewEventListApiResponse eventData = new ViewEventListApiResponse();
+      EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
@@ -237,12 +243,12 @@ public class EventService {
   /**
    * View Event Cancel Data.
    */
-  public List<ViewEventListApiResponse> getCancelEvent() {
+  public List<EventData> getCancelEvent() {
     List<EventDao> event = eventRepository.findByStatus(5L);
-    List<ViewEventListApiResponse> newEvent = new ArrayList<>();
+    List<EventData> newEvent = new ArrayList<>();
 
     for (int i = 0; i < event.size(); i++) {
-      ViewEventListApiResponse eventData = new ViewEventListApiResponse();
+      EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
@@ -290,12 +296,12 @@ public class EventService {
   /**
    * View Event By Name.
    */
-  public List<ViewEventListApiResponse> getEventByName(String name) {
+  public List<EventData> getEventByName(String name) {
     List<EventDao> event = eventRepository.findByName(name);
-    List<ViewEventListApiResponse> newEvent = new ArrayList<>();
+    List<EventData> newEvent = new ArrayList<>();
 
     for (int i = 0; i < event.size(); i++) {
-      ViewEventListApiResponse eventData = new ViewEventListApiResponse();
+      EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
