@@ -1,12 +1,15 @@
 package id.myevent.controller;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.CreateEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
+import id.myevent.model.notification.NotificationData;
 import id.myevent.service.EventService;
+import id.myevent.service.NotificationService;
 import id.myevent.util.ImageUtil;
 import java.io.IOException;
 import java.util.List;
@@ -21,8 +24,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +38,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class EventController {
   @Autowired EventService eventService;
+
+  @Autowired
+  NotificationService notificationService;
 
   /** create event. */
   @PostMapping(
@@ -158,5 +166,19 @@ public class EventController {
     eventUpdate.setEventOrganizerId(eventOrganizerId);
     eventService.eventUpdate(id, eventUpdate);
     return ResponseEntity.ok(new ApiResponse("Event Berhasil di Update"));
+  }
+
+  /** Publish Event. */
+  @PostMapping("/events/{id}/publish")
+  public ResponseEntity<ApiResponse> publish(@PathVariable long id) {
+    eventService.publish(id);
+    return ResponseEntity.ok(new ApiResponse("Event Berhasil Di Publish"));
+  }
+
+  @RequestMapping("/send-notification")
+  @ResponseBody
+  public String sendNotification(@RequestBody NotificationData note,
+                                 @RequestParam String token) throws FirebaseMessagingException {
+    return notificationService.sendNotification(note, token);
   }
 }

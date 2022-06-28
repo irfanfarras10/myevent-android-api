@@ -16,6 +16,10 @@ import id.myevent.repository.EventRepository;
 import id.myevent.repository.EventStatusRepository;
 import id.myevent.repository.EventVenueCategoryRepository;
 import id.myevent.repository.TicketRepository;
+import id.myevent.task.LiveEventTask;
+import id.myevent.task.PassedEventTask;
+import id.myevent.task.ReminderOneEventTask;
+import id.myevent.task.ReminderThreeEventTask;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.ImageUtil;
 import java.util.ArrayList;
@@ -23,9 +27,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -53,6 +59,18 @@ public class EventService {
 
   @Autowired
   GlobalUtil globalUtil;
+
+  @Autowired
+  TaskScheduler taskScheduler;
+
+  @Autowired
+  LiveEventTask liveEventTask;
+  @Autowired
+  PassedEventTask passedEventTask;
+  @Autowired
+  ReminderThreeEventTask reminderThreeEventTask;
+  @Autowired
+  ReminderOneEventTask reminderOneEventTask;
 
   /**
    * insert event.
@@ -427,5 +445,45 @@ public class EventService {
     if (event.getEventOrganizerId() == null) {
       throw new ConflictException("Tidak terdapat event organizer ID");
     }
+  }
+
+  /**
+   * Publish Event.
+   */
+  public void publish(Long id) {
+    // set event status to published
+    EventDao event = eventRepository.findById(id).get();
+    final EventStatusDao publishedEventStatus = eventStatusRepository.findById(2L).get();
+    event.setEventStatus(publishedEventStatus);
+    eventRepository.save(event);
+
+    // run schedule for set event status to live
+    Date scheduleTime = new Date(event.getDateTimeEventStart());
+    log.warn("tanggal event mulai: " + scheduleTime);
+    liveEventTask.setEvent(event);
+    taskScheduler.schedule(liveEventTask, scheduleTime);
+    // TODO: run schedule for set event notification h-3
+    long dateThree = (scheduleTime.getTime() + TimeUnit.DAYS.toMillis(-3));
+    log.warn(String.valueOf(dateThree));
+    // convert to date
+    Date dayMinThree = new Date(dateThree);
+    log.warn("d-3 event (date): " + dayMinThree);
+    reminderThreeEventTask.setEvent(event);
+    taskScheduler.schedule(reminderThreeEventTask, dayMinThree);
+
+    // TODO: run schedule for set event notification h-1
+    long dateOne = (scheduleTime.getTime() + TimeUnit.DAYS.toMillis(-1));
+    log.warn(String.valueOf(dateOne));
+    // convert to date
+    Date dayMinOne = new Date(dateOne);
+    log.warn("d-1 event (date): " + dayMinOne);
+    reminderOneEventTask.setEvent(event);
+    taskScheduler.schedule(reminderOneEventTask, dayMinOne);
+
+    // TODO: run schedule for set event status to pass
+    Date endEventTime = new Date(event.getDateTimeEventEnd());
+    log.warn("tanggal event selesai: " + endEventTime);
+    passedEventTask.setEvent(event);
+    taskScheduler.schedule(passedEventTask, endEventTime);
   }
 }
