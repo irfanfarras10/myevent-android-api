@@ -3,6 +3,7 @@ package id.myevent.controller;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.CreateEventApiResponse;
+import id.myevent.model.apiresponse.ViewEventAgendaApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventDao;
@@ -12,7 +13,6 @@ import id.myevent.service.EventService;
 import id.myevent.service.NotificationService;
 import id.myevent.util.ImageUtil;
 import java.io.IOException;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -180,5 +180,10 @@ public class EventController {
   public String sendNotification(@RequestBody NotificationData note,
                                  @RequestParam String token) throws FirebaseMessagingException {
     return notificationService.sendNotification(note, token);
+  }
+
+  @GetMapping("/events/agenda")
+  public ViewEventAgendaApiResponse getEventAgenda() {
+    return eventService.getEventAgenda();
   }
 }

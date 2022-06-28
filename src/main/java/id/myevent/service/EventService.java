@@ -1,7 +1,9 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
+import id.myevent.model.apiresponse.AgendaEventData;
 import id.myevent.model.apiresponse.EventData;
+import id.myevent.model.apiresponse.ViewEventAgendaApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventCategoryDao;
@@ -328,6 +330,27 @@ public class EventService {
     }
 
     newEvent.setEventDataList(newEventData);
+    return newEvent;
+  }
+
+  /**
+   * View Event by Calendar View.
+   */
+  public ViewEventAgendaApiResponse getEventAgenda() {
+    List<EventDao> event = (List<EventDao>) eventRepository.findAll();
+    List<AgendaEventData> newEventData = new ArrayList<>();
+    ViewEventAgendaApiResponse newEvent = new ViewEventAgendaApiResponse();
+
+    for (int i = 0; i < event.size(); i++) {
+      AgendaEventData eventData = new AgendaEventData();
+      eventData.setName(event.get(i).getName());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
+      eventData.setEventStatus(event.get(i).getEventStatus());
+      newEventData.add(eventData);
+    }
+
+    newEvent.setAgendaEventDataList(newEventData);
     return newEvent;
   }
 
