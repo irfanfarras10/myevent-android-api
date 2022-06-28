@@ -1,6 +1,5 @@
 package id.myevent.service;
 
-import id.myevent.config.TaskSchedulerConfig;
 import id.myevent.exception.ConflictException;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
@@ -18,44 +17,64 @@ import id.myevent.repository.EventStatusRepository;
 import id.myevent.repository.EventVenueCategoryRepository;
 import id.myevent.repository.TicketRepository;
 import id.myevent.task.LiveEventTask;
+import id.myevent.task.PassedEventTask;
+import id.myevent.task.ReminderOneEventTask;
+import id.myevent.task.ReminderThreeEventTask;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.ImageUtil;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-/** User Service. */
+/**
+ * User Service.
+ */
 @Service
 @Slf4j
 public class EventService {
-  @Autowired EventStatusRepository eventStatusRepository;
-  @Autowired EventCategoryRepository eventCategoryRepository;
+  @Autowired
+  EventStatusRepository eventStatusRepository;
+  @Autowired
+  EventCategoryRepository eventCategoryRepository;
 
-  @Autowired EventVenueCategoryRepository eventVenueCategoryRepository;
-  @Autowired EventPaymentCategoryRepository eventPaymentCategoryRepository;
-  @Autowired EventOrganizerRepository eventOrganizerRepository;
-  @Autowired EventRepository eventRepository;
-  @Autowired TicketRepository ticketRepository;
+  @Autowired
+  EventVenueCategoryRepository eventVenueCategoryRepository;
+  @Autowired
+  EventPaymentCategoryRepository eventPaymentCategoryRepository;
+  @Autowired
+  EventOrganizerRepository eventOrganizerRepository;
+  @Autowired
+  EventRepository eventRepository;
+  @Autowired
+  TicketRepository ticketRepository;
 
-  @Autowired GlobalUtil globalUtil;
+  @Autowired
+  GlobalUtil globalUtil;
 
-  @Autowired TaskScheduler taskScheduler;
+  @Autowired
+  TaskScheduler taskScheduler;
 
-  @Autowired LiveEventTask liveEventTask;
+  @Autowired
+  LiveEventTask liveEventTask;
+  @Autowired
+  PassedEventTask passedEventTask;
+  @Autowired
+  ReminderThreeEventTask reminderThreeEventTask;
+  @Autowired
+  ReminderOneEventTask reminderOneEventTask;
 
-  /** insert event. */
+  /**
+   * insert event.
+   */
   public long insertEvent(EventDto eventData) {
     EventDao newEvent = new EventDao();
 
@@ -94,7 +113,9 @@ public class EventService {
     }
   }
 
-  /** Delete Event. */
+  /**
+   * Delete Event.
+   */
   public void deleteEvent(Long id) {
 
     Optional<EventDao> newEvents = eventRepository.findById(id);
@@ -110,7 +131,9 @@ public class EventService {
     }
   }
 
-  /** View Event Draft Data. */
+  /**
+   * View Event Draft Data.
+   */
   public List<ViewEventListApiResponse> getDraftEvent() {
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
     List<EventDao> event = eventRepository.findByStatus(1L);
@@ -134,7 +157,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Event Published Data. */
+  /**
+   * View Event Published Data.
+   */
   public List<ViewEventListApiResponse> getPublisedEvent() {
     List<EventDao> event = eventRepository.findByStatus(2L);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
@@ -157,7 +182,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Event Live Data. */
+  /**
+   * View Event Live Data.
+   */
   public List<ViewEventListApiResponse> getLiveEvent() {
     List<EventDao> event = eventRepository.findByStatus(3L);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
@@ -181,7 +208,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Event Passed Data. */
+  /**
+   * View Event Passed Data.
+   */
   public List<ViewEventListApiResponse> getPassedEvent() {
     List<EventDao> event = eventRepository.findByStatus(4L);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
@@ -205,7 +234,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Event Cancel Data. */
+  /**
+   * View Event Cancel Data.
+   */
   public List<ViewEventListApiResponse> getCancelEvent() {
     List<EventDao> event = eventRepository.findByStatus(5L);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
@@ -229,7 +260,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Detail Event. */
+  /**
+   * View Detail Event.
+   */
   public ViewEventApiResponse getDetailEvent(Long id) {
     ViewEventApiResponse newEvent = new ViewEventApiResponse();
     Optional<EventDao> eventData = eventRepository.findById(id);
@@ -254,7 +287,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** View Event By Name. */
+  /**
+   * View Event By Name.
+   */
   public List<ViewEventListApiResponse> getEventByName(String name) {
     List<EventDao> event = eventRepository.findByName(name);
     List<ViewEventListApiResponse> newEvent = new ArrayList<>();
@@ -278,7 +313,9 @@ public class EventService {
     return newEvent;
   }
 
-  /** Update event. */
+  /**
+   * Update event.
+   */
   public void eventUpdate(Long id, EventDto event) {
     Optional<EventDao> currentEvent = eventRepository.findById(id);
 
@@ -329,7 +366,9 @@ public class EventService {
     return filename;
   }
 
-  /** Get Event Image. */
+  /**
+   * Get Event Image.
+   */
   public EventDao getImage(String imageName) {
     final Optional<EventDao> event = eventRepository.findByImageName(imageName);
 
@@ -408,6 +447,9 @@ public class EventService {
     }
   }
 
+  /**
+   * Publish Event.
+   */
   public void publish(Long id) {
     // set event status to published
     EventDao event = eventRepository.findById(id).get();
@@ -417,11 +459,31 @@ public class EventService {
 
     // run schedule for set event status to live
     Date scheduleTime = new Date(event.getDateTimeEventStart());
-    log.warn(scheduleTime.toString());
+    log.warn("tanggal event mulai: " + scheduleTime);
     liveEventTask.setEvent(event);
     taskScheduler.schedule(liveEventTask, scheduleTime);
-    // TODO: run schedule for set event notification h-1
     // TODO: run schedule for set event notification h-3
+    long dateThree = (scheduleTime.getTime() + TimeUnit.DAYS.toMillis(-3));
+    log.warn(String.valueOf(dateThree));
+    // convert to date
+    Date dayMinThree = new Date(dateThree);
+    log.warn("d-3 event (date): " + dayMinThree);
+    reminderThreeEventTask.setEvent(event);
+    taskScheduler.schedule(reminderThreeEventTask, dayMinThree);
+
+    // TODO: run schedule for set event notification h-1
+    long dateOne = (scheduleTime.getTime() + TimeUnit.DAYS.toMillis(-1));
+    log.warn(String.valueOf(dateOne));
+    // convert to date
+    Date dayMinOne = new Date(dateOne);
+    log.warn("d-1 event (date): " + dayMinOne);
+    reminderOneEventTask.setEvent(event);
+    taskScheduler.schedule(reminderOneEventTask, dayMinOne);
+
     // TODO: run schedule for set event status to pass
+    Date endEventTime = new Date(event.getDateTimeEventEnd());
+    log.warn("tanggal event selesai: " + endEventTime);
+    passedEventTask.setEvent(event);
+    taskScheduler.schedule(passedEventTask, endEventTime);
   }
 }

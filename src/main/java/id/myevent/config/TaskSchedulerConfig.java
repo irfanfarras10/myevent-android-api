@@ -5,11 +5,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+/**
+ * Task Scheduler Config.
+ */
 @Configuration
 @ComponentScan(
     basePackages = "id.myevent.config",
     basePackageClasses = {
-      TaskSchedulerConfig.class,
+        TaskSchedulerConfig.class,
     })
 public class TaskSchedulerConfig {
   @Bean

@@ -9,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Live Event Task.
+ * Passed Event Task.
  */
 @Slf4j
 @Component
-public class LiveEventTask implements Runnable {
+public class PassedEventTask implements Runnable {
+
   @Autowired
   EventRepository eventRepository;
 
@@ -32,12 +33,11 @@ public class LiveEventTask implements Runnable {
 
   @Override
   public void run() {
-    //update event status to live
+    //update event status to passed
 
-    final EventStatusDao publishedEventStatus = eventStatusRepository.findById(3L).get();
-    event.setEventStatus(publishedEventStatus);
+    final EventStatusDao passedEventStatus = eventStatusRepository.findById(4L).get();
+    event.setEventStatus(passedEventStatus);
     eventRepository.save(event);
-    log.warn("update status menjadi live untuk event dengan id " + event.getId());
-
+    log.warn("update status menjadi passed untuk event dengan id " + event.getId());
   }
 }
