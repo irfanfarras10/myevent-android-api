@@ -6,6 +6,7 @@ import id.myevent.model.dao.EventGuestDao;
 import id.myevent.model.dto.EventGuestDto;
 import id.myevent.repository.EventGuestRepository;
 import id.myevent.repository.EventRepository;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -41,5 +42,38 @@ public class EventGuestService {
       String exceptionMessage = exception.getMostSpecificCause().getMessage();
       throw new ConflictException(exceptionMessage);
     }
+  }
+
+  /**
+   * Update Guest.
+   */
+  public void updateGuest(Long eventId, Long guestId, EventGuestDto guestData) {
+    Optional<EventGuestDao> currentGuest = eventGuestRepository.findById(guestId);
+    final EventDao eventData = eventRepository.findById(eventId).get();
+    EventGuestDao newGuest = currentGuest.get();
+
+    if (eventData.getEventStatus().getId() == 1) {
+      if (guestData.getName() != null) {
+        newGuest.setName(guestData.getName());
+      }
+      if (guestData.getEmail() != null) {
+        newGuest.setEmail(guestData.getEmail());
+      }
+      if (guestData.getPhoneNumber() != null) {
+        newGuest.setPhoneNumber(guestData.getPhoneNumber());
+      }
+      newGuest.setEvent(eventData);
+
+      try {
+        eventGuestRepository.save(newGuest);
+      } catch (DataIntegrityViolationException exception) {
+        String exceptionMessage = exception.getMostSpecificCause().getMessage();
+        throw new ConflictException(exceptionMessage);
+      }
+    } else {
+      throw new ConflictException("Event harus di status Draft");
+    }
+
+
   }
 }

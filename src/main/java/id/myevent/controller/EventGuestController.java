@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,5 +31,13 @@ public class EventGuestController {
   public ResponseEntity create(@PathVariable("id") Long id, @RequestBody EventGuestDto guestDto) {
     eventGuestService.create(id, guestDto);
     return new ResponseEntity(new ApiResponse("Undangan Tersimpan"), HttpStatus.CREATED);
+  }
+
+  @PutMapping("/events/{eventId}/guest/{guestId}")
+  public ResponseEntity<ApiResponse> editGuest(@PathVariable("eventId") Long eventId,
+                                                @PathVariable("guestId") Long guestId,
+                                                @RequestBody EventGuestDto guestDto) {
+    eventGuestService.updateGuest(eventId, guestId, guestDto);
+    return new ResponseEntity(new ApiResponse("Undangan Berhasil di Update"), HttpStatus.OK);
   }
 }

@@ -6,6 +6,7 @@ import id.myevent.model.dao.EventPaymentDao;
 import id.myevent.model.dto.EventPaymentDto;
 import id.myevent.repository.EventPaymentRepository;
 import id.myevent.repository.EventRepository;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,6 +40,32 @@ public class EventPaymentService {
     } catch (DataIntegrityViolationException exception) {
       String exceptionMessage = exception.getMostSpecificCause().getMessage();
       throw new ConflictException(exceptionMessage);
+    }
+  }
+
+  /**
+   * Update Payment.
+   */
+  public void updatePayment(Long eventId, Long eventPaymentId, EventPaymentDto paymentData) {
+    Optional<EventPaymentDao> currentPayment = eventPaymentRepository.findById(eventPaymentId);
+    EventDao eventData = eventRepository.findById(eventId).get();
+    EventPaymentDao newPayment = currentPayment.get();
+
+    if (eventData.getEventStatus().getId() == 1) {
+      if (paymentData.getType() != null) {
+        newPayment.setType(paymentData.getType());
+      }
+      if (paymentData.getInformation() != null) {
+        newPayment.setInformation(paymentData.getInformation());
+      }
+      try {
+        eventPaymentRepository.save(newPayment);
+      } catch (DataIntegrityViolationException exception) {
+        String exceptionMessage = exception.getMostSpecificCause().getMessage();
+        throw new ConflictException(exceptionMessage);
+      }
+    } else {
+      throw new ConflictException("Event harus di status Draft");
     }
   }
 }
