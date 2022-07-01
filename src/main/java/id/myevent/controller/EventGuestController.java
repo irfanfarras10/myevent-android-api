@@ -1,6 +1,7 @@
 package id.myevent.controller;
 
 import id.myevent.model.apiresponse.ApiResponse;
+import id.myevent.model.apiresponse.ViewEventGuestListApiResponse;
 import id.myevent.model.dto.EventGuestDto;
 import id.myevent.service.EventGuestService;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,9 +37,29 @@ public class EventGuestController {
 
   @PutMapping("/events/{eventId}/guest/{guestId}")
   public ResponseEntity<ApiResponse> editGuest(@PathVariable("eventId") Long eventId,
-                                                @PathVariable("guestId") Long guestId,
-                                                @RequestBody EventGuestDto guestDto) {
+                                               @PathVariable("guestId") Long guestId,
+                                               @RequestBody EventGuestDto guestDto) {
     eventGuestService.updateGuest(eventId, guestId, guestDto);
     return new ResponseEntity(new ApiResponse("Undangan Berhasil di Update"), HttpStatus.OK);
   }
+
+  @GetMapping("/events/{eventId}/guest")
+  public ViewEventGuestListApiResponse getGuest(@PathVariable("eventId") Long eventId) {
+    return eventGuestService.getGuestList(eventId);
+  }
+
+  @GetMapping("/events/{eventId}/guest/invite")
+  public ResponseEntity sendEmailAll(@PathVariable("eventId") Long eventId) {
+    eventGuestService.inviteAll(eventId);
+    return new ResponseEntity(new ApiResponse("Email berhasil terkirim"), HttpStatus.OK);
+  }
+
+  @GetMapping("/events/{eventId}/guest/{guestId}/invite")
+  public ResponseEntity sendEmail(@PathVariable("eventId") Long eventId,
+                                  @PathVariable("guestId") Long guestId) {
+    eventGuestService.invite(eventId, guestId);
+    return new ResponseEntity(new ApiResponse("Email berhasil terkirim"), HttpStatus.OK);
+  }
+
+
 }

@@ -86,7 +86,7 @@ public class EventController {
         new ApiResponse("Event Berhasil Dihapus"), HttpStatus.OK);
   }
 
-  /** get all event data */
+  /** get all event data. */
   @GetMapping("events")
   public ViewEventListApiResponse getEvents() {
     return eventService.getEvents();
