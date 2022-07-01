@@ -14,8 +14,10 @@ import lombok.Data;
 public class EventData {
   private String name;
   private String description;
-  private Long dateTimeEventStart;
-  private Long dateTimeEventEnd;
+  private Long dateEventStart;
+  private Long dateEventEnd;
+  private Long timeEventStart;
+  private Long timeEventEnd;
   private String venue;
   private String bannerPhoto;
   private EventStatusDao eventStatus;
