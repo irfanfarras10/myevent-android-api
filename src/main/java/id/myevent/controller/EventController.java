@@ -3,6 +3,7 @@ package id.myevent.controller;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.CreateEventApiResponse;
+import id.myevent.model.apiresponse.ViewEventAgendaApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventDao;
@@ -38,7 +39,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class EventController {
   @Autowired EventService eventService;
 
-  @Autowired NotificationService notificationService;
+  @Autowired
+  NotificationService notificationService;
 
   /** create event. */
   @PostMapping(
@@ -47,10 +49,8 @@ public class EventController {
   public ResponseEntity<CreateEventApiResponse> createEvent(
       @RequestParam("name") String name,
       @RequestParam("description") String description,
-      @RequestParam("dateEventStart") Long dateEventStart,
-      @RequestParam("dateEventEnd") Long dateEventEnd,
-      @RequestParam("timeEventStart") Long timeEventStart,
-      @RequestParam("timeEventEnd") Long timeEventEnd,
+      @RequestParam("dateTimeEventStart") Long dateTimeEventStart,
+      @RequestParam("dateTimeEventEnd") Long dateTimeEventEnd,
       @RequestParam("location") String location,
       @RequestParam("bannerPhoto") MultipartFile bannerPhoto,
       @RequestParam("eventStatusId") Long eventStatusId,
@@ -61,10 +61,8 @@ public class EventController {
     EventDto eventData = new EventDto();
     eventData.setName(name);
     eventData.setDescription(description);
-    eventData.setDateEventStart(dateEventStart);
-    eventData.setDateEventEnd(dateEventEnd);
-    eventData.setTimeEventStart(timeEventStart);
-    eventData.setTimeEventEnd(timeEventEnd);
+    eventData.setDateTimeEventStart(dateTimeEventStart);
+    eventData.setDateTimeEventEnd(dateTimeEventEnd);
     eventData.setVenue(location);
     eventData.setBannerPhoto(bannerPhoto.getBytes());
     eventData.setBannerPhotoType(bannerPhoto.getContentType());
@@ -144,10 +142,8 @@ public class EventController {
       @PathVariable("id") Long id,
       @RequestParam("name") String name,
       @RequestParam("description") String description,
-      @RequestParam("dateEventStart") Long dateEventStart,
-      @RequestParam("dateEventEnd") Long dateEventEnd,
-      @RequestParam("timeEventStart") Long timeEventStart,
-      @RequestParam("timeEventEnd") Long timeEventEnd,
+      @RequestParam("dateTimeEventStart") Long dateTimeEventStart,
+      @RequestParam("dateTimeEventEnd") Long dateTimeEventEnd,
       @RequestParam("location") String location,
       @RequestParam("bannerPhoto") MultipartFile bannerPhoto,
       @RequestParam("eventStatusId") Long eventStatusId,
@@ -159,10 +155,8 @@ public class EventController {
     EventDto eventUpdate = new EventDto();
     eventUpdate.setName(name);
     eventUpdate.setDescription(description);
-    eventUpdate.setDateEventStart(dateEventStart);
-    eventUpdate.setDateEventEnd(dateEventEnd);
-    eventUpdate.setTimeEventStart(timeEventStart);
-    eventUpdate.setTimeEventEnd(timeEventEnd);
+    eventUpdate.setDateTimeEventStart(dateTimeEventStart);
+    eventUpdate.setDateTimeEventEnd(dateTimeEventEnd);
     eventUpdate.setVenue(location);
     eventUpdate.setBannerPhoto(bannerPhoto.getBytes());
     eventUpdate.setBannerPhotoType(bannerPhoto.getContentType());
@@ -183,8 +177,13 @@ public class EventController {
 
   @RequestMapping("/send-notification")
   @ResponseBody
-  public String sendNotification(@RequestBody NotificationData note, @RequestParam String token)
-      throws FirebaseMessagingException {
+  public String sendNotification(@RequestBody NotificationData note,
+                                 @RequestParam String token) throws FirebaseMessagingException {
     return notificationService.sendNotification(note, token);
+  }
+
+  @GetMapping("/events/agenda")
+  public ViewEventAgendaApiResponse getEventAgenda() {
+    return eventService.getEventAgenda();
   }
 }

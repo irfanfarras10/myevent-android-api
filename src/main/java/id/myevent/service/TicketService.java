@@ -117,7 +117,7 @@ public class TicketService {
       throw new ConflictException(
           "Tanggal registrasi awal tidak boleh melebihi tanggal registrasi akhir");
     }
-    if (ticketData.getDateTimeRegistrationStart() >= eventData.getTimeEventStart()) {
+    if (ticketData.getDateTimeRegistrationStart() >= eventData.getDateTimeEventStart()) {
       throw new ConflictException("Tanggal registrasi harus sebelum tanggal pelaksanaan event");
     }
   }
