@@ -1,7 +1,9 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
+import id.myevent.model.apiresponse.AgendaEventData;
 import id.myevent.model.apiresponse.EventData;
+import id.myevent.model.apiresponse.ViewEventAgendaApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventCategoryDao;
@@ -90,10 +92,8 @@ public class EventService {
 
     newEvent.setName(eventData.getName());
     newEvent.setDescription(eventData.getDescription());
-    newEvent.setDateEventStart(eventData.getDateEventStart());
-    newEvent.setDateEventEnd(eventData.getDateEventEnd());
-    newEvent.setTimeEventStart(eventData.getTimeEventStart());
-    newEvent.setTimeEventEnd(eventData.getTimeEventEnd());
+    newEvent.setDateTimeEventStart(eventData.getDateTimeEventStart());
+    newEvent.setDateTimeEventEnd(eventData.getDateTimeEventEnd());
     newEvent.setVenue(eventData.getVenue());
     newEvent.setBannerPhoto(ImageUtil.compressImage(eventData.getBannerPhoto()));
     newEvent.setBannerPhotoName(generateUniqueImageName());
@@ -148,10 +148,8 @@ public class EventService {
 
       eventData.setName(eventDraft.get(i).getName());
       eventData.setDescription(eventDraft.get(i).getDescription());
-      eventData.setDateEventStart(eventDraft.get(i).getDateEventStart());
-      eventData.setDateEventEnd(eventDraft.get(i).getDateEventEnd());
-      eventData.setTimeEventStart(eventDraft.get(i).getTimeEventStart());
-      eventData.setTimeEventEnd(eventDraft.get(i).getTimeEventEnd());
+      eventData.setDateTimeEventStart(eventDraft.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(eventDraft.get(i).getDateTimeEventEnd());
       eventData.setVenue(eventDraft.get(i).getVenue());
       eventData.setBannerPhoto(generateBannerPhotoUrl(eventDraft.get(i).getBannerPhotoName()));
       eventData.setEventStatus(eventDraft.get(i).getEventStatus());
@@ -180,10 +178,8 @@ public class EventService {
       EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
-      eventData.setDateEventStart(event.get(i).getDateEventStart());
-      eventData.setDateEventEnd(event.get(i).getDateEventEnd());
-      eventData.setTimeEventStart(event.get(i).getTimeEventStart());
-      eventData.setTimeEventEnd(event.get(i).getTimeEventEnd());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
       eventData.setVenue(event.get(i).getVenue());
       eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
       eventData.setEventStatus(event.get(i).getEventStatus());
@@ -211,10 +207,8 @@ public class EventService {
       EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
-      eventData.setDateEventStart(event.get(i).getDateEventStart());
-      eventData.setDateEventEnd(event.get(i).getDateEventEnd());
-      eventData.setTimeEventStart(event.get(i).getTimeEventStart());
-      eventData.setTimeEventEnd(event.get(i).getTimeEventEnd());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
       eventData.setVenue(event.get(i).getVenue());
       eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
       eventData.setEventStatus(event.get(i).getEventStatus());
@@ -241,10 +235,8 @@ public class EventService {
       EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
-      eventData.setDateEventStart(event.get(i).getDateEventStart());
-      eventData.setDateEventEnd(event.get(i).getDateEventEnd());
-      eventData.setTimeEventStart(event.get(i).getTimeEventStart());
-      eventData.setTimeEventEnd(event.get(i).getTimeEventEnd());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
       eventData.setVenue(event.get(i).getVenue());
       eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
       eventData.setEventStatus(event.get(i).getEventStatus());
@@ -271,10 +263,8 @@ public class EventService {
       EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
-      eventData.setDateEventStart(event.get(i).getDateEventStart());
-      eventData.setDateEventEnd(event.get(i).getDateEventEnd());
-      eventData.setTimeEventStart(event.get(i).getTimeEventStart());
-      eventData.setTimeEventEnd(event.get(i).getTimeEventEnd());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
       eventData.setVenue(event.get(i).getVenue());
       eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
       eventData.setEventStatus(event.get(i).getEventStatus());
@@ -297,10 +287,8 @@ public class EventService {
 
     newEvent.setName(eventData.get().getName());
     newEvent.setDescription(eventData.get().getDescription());
-    newEvent.setDateEventStart(eventData.get().getDateEventStart());
-    newEvent.setDateEventEnd(eventData.get().getDateEventEnd());
-    newEvent.setTimeEventStart(eventData.get().getTimeEventStart());
-    newEvent.setTimeEventEnd(eventData.get().getTimeEventEnd());
+    newEvent.setDateTimeEventStart(eventData.get().getDateTimeEventStart());
+    newEvent.setDateTimeEventEnd(eventData.get().getDateTimeEventEnd());
     newEvent.setVenue(eventData.get().getVenue());
     newEvent.setBannerPhoto(generateBannerPhotoUrl(eventData.get().getBannerPhotoName()));
     newEvent.setDateTimeRegistrationStart(eventData.get().getDateTimeRegistrationStart());
@@ -329,10 +317,8 @@ public class EventService {
       EventData eventData = new EventData();
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
-      eventData.setDateEventStart(event.get(i).getDateEventStart());
-      eventData.setDateEventEnd(event.get(i).getDateEventEnd());
-      eventData.setTimeEventStart(event.get(i).getTimeEventStart());
-      eventData.setTimeEventEnd(event.get(i).getTimeEventEnd());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
       eventData.setVenue(event.get(i).getVenue());
       eventData.setBannerPhoto(generateBannerPhotoUrl(event.get(i).getBannerPhotoName()));
       eventData.setEventStatus(event.get(i).getEventStatus());
@@ -344,6 +330,27 @@ public class EventService {
     }
 
     newEvent.setEventDataList(newEventData);
+    return newEvent;
+  }
+
+  /**
+   * View Event by Calendar View.
+   */
+  public ViewEventAgendaApiResponse getEventAgenda() {
+    List<EventDao> event = (List<EventDao>) eventRepository.findAll();
+    List<AgendaEventData> newEventData = new ArrayList<>();
+    ViewEventAgendaApiResponse newEvent = new ViewEventAgendaApiResponse();
+
+    for (int i = 0; i < event.size(); i++) {
+      AgendaEventData eventData = new AgendaEventData();
+      eventData.setName(event.get(i).getName());
+      eventData.setDateTimeEventStart(event.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(event.get(i).getDateTimeEventEnd());
+      eventData.setEventStatus(event.get(i).getEventStatus());
+      newEventData.add(eventData);
+    }
+
+    newEvent.setAgendaEventDataList(newEventData);
     return newEvent;
   }
 
@@ -363,10 +370,8 @@ public class EventService {
     EventDao newEvent = currentEvent.get();
     newEvent.setName(event.getName());
     newEvent.setDescription(event.getDescription());
-    newEvent.setDateEventStart(event.getDateEventStart());
-    newEvent.setDateEventEnd(event.getDateEventEnd());
-    newEvent.setTimeEventStart(event.getTimeEventStart());
-    newEvent.setTimeEventEnd(event.getTimeEventEnd());
+    newEvent.setDateTimeEventStart(event.getDateTimeEventStart());
+    newEvent.setDateTimeEventEnd(event.getDateTimeEventEnd());
     newEvent.setVenue(event.getVenue());
     newEvent.setBannerPhoto(event.getBannerPhoto());
     newEvent.setBannerPhotoName(generateUniqueImageName());
@@ -418,6 +423,18 @@ public class EventService {
     if (globalUtil.isBlankString(event.getDescription())) {
       throw new ConflictException("Deskripsi event harus diisi");
     }
+    if (event.getDateTimeEventStart() == null) {
+      throw new ConflictException("Tanggal mulai event harus diisi");
+    }
+    if (event.getDateTimeEventStart() > event.getDateTimeEventEnd()) {
+      throw new ConflictException("Tanggal mulai tidak boleh melebihi tanggal selesai");
+    }
+    if (event.getDateTimeEventEnd() == null) {
+      throw new ConflictException("Tanggal berakhir event harus diisi");
+    }
+    if (event.getDateTimeEventEnd() < event.getDateTimeEventStart()) {
+      throw new ConflictException("Tanggal selesai tidak boleh sebelum dari tanggal mulai");
+    }
     if (event.getBannerPhoto() == null) {
       throw new ConflictException("Foto event harus di unggah");
     }
@@ -441,6 +458,18 @@ public class EventService {
     }
     if (globalUtil.isBlankString(event.getDescription())) {
       throw new ConflictException("Deskripsi event harus diisi");
+    }
+    if (event.getDateTimeEventStart() == null) {
+      throw new ConflictException("Tanggal mulai event harus diisi");
+    }
+    if (event.getDateTimeEventStart() > event.getDateTimeEventEnd()) {
+      throw new ConflictException("Tanggal mulai tidak boleh melebihi tanggal selesai");
+    }
+    if (event.getDateTimeEventEnd() == null) {
+      throw new ConflictException("Tanggal berakhir event harus diisi");
+    }
+    if (event.getDateTimeEventEnd() < event.getDateTimeEventStart()) {
+      throw new ConflictException("Tanggal selesai tidak boleh sebelum dari tanggal mulai");
     }
     if (event.getBannerPhoto() == null) {
       throw new ConflictException("Foto event harus di unggah");
@@ -470,7 +499,7 @@ public class EventService {
     eventRepository.save(event);
 
     // run schedule for set event status to live
-    Date scheduleTime = new Date(event.getTimeEventStart());
+    Date scheduleTime = new Date(event.getDateTimeEventStart());
     log.warn("tanggal event mulai: " + scheduleTime);
     liveEventTask.setEvent(event);
     taskScheduler.schedule(liveEventTask, scheduleTime);
@@ -493,7 +522,7 @@ public class EventService {
     taskScheduler.schedule(reminderOneEventTask, dayMinOne);
 
     // TODO: run schedule for set event status to pass
-    Date endEventTime = new Date(event.getTimeEventEnd());
+    Date endEventTime = new Date(event.getDateTimeEventEnd());
     log.warn("tanggal event selesai: " + endEventTime);
     passedEventTask.setEvent(event);
     taskScheduler.schedule(passedEventTask, endEventTime);

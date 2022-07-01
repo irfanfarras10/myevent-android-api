@@ -30,16 +30,10 @@ public class EventDao {
   private String description;
   
   @Column(name = "datetime_event_start", nullable = false)
-  private long dateEventStart;
+  private long dateTimeEventStart;
   
   @Column(name = "datetime_event_end", nullable = false)
-  private long dateEventEnd;
-
-  @Column(name = "time_event_start", nullable = false)
-  private long timeEventStart;
-
-  @Column(name = "time_event_end", nullable = false)
-  private long timeEventEnd;
+  private long dateTimeEventEnd;
   
   @Column(name = "venue")
   private String venue;
