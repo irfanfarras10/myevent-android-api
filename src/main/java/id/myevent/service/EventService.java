@@ -135,6 +135,36 @@ public class EventService {
   }
 
   /**
+   * View Event for All Status
+   * */
+  public ViewEventListApiResponse getEvents(){
+    List<EventDao> eventDraft = (List<EventDao>) eventRepository.findAll();
+    List<EventData> newEventData = new ArrayList<>();
+    ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
+
+    for (int i = 0; i < eventDraft.size(); i++) {
+      EventData eventData = new EventData();
+
+      eventData.setName(eventDraft.get(i).getName());
+      eventData.setDescription(eventDraft.get(i).getDescription());
+      eventData.setDateTimeEventStart(eventDraft.get(i).getDateTimeEventStart());
+      eventData.setDateTimeEventEnd(eventDraft.get(i).getDateTimeEventEnd());
+      eventData.setVenue(eventDraft.get(i).getVenue());
+      eventData.setBannerPhoto(generateBannerPhotoUrl(eventDraft.get(i).getBannerPhotoName()));
+      eventData.setEventStatus(eventDraft.get(i).getEventStatus());
+      eventData.setEventCategory(eventDraft.get(i).getEventCategory());
+      eventData.setEventVenueCategory(eventDraft.get(i).getEventVenueCategory());
+      eventData.setEventPaymentCategory(eventDraft.get(i).getEventPaymentCategory());
+      eventData.setEventOrganizer(eventDraft.get(i).getEventOrganizer());
+
+      newEventData.add(eventData);
+    }
+
+    newEvent.setEventDataList(newEventData);
+    return newEvent;
+  }
+
+  /**
    * View Event Draft Data.
    */
   public ViewEventListApiResponse getDraftEvent() {
