@@ -135,7 +135,7 @@ public class EventService {
   }
 
   /**
-   * View Event Data
+   * View Event Data.
    */
   public ViewEventListApiResponse getEvents() {
 

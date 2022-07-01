@@ -138,7 +138,7 @@ public class EventGuestService {
   }
 
   /**
-   * Invite All Guest.
+   * Invite Guest.
    */
   public void invite(Long eventId, Long guestId) {
     final EventDao eventData = eventRepository.findById(eventId).get();
@@ -172,7 +172,7 @@ public class EventGuestService {
   public String mailMessage(EventDao eventData) {
 
     DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-    String dateTime = sdf.format(eventData.getDateTimeEventStart());
+    String dateTime = sdf.format(eventData.getTimeEventStart());
 
     final String emailMessage = "<html>\n"
         + "<body>\n"
