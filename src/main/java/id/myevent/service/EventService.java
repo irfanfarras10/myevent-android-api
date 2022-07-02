@@ -23,15 +23,21 @@ import id.myevent.task.ReminderOneEventTask;
 import id.myevent.task.ReminderThreeEventTask;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.ImageUtil;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -72,6 +78,8 @@ public class EventService {
   ReminderThreeEventTask reminderThreeEventTask;
   @Autowired
   ReminderOneEventTask reminderOneEventTask;
+  @Autowired
+  JavaMailSender javaMailSender;
 
   /**
    * insert event.
@@ -96,7 +104,7 @@ public class EventService {
     newEvent.setTimeEventEnd(eventData.getTimeEventEnd());
     newEvent.setVenue(eventData.getVenue());
     newEvent.setBannerPhoto(ImageUtil.compressImage(eventData.getBannerPhoto()));
-    newEvent.setBannerPhotoName(generateUniqueImageName());
+    newEvent.setBannerPhotoName(generateUniqueImageName(eventData.getBannerPhotoType()));
     newEvent.setBannerPhotoType(eventData.getBannerPhotoType());
     newEvent.setEventStatus(eventStatus.get());
     newEvent.setEventCategory(eventCategory.get());
@@ -402,7 +410,7 @@ public class EventService {
     newEvent.setTimeEventEnd(event.getTimeEventEnd());
     newEvent.setVenue(event.getVenue());
     newEvent.setBannerPhoto(event.getBannerPhoto());
-    newEvent.setBannerPhotoName(generateUniqueImageName());
+    newEvent.setBannerPhotoName(generateUniqueImageName(event.getBannerPhotoType()));
     newEvent.setBannerPhotoType(event.getBannerPhotoType());
     newEvent.setEventStatus(eventStatus.get());
     newEvent.setEventCategory(eventCategory.get());
@@ -424,14 +432,15 @@ public class EventService {
     return url;
   }
 
-  private String generateUniqueImageName() {
+  private String generateUniqueImageName(String imageFormat) {
     String filename = "";
+    imageFormat = StringUtils.substringAfter(imageFormat,"/");
     long millis = System.currentTimeMillis();
     String datetime = new Date().toGMTString();
     datetime = datetime.replace(" ", "");
     datetime = datetime.replace(":", "");
     String uuid = UUID.randomUUID().toString();
-    filename = uuid + "_" + datetime + "_" + millis;
+    filename = uuid + "_" + datetime + "_" + millis + "." + imageFormat;
     return filename;
   }
 
@@ -530,5 +539,65 @@ public class EventService {
     log.warn("tanggal event selesai: " + endEventTime);
     passedEventTask.setEvent(event);
     taskScheduler.schedule(passedEventTask, endEventTime);
+  }
+
+  public void cancel(Long id, String message) {
+
+    EventDao event = eventRepository.findById(id).get();
+    final EventStatusDao cancelledEventStatus = eventStatusRepository.findById(5L).get();
+
+    final String emailMessage = mailCancelMessage(event, message);
+
+    //send message to all participants & guest
+    try {
+      MimeMessage messages = javaMailSender.createMimeMessage();
+
+      MimeMessageHelper messageHelper = new MimeMessageHelper(messages, true);
+
+      //TODO: get all data participants & guest
+      //get multiple email
+//      for (int i = 0; i < eventGuest.size(); i++) {
+//        String email = eventGuest.get(i).getEmail();
+//        guests.add(email);
+//      }
+//      String[] mailsArray = guests.toArray(new String[0]);
+//      log.warn(String.valueOf(mailsArray));
+//      messageHelper.setTo(mailsArray);
+      messageHelper.setCc(event.getEventOrganizer().getEmail());
+      messageHelper.setSubject("Event Cancellation - " + event.getName());
+      messageHelper.setText(emailMessage, true);
+
+      javaMailSender.send(messages);
+
+      //set event status to cancel
+      event.setEventStatus(cancelledEventStatus);
+      eventRepository.save(event);
+    } catch (Exception e) {
+      throw new ConflictException("Email gagal dikirim");
+    }
+
+  }
+
+  public String mailCancelMessage(EventDao eventData, String message) {
+
+    DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    String dateTime = sdf.format(eventData.getTimeEventStart());
+
+    final String emailMessage = "<html>\n"
+        + "<body>\n"
+        + "    <p>Kepada Bapak/Ibu,</p>\n"
+        + "    <p>Dengan email ini, kami ingin menginformasikan anda bahwa acara "
+        + eventData.getName() + " pada tanggal " + dateTime
+        + " yang diselenggarakan oleh " + eventData.getEventOrganizer().getOrganizerName()
+        + "<b> Dibatalkan </b> dengan alasan " + message + ".</p>\n"
+        +
+        "    <p>Demikian informasi ini disampaikan, kami memohon maaf sebesar-besarnya atas "
+        + "pembatalan acara ini.</p>\n"
+        + "    <p>Untuk informasi lebih lanjut silakan menghubungi tim dari "
+        + eventData.getEventOrganizer().getOrganizerName() + ".</p>\n"
+        + "</body>\n"
+        + "</html>";
+
+    return emailMessage;
   }
 }
