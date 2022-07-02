@@ -39,16 +39,11 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class EmailService {
 
-  @Autowired
-  EventGuestRepository eventGuestRepository;
-  @Autowired
-  EventRepository eventRepository;
-  @Autowired
-  JavaMailSender javaMailSender;
+  @Autowired EventGuestRepository eventGuestRepository;
+  @Autowired EventRepository eventRepository;
+  @Autowired JavaMailSender javaMailSender;
 
-  /**
-   * Invite All Guest.
-   */
+  /** Invite All Guest. */
   public void inviteAll(Long eventId) {
     final EventDao eventData = eventRepository.findById(eventId).get();
     List<String> guests = new ArrayList<>();
@@ -61,7 +56,7 @@ public class EmailService {
 
       MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
 
-      //get multiple email
+      // get multiple email
       for (int i = 0; i < eventGuest.size(); i++) {
         String email = eventGuest.get(i).getEmail();
         guests.add(email);
@@ -75,7 +70,7 @@ public class EmailService {
 
       javaMailSender.send(message);
 
-      //change email status in Event Guest
+      // change email status in Event Guest
       for (int j = 0; j < eventGuest.size(); j++) {
         eventGuest.get(j).setAlreadyShared(true);
         eventGuestRepository.save(eventGuest.get(j));
@@ -85,9 +80,7 @@ public class EmailService {
     }
   }
 
-  /**
-   * Invite Guest.
-   */
+  /** Invite Guest. */
   public void invite(Long eventId, Long guestId) {
     final EventDao eventData = eventRepository.findById(eventId).get();
     EventGuestDao guestData = eventGuestRepository.findById(guestId).get();
@@ -104,14 +97,14 @@ public class EmailService {
       messageHelper.setSubject("Event Invitation - " + eventData.getName());
       messageHelper.setText(emailMessage, true);
 
-      //File image =
+      // File image =
       //     getImage(eventData.getBannerPhoto(), eventData.getBannerPhotoName());
 
-//      messageHelper.addInline("myfoto", image);
-//
+      //      messageHelper.addInline("myfoto", image);
+      //
       javaMailSender.send(message);
 
-      //change email status in Event Guest
+      // change email status in Event Guest
       guestData.setAlreadyShared(true);
       eventGuestRepository.save(guestData);
     } catch (Exception e) {
@@ -119,9 +112,7 @@ public class EmailService {
     }
   }
 
-  /**
-   * Mail Invitation message.
-   */
+  /** Mail Invitation message. */
   public String mailMessage(EventDao eventData) {
 
     DateFormat sdf = new SimpleDateFormat("EEEE, dd. MMMM yyyy HH:mm");
@@ -134,25 +125,36 @@ public class EmailService {
     String name = loc.features.get(0).properties.name;
     String address_line2 = loc.features.get(0).properties.address_line2;
 
-    String img = "https://myevent-android-api.herokuapp.com/api/events/image/"+eventData.getBannerPhotoName();
+    String imgSrc =
+        "<img src=\"https://myevent-android-api.herokuapp.com/api/events/image/"
+            + eventData.getBannerPhotoName()
+            + "\" height=300>";
 
-    final String emailMessage = "<html>\n"
-        + "<body>\n"
-        + "    <p>Kepada Bapak/Ibu,</p>\n"
-        + "    <p>Kami ingin mengundang anda ke acara " + eventData.getName()
-        + " yang diselenggarakan oleh " + eventData.getEventOrganizer().getOrganizerName()
-        + ". Event tersebut akan dilaksanakan pada: </p>\n"
-        + "    <p><b>Hari, Tanggal:</b> " + dateTime + "</p>\n"
-        + "    <p><b>Tempat:</b> " + name + " " + address_line2 + "</p>\n"
-        +
-        "    <p>Demikian undangan ini disampaikan, kami berharap kedatangan Bapak/Ibu pada acara "
-        + "kami.</p>\n"
-        + "    <p>Untuk informasi lebih lanjut silakan menghubungi tim dari "
-        + eventData.getEventOrganizer().getOrganizerName() + ".</p>\n"
-        + "<src="+img
-        + "         width=150\" height=\"70\">"
-        + "</body>\n"
-        + "</html>";
+    final String emailMessage =
+        "<html>\n"
+            + "<body>\n"
+            + "    <p>Kepada Bapak/Ibu,</p>\n"
+            + "    <p>Kami ingin mengundang anda ke acara "
+            + eventData.getName()
+            + " yang diselenggarakan oleh "
+            + eventData.getEventOrganizer().getOrganizerName()
+            + ". Event tersebut akan dilaksanakan pada: </p>\n"
+            + "    <p><b>Hari, Tanggal:</b> "
+            + dateTime
+            + "</p>\n"
+            + "    <p><b>Tempat:</b> "
+            + name
+            + " "
+            + address_line2
+            + "</p>\n"
+            + "    <p>Demikian undangan ini disampaikan, kami berharap kedatangan Bapak/Ibu pada acara "
+            + "kami.</p>\n"
+            + "    <p>Untuk informasi lebih lanjut silakan menghubungi tim dari "
+            + eventData.getEventOrganizer().getOrganizerName()
+            + ".</p>\n"
+            + imgSrc
+            + "</body>\n"
+            + "</html>";
 
     return emailMessage;
   }
@@ -160,8 +162,13 @@ public class EmailService {
   public Location getLocation(String lat, String lon) {
 
     String url =
-        "https://api.geoapify.com/v1/geocode/reverse" + "?lat=" + lat + "&lon=" + lon + "&apiKey=" +
-            "26018a31a0aa41699818b7b50ea82935";
+        "https://api.geoapify.com/v1/geocode/reverse"
+            + "?lat="
+            + lat
+            + "&lon="
+            + lon
+            + "&apiKey="
+            + "26018a31a0aa41699818b7b50ea82935";
     log.warn(url);
     RestTemplate restTemplate = new RestTemplate();
 
@@ -172,36 +179,33 @@ public class EmailService {
 
   private void getImage(byte[] imageByte, String name) throws IOException {
 
-//    File convertFile = new File("/photos/"+name);
-//    convertFile.getParentFile().mkdirs();
-//    convertFile.createNewFile();
-//    log.warn(String.valueOf(convertFile.getParentFile().mkdirs()));
-//    FileOutputStream fout = new FileOutputStream(convertFile);
-//    fout.write(imageByte);
-//    fout.close();
+    //    File convertFile = new File("/photos/"+name);
+    //    convertFile.getParentFile().mkdirs();
+    //    convertFile.createNewFile();
+    //    log.warn(String.valueOf(convertFile.getParentFile().mkdirs()));
+    //    FileOutputStream fout = new FileOutputStream(convertFile);
+    //    fout.write(imageByte);
+    //    fout.close();
 
     String fileLocation = new File("photos").getAbsolutePath() + "\\" + name;
     Path target = Paths.get(fileLocation);
     //  FileOutputStream fos = new FileOutputStream(fileLocation);
 
-//    BufferedImage bImage = ImageIO.read(new File(fileLocation));
-//    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//    ImageIO.write(bImage, "png", bos );
-//    byte [] data = bos.toByteArray();
-//    ByteArrayInputStream bis = new ByteArrayInputStream(data);
-//    BufferedImage bImage2 = ImageIO.read(bis);
-//    ImageIO.write(bImage2, "png", new File("output.png") );
-//    System.out.println("image created");
-
+    //    BufferedImage bImage = ImageIO.read(new File(fileLocation));
+    //    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    //    ImageIO.write(bImage, "png", bos );
+    //    byte [] data = bos.toByteArray();
+    //    ByteArrayInputStream bis = new ByteArrayInputStream(data);
+    //    BufferedImage bImage2 = ImageIO.read(bis);
+    //    ImageIO.write(bImage2, "png", new File("output.png") );
+    //    System.out.println("image created");
 
     // convert byte[] back to a BufferedImage
-    //InputStream is = new ByteArrayInputStream(imageByte);
+    // InputStream is = new ByteArrayInputStream(imageByte);
     ByteArrayInputStream inStreambj = new ByteArrayInputStream(imageByte);
     BufferedImage newBi = ImageIO.read(inStreambj);
 
     // save it
     ImageIO.write(newBi, "png", new File(fileLocation));
   }
-
-
 }
