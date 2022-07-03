@@ -154,6 +154,7 @@ public class EventService {
     for (int i = 0; i < eventDraft.size(); i++) {
       EventData eventData = new EventData();
 
+      eventData.setId(eventDraft.get(i).getId());
       eventData.setName(eventDraft.get(i).getName());
       eventData.setDescription(eventDraft.get(i).getDescription());
       eventData.setDateEventStart(eventDraft.get(i).getDateEventStart());
@@ -187,6 +188,7 @@ public class EventService {
     for (int i = 0; i < eventDraft.size(); i++) {
       EventData eventData = new EventData();
 
+      eventData.setId(eventDraft.get(i).getId());
       eventData.setName(eventDraft.get(i).getName());
       eventData.setDescription(eventDraft.get(i).getDescription());
       eventData.setDateEventStart(eventDraft.get(i).getDateEventStart());
@@ -219,6 +221,8 @@ public class EventService {
 
     for (int i = 0; i < event.size(); i++) {
       EventData eventData = new EventData();
+
+      eventData.setId(event.get(i).getId());
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateEventStart(event.get(i).getDateEventStart());
@@ -250,6 +254,8 @@ public class EventService {
 
     for (int i = 0; i < event.size(); i++) {
       EventData eventData = new EventData();
+
+      eventData.setId(event.get(i).getId());
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateEventStart(event.get(i).getDateEventStart());
@@ -280,6 +286,8 @@ public class EventService {
 
     for (int i = 0; i < event.size(); i++) {
       EventData eventData = new EventData();
+
+      eventData.setId(event.get(i).getId());
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateEventStart(event.get(i).getDateEventStart());
@@ -310,6 +318,8 @@ public class EventService {
 
     for (int i = 0; i < event.size(); i++) {
       EventData eventData = new EventData();
+
+      eventData.setId(event.get(i).getId());
       eventData.setName(event.get(i).getName());
       eventData.setDescription(event.get(i).getDescription());
       eventData.setDateEventStart(event.get(i).getDateEventStart());
@@ -336,6 +346,7 @@ public class EventService {
     ViewEventApiResponse newEvent = new ViewEventApiResponse();
     Optional<EventDao> eventData = eventRepository.findById(id);
 
+    newEvent.setId(eventData.get().getId());
     newEvent.setName(eventData.get().getName());
     newEvent.setDescription(eventData.get().getDescription());
     newEvent.setDateEventStart(eventData.get().getDateEventStart());

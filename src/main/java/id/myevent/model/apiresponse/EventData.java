@@ -12,6 +12,7 @@ import lombok.Data;
  */
 @Data
 public class EventData {
+  private Long id;
   private String name;
   private String description;
   private Long dateEventStart;
