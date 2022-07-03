@@ -15,6 +15,7 @@ import lombok.Data;
 /** View Event Api Response. */
 @Data
 public class ViewEventApiResponse {
+  private Long id;
   private String name;
   private String description;
   private Long dateEventStart;
