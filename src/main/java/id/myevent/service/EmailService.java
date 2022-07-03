@@ -3,55 +3,35 @@ package id.myevent.service;
 import id.myevent.exception.ConflictException;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dao.EventGuestDao;
-import id.myevent.model.location.Feature;
 import id.myevent.model.location.Location;
-import id.myevent.model.location.Properties;
 import id.myevent.repository.EventGuestRepository;
 import id.myevent.repository.EventRepository;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
-import javax.imageio.ImageIO;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.ServletOutputStream;
-import javax.swing.ImageIcon;
-import javax.xml.bind.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
 import net.fortuna.ical4j.util.RandomUidGenerator;
 import net.fortuna.ical4j.util.UidGenerator;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -131,10 +111,12 @@ public class EmailService {
       messageHelper.setSubject("Event Invitation - " + eventData.getName());
       messageHelper.setText(emailMessage, true);
 
-      //File ics = generateIcs(eventData);
+      String filePath = new File("photos").getAbsolutePath() + "\\" + eventData.getName()
+          + eventData.getTimeEventStart() + ".ics";
+      FileSystemResource resource = new FileSystemResource(new File(filePath));
 
-      //messageHelper.addInline("myfoto", image);
-      //
+      messageHelper.addAttachment("icsfile.ics", resource);
+
       javaMailSender.send(message);
 
       // change email status in Event Guest
@@ -182,8 +164,7 @@ public class EmailService {
             + " "
             + address_line2
             + "</p>\n"
-            +
-            "    <p>Demikian undangan ini disampaikan, kami berharap kedatangan Bapak/Ibu pada "
+            + "    <p>Demikian undangan ini disampaikan, kami berharap kedatangan Bapak/Ibu pada "
             + "acara kami.</p>\n"
             + "    <p>Untuk informasi lebih lanjut silakan menghubungi tim dari "
             + eventData.getEventOrganizer().getOrganizerName()
@@ -216,38 +197,6 @@ public class EmailService {
     return loc;
   }
 
-  private void getImage(byte[] imageByte, String name) throws IOException {
-
-    //    File convertFile = new File("/photos/"+name);
-    //    convertFile.getParentFile().mkdirs();
-    //    convertFile.createNewFile();
-    //    log.warn(String.valueOf(convertFile.getParentFile().mkdirs()));
-    //    FileOutputStream fout = new FileOutputStream(convertFile);
-    //    fout.write(imageByte);
-    //    fout.close();
-
-    String fileLocation = new File("photos").getAbsolutePath() + "\\" + name;
-    Path target = Paths.get(fileLocation);
-    //  FileOutputStream fos = new FileOutputStream(fileLocation);
-
-    //    BufferedImage bImage = ImageIO.read(new File(fileLocation));
-    //    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    //    ImageIO.write(bImage, "png", bos );
-    //    byte [] data = bos.toByteArray();
-    //    ByteArrayInputStream bis = new ByteArrayInputStream(data);
-    //    BufferedImage bImage2 = ImageIO.read(bis);
-    //    ImageIO.write(bImage2, "png", new File("output.png") );
-    //    System.out.println("image created");
-
-    // convert byte[] back to a BufferedImage
-    // InputStream is = new ByteArrayInputStream(imageByte);
-    ByteArrayInputStream inStreambj = new ByteArrayInputStream(imageByte);
-    BufferedImage newBi = ImageIO.read(inStreambj);
-
-    // save it
-    ImageIO.write(newBi, "png", new File(fileLocation));
-  }
-
   private void generateIcs(EventDao eventData) throws IOException {
 
     System.setProperty("net.fortuna.ical4j.timezone.cache.impl",
@@ -268,7 +217,16 @@ public class EmailService {
             TimeZone.getDefault().toZoneId());
 
     String eventSummary = eventData.getName();
+    String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
+    String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
+    Location loc = getLocation(lat, lon);
+
+    String name = loc.features.get(0).properties.name;
+    String address_line2 = loc.features.get(0).properties.address_line2;
+
     VEvent event = new VEvent(start, end, eventSummary);
+    event.add(new Description(eventData.getDescription()));
+    event.add(new net.fortuna.ical4j.model.property.Location(name + " " + address_line2));
     event.add(uid);
 
     //create calendar
@@ -280,7 +238,8 @@ public class EmailService {
     /* Add event to calendar */
     calendar.add(event);
 
-    String filePath = new File("photos").getAbsolutePath() + "\\" + "mymeeting.ics";
+    String filePath = new File("photos").getAbsolutePath() + "\\" + eventData.getName()
+        + eventData.getTimeEventStart() + ".ics";
     FileOutputStream fout = null;
 
     try {
