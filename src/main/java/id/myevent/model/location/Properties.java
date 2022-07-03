@@ -1,6 +1,9 @@
 package id.myevent.model.location;
 
-public class Properties{
+/**
+ * Properties Model.
+ */
+public class Properties {
   public Datasource datasource;
   public String name;
   public String street;

@@ -1,5 +1,8 @@
 package id.myevent.model.location;
 
-public class Rank{
+/**
+ * Rank Model.
+ */
+public class Rank {
   public double popularity;
 }

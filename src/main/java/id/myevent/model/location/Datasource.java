@@ -1,6 +1,9 @@
 package id.myevent.model.location;
 
-public class Datasource{
+/**
+ * Data source model.
+ */
+public class Datasource {
   public String sourcename;
   public String attribution;
   public String license;

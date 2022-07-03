@@ -5,6 +5,7 @@ import id.myevent.model.apiresponse.ViewEventGuestListApiResponse;
 import id.myevent.model.dto.EventGuestDto;
 import id.myevent.service.EmailService;
 import id.myevent.service.EventGuestService;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,7 +61,7 @@ public class EventGuestController {
 
   @GetMapping("/events/{eventId}/guest/{guestId}/invite")
   public ResponseEntity sendEmail(@PathVariable("eventId") Long eventId,
-                                  @PathVariable("guestId") Long guestId) {
+                                  @PathVariable("guestId") Long guestId) throws IOException {
     emailService.invite(eventId, guestId);
     return new ResponseEntity(new ApiResponse("Email berhasil terkirim"), HttpStatus.OK);
   }

@@ -434,7 +434,7 @@ public class EventService {
 
   private String generateUniqueImageName(String imageFormat) {
     String filename = "";
-    imageFormat = StringUtils.substringAfter(imageFormat,"/");
+    imageFormat = StringUtils.substringAfter(imageFormat, "/");
     long millis = System.currentTimeMillis();
     String datetime = new Date().toGMTString();
     datetime = datetime.replace(" ", "");
@@ -541,6 +541,9 @@ public class EventService {
     taskScheduler.schedule(passedEventTask, endEventTime);
   }
 
+  /**
+   * Cancel Event.
+   */
   public void cancel(Long id, String message) {
 
     EventDao event = eventRepository.findById(id).get();
@@ -578,6 +581,9 @@ public class EventService {
 
   }
 
+  /**
+   * Generate Message for cancel event.
+   */
   public String mailCancelMessage(EventDao eventData, String message) {
 
     DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
