@@ -61,7 +61,7 @@ public class EventGuestController {
 
   @GetMapping("/events/{eventId}/guest/{guestId}/invite")
   public ResponseEntity sendEmail(@PathVariable("eventId") Long eventId,
-                                  @PathVariable("guestId") Long guestId) throws IOException {
+                                  @PathVariable("guestId") Long guestId) {
     emailService.invite(eventId, guestId);
     return new ResponseEntity(new ApiResponse("Email berhasil terkirim"), HttpStatus.OK);
   }

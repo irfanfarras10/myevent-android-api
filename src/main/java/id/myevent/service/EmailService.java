@@ -62,6 +62,12 @@ public class EmailService {
     final String emailMessage = mailMessage(eventData);
 
     try {
+      generateIcs(eventData);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    try {
       MimeMessage message = javaMailSender.createMimeMessage();
 
       MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
@@ -78,6 +84,12 @@ public class EmailService {
       messageHelper.setSubject("Event Invitation - " + eventData.getName());
       messageHelper.setText(emailMessage, true);
 
+      String filePath = new File("photos").getAbsolutePath() + "\\" + eventData.getName()
+          + eventData.getTimeEventStart() + ".ics";
+      FileSystemResource resource = new FileSystemResource(new File(filePath));
+
+      messageHelper.addAttachment("event.ics", resource);
+
       javaMailSender.send(message);
 
       // change email status in Event Guest
@@ -93,13 +105,17 @@ public class EmailService {
   /**
    * Invite Guest.
    */
-  public void invite(Long eventId, Long guestId) throws IOException {
+  public void invite(Long eventId, Long guestId) {
     final EventDao eventData = eventRepository.findById(eventId).get();
     EventGuestDao guestData = eventGuestRepository.findById(guestId).get();
 
     final String emailMessage = mailMessage(eventData);
 
-    generateIcs(eventData);
+    try {
+      generateIcs(eventData);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
 
     try {
       MimeMessage message = javaMailSender.createMimeMessage();
@@ -115,7 +131,7 @@ public class EmailService {
           + eventData.getTimeEventStart() + ".ics";
       FileSystemResource resource = new FileSystemResource(new File(filePath));
 
-      messageHelper.addAttachment("icsfile.ics", resource);
+      messageHelper.addAttachment("event.ics", resource);
 
       javaMailSender.send(message);
 
