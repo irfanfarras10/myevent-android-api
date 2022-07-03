@@ -45,7 +45,7 @@ public class EventDao {
   private String venue;
 
   @JsonIgnore
-  @Column(name = "banner_photo", unique = false, length = 100000, nullable = false)
+  @Column(name = "banner_photo", unique = false, nullable = false)
   private byte[] bannerPhoto;
 
   @JsonIgnore
