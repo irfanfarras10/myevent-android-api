@@ -527,7 +527,8 @@ public class EventService {
     log.warn("tanggal event mulai: " + scheduleTime);
     liveEventTask.setEvent(event);
     taskScheduler.schedule(liveEventTask, scheduleTime);
-    // TODO: run schedule for set event notification h-3
+
+    // run schedule for set event notification h-3
     long dateThree = (scheduleTime.getTime() + TimeUnit.DAYS.toMillis(-3));
     log.warn(String.valueOf(dateThree));
     // convert to date
@@ -536,7 +537,7 @@ public class EventService {
     reminderThreeEventTask.setEvent(event);
     taskScheduler.schedule(reminderThreeEventTask, dayMinThree);
 
-    // TODO: run schedule for set event notification h-1
+    // run schedule for set event notification h-1
     long dateOne = (scheduleTime.getTime() + TimeUnit.DAYS.toMillis(-1));
     log.warn(String.valueOf(dateOne));
     // convert to date
@@ -545,76 +546,12 @@ public class EventService {
     reminderOneEventTask.setEvent(event);
     taskScheduler.schedule(reminderOneEventTask, dayMinOne);
 
-    // TODO: run schedule for set event status to pass
+    // run schedule for set event status to pass
     Date endEventTime = new Date(event.getTimeEventEnd());
     log.warn("tanggal event selesai: " + endEventTime);
     passedEventTask.setEvent(event);
     taskScheduler.schedule(passedEventTask, endEventTime);
   }
 
-  /**
-   * Cancel Event.
-   */
-  public void cancel(Long id, String message) {
 
-    EventDao event = eventRepository.findById(id).get();
-    final EventStatusDao cancelledEventStatus = eventStatusRepository.findById(5L).get();
-
-    final String emailMessage = mailCancelMessage(event, message);
-
-    //send message to all participants & guest
-    try {
-      MimeMessage messages = javaMailSender.createMimeMessage();
-
-      MimeMessageHelper messageHelper = new MimeMessageHelper(messages, true);
-
-      //TODO: get all data participants & guest
-      //get multiple email
-//      for (int i = 0; i < eventGuest.size(); i++) {
-//        String email = eventGuest.get(i).getEmail();
-//        guests.add(email);
-//      }
-//      String[] mailsArray = guests.toArray(new String[0]);
-//      log.warn(String.valueOf(mailsArray));
-//      messageHelper.setTo(mailsArray);
-      messageHelper.setCc(event.getEventOrganizer().getEmail());
-      messageHelper.setSubject("Event Cancellation - " + event.getName());
-      messageHelper.setText(emailMessage, true);
-
-      javaMailSender.send(messages);
-
-      //set event status to cancel
-      event.setEventStatus(cancelledEventStatus);
-      eventRepository.save(event);
-    } catch (Exception e) {
-      throw new ConflictException("Email gagal dikirim");
-    }
-
-  }
-
-  /**
-   * Generate Message for cancel event.
-   */
-  public String mailCancelMessage(EventDao eventData, String message) {
-
-    DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-    String dateTime = sdf.format(eventData.getTimeEventStart());
-
-    final String emailMessage = "<html>\n"
-        + "<body>\n"
-        + "    <p>Kepada Bapak/Ibu,</p>\n"
-        + "    <p>Dengan email ini, kami ingin menginformasikan anda bahwa acara "
-        + eventData.getName() + " pada tanggal " + dateTime
-        + " yang diselenggarakan oleh " + eventData.getEventOrganizer().getOrganizerName()
-        + "<b> Dibatalkan </b> dengan alasan " + message + ".</p>\n"
-        +
-        "    <p>Demikian informasi ini disampaikan, kami memohon maaf sebesar-besarnya atas "
-        + "pembatalan acara ini.</p>\n"
-        + "    <p>Untuk informasi lebih lanjut silakan menghubungi tim dari "
-        + eventData.getEventOrganizer().getOrganizerName() + ".</p>\n"
-        + "</body>\n"
-        + "</html>";
-
-    return emailMessage;
-  }
 }

@@ -1,11 +1,14 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
+import id.myevent.model.apiresponse.CancelMessage;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dao.EventGuestDao;
+import id.myevent.model.dao.EventStatusDao;
 import id.myevent.model.location.Location;
 import id.myevent.repository.EventGuestRepository;
 import id.myevent.repository.EventRepository;
+import id.myevent.repository.EventStatusRepository;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -49,6 +52,8 @@ public class EmailService {
   @Autowired
   EventRepository eventRepository;
   @Autowired
+  EventStatusRepository eventStatusRepository;
+  @Autowired
   JavaMailSender javaMailSender;
 
   /**
@@ -84,7 +89,7 @@ public class EmailService {
       messageHelper.setSubject("Event Invitation - " + eventData.getName());
       messageHelper.setText(emailMessage, true);
 
-      String filePath = new File("photos").getAbsolutePath() + "\\" + eventData.getName()
+      String filePath = new File("calendar").getAbsolutePath() + "\\" + eventData.getName()
           + eventData.getTimeEventStart() + ".ics";
       FileSystemResource resource = new FileSystemResource(new File(filePath));
 
@@ -127,7 +132,7 @@ public class EmailService {
       messageHelper.setSubject("Event Invitation - " + eventData.getName());
       messageHelper.setText(emailMessage, true);
 
-      String filePath = new File("photos").getAbsolutePath() + "\\" + eventData.getName()
+      String filePath = new File("calendar").getAbsolutePath() + "\\" + eventData.getName()
           + eventData.getTimeEventStart() + ".ics";
       FileSystemResource resource = new FileSystemResource(new File(filePath));
 
@@ -141,6 +146,76 @@ public class EmailService {
     } catch (Exception e) {
       throw new ConflictException("Email gagal dikirim");
     }
+  }
+
+  /**
+   * Cancel Event.
+   */
+  public void cancel(Long id, CancelMessage message) {
+
+    EventDao event = eventRepository.findById(id).get();
+    final EventStatusDao cancelledEventStatus = eventStatusRepository.findById(5L).get();
+    List<String> guests = new ArrayList<>();
+    List<EventGuestDao> eventGuest = eventGuestRepository.findByEvent(id);
+    String valueMessage = message.getMessage();
+
+    final String emailMessage = mailCancelMessage(event, valueMessage);
+
+    //send message to all participants & guest
+    try {
+      MimeMessage messages = javaMailSender.createMimeMessage();
+
+      MimeMessageHelper messageHelper = new MimeMessageHelper(messages, true);
+
+      //TODO: get all data participants & guest
+      //get multiple email guests
+      for (int i = 0; i < eventGuest.size(); i++) {
+        String email = eventGuest.get(i).getEmail();
+        guests.add(email);
+      }
+      //get multiple email participants
+      String[] mailsArray = guests.toArray(new String[0]);
+      log.warn(String.valueOf(mailsArray));
+      messageHelper.setTo(mailsArray);
+      messageHelper.setCc(event.getEventOrganizer().getEmail());
+      messageHelper.setSubject("Event Cancellation - " + event.getName());
+      messageHelper.setText(emailMessage, true);
+
+      javaMailSender.send(messages);
+
+      //set event status to cancel
+      event.setEventStatus(cancelledEventStatus);
+      eventRepository.save(event);
+    } catch (Exception e) {
+      throw new ConflictException("Email gagal dikirim");
+    }
+
+  }
+
+  /**
+   * Generate Message for cancel event.
+   */
+  public String mailCancelMessage(EventDao eventData, String message) {
+
+    DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    String dateTime = sdf.format(eventData.getTimeEventStart());
+
+    final String emailMessage = "<html>\n"
+        + "<body>\n"
+        + "    <p>Kepada Bapak/Ibu,</p>\n"
+        + "    <p>Dengan email ini, kami ingin menginformasikan anda bahwa acara "
+        + eventData.getName() + " pada tanggal " + dateTime
+        + " yang diselenggarakan oleh " + eventData.getEventOrganizer().getOrganizerName()
+        + "<b> Dibatalkan </b> dengan alasan " + message + ".</p>\n"
+        +
+        "    <p>Demikian informasi ini disampaikan, kami memohon maaf sebesar-besarnya atas "
+        + "pembatalan acara ini.</p>\n"
+        + "    <p>Untuk informasi lebih lanjut silakan menghubungi tim dari "
+        + eventData.getEventOrganizer().getOrganizerName() + ".</p>\n"
+        + "</body>\n"
+        + "</html>";
+
+    return emailMessage;
   }
 
   /**
@@ -254,7 +329,7 @@ public class EmailService {
     /* Add event to calendar */
     calendar.add(event);
 
-    String filePath = new File("photos").getAbsolutePath() + "\\" + eventData.getName()
+    String filePath = new File("calendar").getAbsolutePath() + "\\" + eventData.getName()
         + eventData.getTimeEventStart() + ".ics";
     FileOutputStream fout = null;
 

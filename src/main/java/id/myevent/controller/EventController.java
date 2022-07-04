@@ -2,6 +2,7 @@ package id.myevent.controller;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import id.myevent.model.apiresponse.ApiResponse;
+import id.myevent.model.apiresponse.CancelMessage;
 import id.myevent.model.apiresponse.CreateEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
@@ -9,6 +10,7 @@ import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
 import id.myevent.model.location.Location;
 import id.myevent.model.notification.NotificationData;
+import id.myevent.service.EmailService;
 import id.myevent.service.EventService;
 import id.myevent.service.NotificationService;
 import id.myevent.util.ImageUtil;
@@ -45,6 +47,9 @@ public class EventController {
 
   @Autowired
   NotificationService notificationService;
+
+  @Autowired
+  EmailService emailService;
 
   /**
    * create event.
@@ -228,8 +233,8 @@ public class EventController {
 
   @PostMapping("/events/{id}/cancel")
   public ResponseEntity<ApiResponse> ResponseEntity(@PathVariable("id") Long id,
-                                                    @RequestBody String message) {
-    eventService.cancel(id, message);
+                                                    @RequestBody CancelMessage message) {
+    emailService.cancel(id, message);
     return ResponseEntity.ok(new ApiResponse("Event Berhasil di Cancel"));
   }
 
