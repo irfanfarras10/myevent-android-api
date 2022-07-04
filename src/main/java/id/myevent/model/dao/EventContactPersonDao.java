@@ -27,12 +27,12 @@ public class EventContactPersonDao {
   @Column(name = "contact", nullable = false)
   private String contact;
   
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne()
   @JoinColumn(name = "event_social_media_id", referencedColumnName = "id", nullable = false)
   private EventSocialMediaDao eventSocialMedia;
 
   @JsonIgnore
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne()
   @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
   private EventDao event;
 }
