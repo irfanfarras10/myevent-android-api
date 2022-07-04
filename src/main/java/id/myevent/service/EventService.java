@@ -23,15 +23,21 @@ import id.myevent.task.ReminderOneEventTask;
 import id.myevent.task.ReminderThreeEventTask;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.ImageUtil;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -72,6 +78,8 @@ public class EventService {
   ReminderThreeEventTask reminderThreeEventTask;
   @Autowired
   ReminderOneEventTask reminderOneEventTask;
+  @Autowired
+  JavaMailSender javaMailSender;
 
   /**
    * insert event.
@@ -96,7 +104,7 @@ public class EventService {
     newEvent.setTimeEventEnd(eventData.getTimeEventEnd());
     newEvent.setVenue(eventData.getVenue());
     newEvent.setBannerPhoto(ImageUtil.compressImage(eventData.getBannerPhoto()));
-    newEvent.setBannerPhotoName(generateUniqueImageName());
+    newEvent.setBannerPhotoName(generateUniqueImageName(eventData.getBannerPhotoType()));
     newEvent.setBannerPhotoType(eventData.getBannerPhotoType());
     newEvent.setEventStatus(eventStatus.get());
     newEvent.setEventCategory(eventCategory.get());
@@ -413,7 +421,7 @@ public class EventService {
     newEvent.setTimeEventEnd(event.getTimeEventEnd());
     newEvent.setVenue(event.getVenue());
     newEvent.setBannerPhoto(event.getBannerPhoto());
-    newEvent.setBannerPhotoName(generateUniqueImageName());
+    newEvent.setBannerPhotoName(generateUniqueImageName(event.getBannerPhotoType()));
     newEvent.setBannerPhotoType(event.getBannerPhotoType());
     newEvent.setEventStatus(eventStatus.get());
     newEvent.setEventCategory(eventCategory.get());
@@ -435,14 +443,15 @@ public class EventService {
     return url;
   }
 
-  private String generateUniqueImageName() {
+  private String generateUniqueImageName(String imageFormat) {
     String filename = "";
+    imageFormat = StringUtils.substringAfter(imageFormat, "/");
     long millis = System.currentTimeMillis();
     String datetime = new Date().toGMTString();
     datetime = datetime.replace(" ", "");
     datetime = datetime.replace(":", "");
     String uuid = UUID.randomUUID().toString();
-    filename = uuid + "_" + datetime + "_" + millis;
+    filename = uuid + "_" + datetime + "_" + millis + "." + imageFormat;
     return filename;
   }
 
@@ -518,7 +527,8 @@ public class EventService {
     log.warn("tanggal event mulai: " + scheduleTime);
     liveEventTask.setEvent(event);
     taskScheduler.schedule(liveEventTask, scheduleTime);
-    // TODO: run schedule for set event notification h-3
+
+    // run schedule for set event notification h-3
     long dateThree = (scheduleTime.getTime() + TimeUnit.DAYS.toMillis(-3));
     log.warn(String.valueOf(dateThree));
     // convert to date
@@ -527,7 +537,7 @@ public class EventService {
     reminderThreeEventTask.setEvent(event);
     taskScheduler.schedule(reminderThreeEventTask, dayMinThree);
 
-    // TODO: run schedule for set event notification h-1
+    // run schedule for set event notification h-1
     long dateOne = (scheduleTime.getTime() + TimeUnit.DAYS.toMillis(-1));
     log.warn(String.valueOf(dateOne));
     // convert to date
@@ -536,10 +546,12 @@ public class EventService {
     reminderOneEventTask.setEvent(event);
     taskScheduler.schedule(reminderOneEventTask, dayMinOne);
 
-    // TODO: run schedule for set event status to pass
+    // run schedule for set event status to pass
     Date endEventTime = new Date(event.getTimeEventEnd());
     log.warn("tanggal event selesai: " + endEventTime);
     passedEventTask.setEvent(event);
     taskScheduler.schedule(passedEventTask, endEventTime);
   }
+
+
 }

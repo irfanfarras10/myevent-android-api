@@ -3,7 +3,9 @@ package id.myevent.controller;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.ViewEventGuestListApiResponse;
 import id.myevent.model.dto.EventGuestDto;
+import id.myevent.service.EmailService;
 import id.myevent.service.EventGuestService;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,9 @@ public class EventGuestController {
   @Autowired
   EventGuestService eventGuestService;
 
+  @Autowired
+  EmailService emailService;
+
   @PostMapping("/events/{id}/guest/create")
   public ResponseEntity create(@PathVariable("id") Long id, @RequestBody EventGuestDto guestDto) {
     eventGuestService.create(id, guestDto);
@@ -50,14 +55,14 @@ public class EventGuestController {
 
   @GetMapping("/events/{eventId}/guest/invite")
   public ResponseEntity sendEmailAll(@PathVariable("eventId") Long eventId) {
-    eventGuestService.inviteAll(eventId);
+    emailService.inviteAll(eventId);
     return new ResponseEntity(new ApiResponse("Email berhasil terkirim"), HttpStatus.OK);
   }
 
   @GetMapping("/events/{eventId}/guest/{guestId}/invite")
   public ResponseEntity sendEmail(@PathVariable("eventId") Long eventId,
                                   @PathVariable("guestId") Long guestId) {
-    eventGuestService.invite(eventId, guestId);
+    emailService.invite(eventId, guestId);
     return new ResponseEntity(new ApiResponse("Email berhasil terkirim"), HttpStatus.OK);
   }
 

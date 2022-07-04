@@ -2,13 +2,15 @@ package id.myevent.controller;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import id.myevent.model.apiresponse.ApiResponse;
+import id.myevent.model.apiresponse.CancelMessage;
 import id.myevent.model.apiresponse.CreateEventApiResponse;
-import id.myevent.model.apiresponse.ViewEventAgendaApiResponse;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
+import id.myevent.model.location.Location;
 import id.myevent.model.notification.NotificationData;
+import id.myevent.service.EmailService;
 import id.myevent.service.EventService;
 import id.myevent.service.NotificationService;
 import id.myevent.util.ImageUtil;
@@ -29,19 +31,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-/** User REST Controller. */
+/**
+ * User REST Controller.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping("/api")
 @Slf4j
 public class EventController {
-  @Autowired EventService eventService;
+  @Autowired
+  EventService eventService;
 
-  @Autowired NotificationService notificationService;
+  @Autowired
+  NotificationService notificationService;
 
-  /** create event. */
+  @Autowired
+  EmailService emailService;
+
+  /**
+   * create event.
+   */
   @PostMapping(
       value = "/events/create",
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -78,7 +90,9 @@ public class EventController {
         new CreateEventApiResponse("Data Tersimpan", insertEventId), HttpStatus.CREATED);
   }
 
-  /** delete event. */
+  /**
+   * delete event.
+   */
   @DeleteMapping("/events/{id}")
   public ResponseEntity<ApiResponse> deleteEvent(@PathVariable("id") Long id) throws IOException {
     eventService.deleteEvent(id);
@@ -86,55 +100,73 @@ public class EventController {
         new ApiResponse("Event Berhasil Dihapus"), HttpStatus.OK);
   }
 
-  /** get all event data. */
+  /**
+   * get all event data.
+   */
   @GetMapping("events")
   public ViewEventListApiResponse getEvents() {
     return eventService.getEvents();
   }
 
-  /** get draft event. */
+  /**
+   * get draft event.
+   */
   @GetMapping("events/draft")
   public ViewEventListApiResponse getEventDraft() {
     return eventService.getDraftEvent();
   }
 
-  /** get published event. */
+  /**
+   * get published event.
+   */
   @GetMapping("events/published")
   public ViewEventListApiResponse getEventPublished() {
     return eventService.getPublisedEvent();
   }
 
-  /** get live event. */
+  /**
+   * get live event.
+   */
   @GetMapping("events/live")
   public ViewEventListApiResponse getEventLive() {
     return eventService.getLiveEvent();
   }
 
-  /** get passed event. */
+  /**
+   * get passed event.
+   */
   @GetMapping("events/passed")
   public ViewEventListApiResponse getEventPassed() {
     return eventService.getPassedEvent();
   }
 
-  /** get cancel event. */
+  /**
+   * get cancel event.
+   */
   @GetMapping("events/cancel")
   public ViewEventListApiResponse getEventCancel() {
     return eventService.getCancelEvent();
   }
 
-  /** get detail event. */
+  /**
+   * get detail event.
+   */
   @GetMapping("events/{id}")
   public ViewEventApiResponse getDetailEvent(@PathVariable("id") Long id) {
     return eventService.getDetailEvent(id);
   }
 
-  /** get event by name. */
+  /**
+   * get event by name.
+   */
   @GetMapping("events/name")
   public ViewEventListApiResponse getEventByName(@RequestParam("name") String name) {
     return eventService.getEventByName(name);
   }
 
-  /** get image event. */
+  /**
+   * get image event.
+   */
   @GetMapping(path = {"/events/image/{name}"})
   public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
 
@@ -145,7 +177,9 @@ public class EventController {
         .body(ImageUtil.decompressImage(image.getBannerPhoto()));
   }
 
-  /** Edit Event Endpoint. */
+  /**
+   * Edit Event Endpoint.
+   */
   @PutMapping("/events/update/{id}")
   public ResponseEntity<ApiResponse> editEvent(
       @PathVariable("id") Long id,
@@ -181,7 +215,9 @@ public class EventController {
     return ResponseEntity.ok(new ApiResponse("Event Berhasil di Update"));
   }
 
-  /** Publish Event. */
+  /**
+   * Publish Event.
+   */
   @PostMapping("/events/{id}/publish")
   public ResponseEntity<ApiResponse> publish(@PathVariable long id) {
     eventService.publish(id);
@@ -194,4 +230,12 @@ public class EventController {
       throws FirebaseMessagingException {
     return notificationService.sendNotification(note, token);
   }
+
+  @PostMapping("/events/{id}/cancel")
+  public ResponseEntity<ApiResponse> ResponseEntity(@PathVariable("id") Long id,
+                                                    @RequestBody CancelMessage message) {
+    emailService.cancel(id, message);
+    return ResponseEntity.ok(new ApiResponse("Event Berhasil di Cancel"));
+  }
+
 }
