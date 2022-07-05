@@ -12,12 +12,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EventRepository extends CrudRepository<EventDao, Long> {
 
-  @Query("SELECT event FROM EventDao event where event.eventStatus.id = :statusId")
-  public List<EventDao> findByStatus(@Param("statusId") Long statusId);
+  @Query("SELECT event FROM EventDao event where event.eventStatus.id = :statusId order by event.id asc")
+  List<EventDao> findByStatus(@Param("statusId") Long statusId);
 
   @Query("SELECT event FROM EventDao event where event.bannerPhotoName = :imageName")
-  public Optional<EventDao> findByImageName(@Param("imageName") String imageName);
+  Optional<EventDao> findByImageName(@Param("imageName") String imageName);
 
   @Query("SELECT event FROM EventDao event WHERE event.name LIKE %:name%")
   List<EventDao> findByName(@Param("name") String name);
+
+  List<EventDao> findAllByOrderByIdAsc();
 }
