@@ -421,7 +421,7 @@ public class EventService {
     newEvent.setTimeEventEnd(event.getTimeEventEnd());
     newEvent.setVenue(event.getVenue());
     if(event.getBannerPhoto() != null){
-      newEvent.setBannerPhoto(event.getBannerPhoto());
+      newEvent.setBannerPhoto(ImageUtil.compressImage(newEvent.getBannerPhoto()));
       newEvent.setBannerPhotoName(generateUniqueImageName(event.getBannerPhotoType()));
       newEvent.setBannerPhotoType(event.getBannerPhotoType());
     }
@@ -453,7 +453,7 @@ public class EventService {
     datetime = datetime.replace(" ", "");
     datetime = datetime.replace(":", "");
     String uuid = UUID.randomUUID().toString();
-    filename = uuid + "_" + datetime + "_" + millis + "." + imageFormat;
+    filename = uuid + "_" + datetime + "_" + millis;
     return filename;
   }
 
