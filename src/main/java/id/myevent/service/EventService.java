@@ -182,7 +182,7 @@ public class EventService {
    */
   public ViewEventListApiResponse getDraftEvent() {
 
-    List<EventDao> eventDraft = eventRepository.findByStatusOrderByIdAsc(1L);
+    List<EventDao> eventDraft = eventRepository.findByStatus(1L);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
@@ -216,7 +216,7 @@ public class EventService {
    */
   public ViewEventListApiResponse getPublisedEvent() {
 
-    List<EventDao> event = eventRepository.findByStatusOrderByIdAsc(2L);
+    List<EventDao> event = eventRepository.findByStatus(2L);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
@@ -249,7 +249,7 @@ public class EventService {
    */
   public ViewEventListApiResponse getLiveEvent() {
 
-    List<EventDao> event = eventRepository.findByStatusOrderByIdAsc(3L);
+    List<EventDao> event = eventRepository.findByStatus(3L);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
@@ -281,7 +281,7 @@ public class EventService {
    * View Event Passed Data.
    */
   public ViewEventListApiResponse getPassedEvent() {
-    List<EventDao> event = eventRepository.findByStatusOrderByIdAsc(4L);
+    List<EventDao> event = eventRepository.findByStatus(4L);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
@@ -313,7 +313,7 @@ public class EventService {
    * View Event Cancel Data.
    */
   public ViewEventListApiResponse getCancelEvent() {
-    List<EventDao> event = eventRepository.findByStatusOrderByIdAsc(5L);
+    List<EventDao> event = eventRepository.findByStatus(5L);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
