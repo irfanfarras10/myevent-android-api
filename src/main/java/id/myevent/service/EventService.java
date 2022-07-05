@@ -420,9 +420,11 @@ public class EventService {
     newEvent.setTimeEventStart(event.getTimeEventStart());
     newEvent.setTimeEventEnd(event.getTimeEventEnd());
     newEvent.setVenue(event.getVenue());
-    newEvent.setBannerPhoto(event.getBannerPhoto());
-    newEvent.setBannerPhotoName(generateUniqueImageName(event.getBannerPhotoType()));
-    newEvent.setBannerPhotoType(event.getBannerPhotoType());
+    if(event.getBannerPhoto() != null){
+      newEvent.setBannerPhoto(event.getBannerPhoto());
+      newEvent.setBannerPhotoName(generateUniqueImageName(event.getBannerPhotoType()));
+      newEvent.setBannerPhotoType(event.getBannerPhotoType());
+    }
     newEvent.setEventStatus(eventStatus.get());
     newEvent.setEventCategory(eventCategory.get());
     newEvent.setEventVenueCategory(eventVenueCategory.get());
@@ -494,9 +496,6 @@ public class EventService {
     }
     if (globalUtil.isBlankString(event.getDescription())) {
       throw new ConflictException("Deskripsi event harus diisi");
-    }
-    if (event.getBannerPhoto() == null) {
-      throw new ConflictException("Foto event harus di unggah");
     }
     if (event.getEventStatusId() == null) {
       throw new ConflictException("Status event harus dilpilih");

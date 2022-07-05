@@ -190,7 +190,7 @@ public class EventController {
       @RequestParam("timeEventStart") Long timeEventStart,
       @RequestParam("timeEventEnd") Long timeEventEnd,
       @RequestParam("location") String location,
-      @RequestParam("bannerPhoto") MultipartFile bannerPhoto,
+      @RequestParam(value = "bannerPhoto", required = false) MultipartFile bannerPhoto,
       @RequestParam("eventStatusId") Long eventStatusId,
       @RequestParam("eventCategoryId") Long eventCategoryId,
       @RequestParam("eventVenueCategoryId") Long eventVenueCategoryId,
@@ -205,8 +205,10 @@ public class EventController {
     eventUpdate.setTimeEventStart(timeEventStart);
     eventUpdate.setTimeEventEnd(timeEventEnd);
     eventUpdate.setVenue(location);
-    eventUpdate.setBannerPhoto(bannerPhoto.getBytes());
-    eventUpdate.setBannerPhotoType(bannerPhoto.getContentType());
+    if(bannerPhoto != null){
+      eventUpdate.setBannerPhoto(bannerPhoto.getBytes());
+      eventUpdate.setBannerPhotoType(bannerPhoto.getContentType());
+    }
     eventUpdate.setEventStatusId(eventStatusId);
     eventUpdate.setEventCategoryId(eventCategoryId);
     eventUpdate.setEventVenueCategoryId(eventVenueCategoryId);
