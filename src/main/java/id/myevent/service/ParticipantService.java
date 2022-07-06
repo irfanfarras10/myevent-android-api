@@ -70,7 +70,7 @@ public class ParticipantService {
     // insert to ticket participant data
 
     Date today = Calendar.getInstance().getTime();
-    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy HH:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
     String currentTime = sdf.format(today);
     Long epochTime;
     try {
@@ -101,7 +101,7 @@ public class ParticipantService {
       throw new ConflictException(exceptionMessage);
     }
     //TODO: send email
-    emailService.sendMessage(eventId, participant.getId(), ticketParticipant.getId());
+    //emailService.sendMessage(eventId, participant.getId(), ticketParticipant.getId());
   }
 
   private String generateUniqueImageName(String imageFormat) {
