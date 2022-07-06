@@ -508,11 +508,11 @@ public class EmailService {
         "      <table style=\"margin:0;padding:0;border:0;box-sizing:border-box;\">\n" +
         "        <tr style=\"margin:0;padding:0;border:0;box-sizing:border-box;\">\n" +
         "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">Nama</td>\n" +
-        "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">Nama Peserta</td>\n" +
+        "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">"+participantData.getName()+"</td>\n" +
         "        </tr>\n" +
         "        <tr style=\"margin:0;padding:0;border:0;box-sizing:border-box;\">\n" +
         "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">Tanggal Event</td>\n" +
-        "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">2 Juni 2022</td>\n" +
+        "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">"+dateTime+"</td>\n" +
         "        </tr>\n" +
         "      </table>\n" +
         "      <br />\n" +
@@ -521,20 +521,17 @@ public class EmailService {
         "        <article class=\"card fl-left\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;float:left;display:table-row;width:49%;background-color:#fff;color:#989898;margin-bottom:10px;font-family:'Oswald', sans-serif;text-transform:uppercase;border-radius:4px;position:relative;\">\n" +
         "          <section class=\"date\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;width:25%;position:relative;text-align:center;border-right:2px dashed #e8e9eb;\">\n" +
         "            <time datetime=\"23th feb\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:block;position:absolute;top:50%;left:50%;-webkit-transform:translate(-50%, -50%);-ms-transform:translate(-50%, -50%);transform:translate(-50%, -50%);\">\n" +
-        "              <!--jenis tiket-->\n" +
-        "              Jenis Tiket\n" +
+        "              "+ticketParticipantData.getTicket().getName()+"\n" +
         "        </time>\n" +
         "          </section>\n" +
         "          <section class=\"card-cont\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;width:75%;font-size:85%;padding:10px 10px 30px 50px;\">\n" +
-        "            <!--nama peserta-->\n" +
-        "            <small style=\"margin:0;padding:0;border:0;box-sizing:border-box;\">Nama Peserta</small>\n" +
-        "            <!--nama event-->\n" +
-        "            <h3 style=\"margin:0;padding:0;border:0;box-sizing:border-box;color:#3C3C3C;font-size:130%;\">Nama Event</h3>\n" +
+        "            <small style=\"margin:0;padding:0;border:0;box-sizing:border-box;\">"+participantData.getName()+"</small>\n" +
+        "            <h3 style=\"margin:0;padding:0;border:0;box-sizing:border-box;color:#3C3C3C;font-size:130%;\">"+eventData.getName()+"</h3>\n" +
         "            <div class=\"even-date\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-row;\">\n" +
         "              <i class=\"fa fa-calendar\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;padding:5% 5% 0 0;\"></i>\n" +
         "              <time style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;\">\n" +
         "                <!--tanggal event-->\n" +
-        "                <span style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:block;\">Rabu, 10 Desember 2022</span>\n" +
+        "                <span style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:block;\">"+dateTime+"</span>\n" +
         "                <!--waktu event-->\n" +
         "                <span style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:block;\">08:55 - 12:00</span>\n" +
         "              </time>\n" +
@@ -543,7 +540,7 @@ public class EmailService {
         "              <i class=\"fa fa-map-marker\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;padding:5% 5% 0 0;\"></i>\n" +
         "              <p style=\"margin:0;padding:0;border:0;box-sizing:border-box;padding-left:20px,;display:table-cell;padding:30px 50px 0 0;\">\n" +
         "                <!--lokasi event-->\n" +
-        "                Lokasi Event\n" +
+        "                "+name+" "+address_line2+"\n" +
         "          </p>\n" +
         "            </div>\n" +
         "            <a href=\"#\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:block;text-decoration:none;width:80px;height:30px;background-color:#D8DDE0;color:#fff;text-align:center;line-height:30px;border-radius:2px;position:absolute;right:10px;bottom:10px;background-color:#037FDD;background-color:#F8504C;\">booked</a>\n" +
