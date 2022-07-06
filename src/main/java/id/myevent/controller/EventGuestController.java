@@ -8,7 +8,10 @@ import id.myevent.service.EventGuestService;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.Resource;
 
 /**
  * Event Guest Controller.
@@ -58,13 +62,5 @@ public class EventGuestController {
     emailService.inviteAll(eventId);
     return new ResponseEntity(new ApiResponse("Email berhasil terkirim"), HttpStatus.OK);
   }
-
-  @GetMapping("/events/{eventId}/guest/{guestId}/invite")
-  public ResponseEntity sendEmail(@PathVariable("eventId") Long eventId,
-                                  @PathVariable("guestId") Long guestId) {
-    emailService.invite(eventId, guestId);
-    return new ResponseEntity(new ApiResponse("Email berhasil terkirim"), HttpStatus.OK);
-  }
-
 
 }
