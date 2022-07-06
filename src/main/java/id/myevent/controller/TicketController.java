@@ -1,6 +1,7 @@
 package id.myevent.controller;
 
 import id.myevent.model.apiresponse.ApiResponse;
+import id.myevent.model.apiresponse.ViewTicketApiResponse;
 import id.myevent.model.dto.TicketDto;
 import id.myevent.service.TicketService;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,5 +40,10 @@ public class TicketController {
                                                 @RequestBody TicketDto ticketDto) {
     ticketService.updateTicket(eventId, ticketId, ticketDto);
     return new ResponseEntity(new ApiResponse("Tiket Berhasil di Update"), HttpStatus.OK);
+  }
+
+  @GetMapping("/events/{eventId}/tickets")
+  public ViewTicketApiResponse getEventTickets(@PathVariable("eventId") Long eventId) {
+    return ticketService.getEventTickets(eventId);
   }
 }

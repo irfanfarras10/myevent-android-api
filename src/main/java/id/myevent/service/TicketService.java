@@ -1,13 +1,17 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
+import id.myevent.model.apiresponse.ViewEventPaymentApiResponse;
+import id.myevent.model.apiresponse.ViewTicketApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dao.EventPaymentCategoryDao;
+import id.myevent.model.dao.EventPaymentDao;
 import id.myevent.model.dao.TicketDao;
 import id.myevent.model.dto.TicketDto;
 import id.myevent.repository.EventPaymentCategoryRepository;
 import id.myevent.repository.EventRepository;
 import id.myevent.repository.TicketRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,5 +124,16 @@ public class TicketService {
     if (ticketData.getDateTimeRegistrationStart() >= eventData.getTimeEventStart()) {
       throw new ConflictException("Tanggal registrasi harus sebelum tanggal pelaksanaan event");
     }
+  }
+
+  /**
+   * Get List of Ticket by Event.
+   */
+  public ViewTicketApiResponse getEventTickets(Long eventId) {
+    List<TicketDao> eventTickets =
+        (List<TicketDao>) ticketRepository.findByEvent(eventId);
+    ViewTicketApiResponse viewTicketApiResponse = new ViewTicketApiResponse();
+    viewTicketApiResponse.setTicketList(eventTickets);
+    return viewTicketApiResponse;
   }
 }
