@@ -80,7 +80,9 @@ public class EmailService {
       // get multiple email
       for (int i = 0; i < eventGuest.size(); i++) {
         String email = eventGuest.get(i).getEmail();
-        guests.add(email);
+        if(eventGuest.get(i).isAlreadyShared() == false){
+          guests.add(email);
+        }
       }
       String[] mailsArray = guests.toArray(new String[0]);
       log.warn(String.valueOf(mailsArray));
@@ -102,47 +104,6 @@ public class EmailService {
         eventGuest.get(j).setAlreadyShared(true);
         eventGuestRepository.save(eventGuest.get(j));
       }
-    } catch (Exception e) {
-      throw new ConflictException("Email gagal dikirim");
-    }
-  }
-
-  /**
-   * Invite Guest.
-   */
-  public void invite(Long eventId, Long guestId) {
-    final EventDao eventData = eventRepository.findById(eventId).get();
-    EventGuestDao guestData = eventGuestRepository.findById(guestId).get();
-
-    final String emailMessage = mailMessage(eventData);
-
-    try {
-      generateIcs(eventData);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    try {
-      MimeMessage message = javaMailSender.createMimeMessage();
-
-      MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
-
-      messageHelper.setTo(guestData.getEmail());
-      messageHelper.setCc(eventData.getEventOrganizer().getEmail());
-      messageHelper.setSubject("Event Invitation - " + eventData.getName());
-      messageHelper.setText(emailMessage, true);
-
-      String filePath = new File("calendar").getAbsolutePath() + "\\" + eventData.getName()
-          + eventData.getTimeEventStart() + ".ics";
-      FileSystemResource resource = new FileSystemResource(new File(filePath));
-
-      messageHelper.addAttachment("event.ics", resource);
-
-      javaMailSender.send(message);
-
-      // change email status in Event Guest
-      guestData.setAlreadyShared(true);
-      eventGuestRepository.save(guestData);
     } catch (Exception e) {
       throw new ConflictException("Email gagal dikirim");
     }

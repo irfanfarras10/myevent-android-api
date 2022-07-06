@@ -21,7 +21,6 @@ import lombok.Data;
 public class EventGuestDao {
 
   @Id
-  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
