@@ -12,6 +12,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Data;
 
+/**
+ * Ticket Participant Dao.
+ */
 @Entity
 @Table(name = "ticket_participant")
 @Data
@@ -33,7 +36,7 @@ public class TicketParticipantDao {
 
   @JsonIgnore
   @ManyToOne()
-  @JoinColumn(name = "event_payment_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "event_payment_id", referencedColumnName = "id")
   private EventPaymentDao eventPayment;
 
   @Column(name = "event_date")
@@ -46,14 +49,14 @@ public class TicketParticipantDao {
   private String status;
 
   @JsonIgnore
-  @Column(name = "payment_photo_proof", unique = false, nullable = false)
+  @Column(name = "payment_photo_proof")
   private byte[] paymentPhotoProof;
 
   @JsonIgnore
-  @Column(name = "payment_proof_name", nullable = false)
+  @Column(name = "payment_proof_name")
   private String paymentPhotoName;
 
   @JsonIgnore
-  @Column(name = "payment_proof_type", nullable = false)
+  @Column(name = "payment_proof_type")
   private String paymentPhotoType;
 }

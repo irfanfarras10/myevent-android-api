@@ -138,6 +138,7 @@ public class EmailService {
     final EventStatusDao cancelledEventStatus = eventStatusRepository.findById(5L).get();
     List<String> guests = new ArrayList<>();
     List<EventGuestDao> eventGuest = eventGuestRepository.findByEvent(id);
+    List<ParticipantDao> participants = participantRepository.findByEvent(id);
     String valueMessage = message.getMessage();
 
     final String emailMessage = mailCancelMessage(event, valueMessage);
@@ -148,13 +149,16 @@ public class EmailService {
 
       MimeMessageHelper messageHelper = new MimeMessageHelper(messages, true);
 
-      //TODO: get all data participants & guest
       //get multiple email guests
       for (int i = 0; i < eventGuest.size(); i++) {
         String email = eventGuest.get(i).getEmail();
         guests.add(email);
       }
       //get multiple email participants
+      for (int j = 0; j <participants.size(); j++){
+        String email = participants.get(j).getEmail();
+        guests.add(email);
+      }
       String[] mailsArray = guests.toArray(new String[0]);
       log.warn(String.valueOf(mailsArray));
       messageHelper.setTo(mailsArray);
@@ -672,6 +676,57 @@ public class EmailService {
         "</html>";
 
     return ticketHtlm;
+  }
+
+  /**
+   * Reject Participant.
+   */
+  public void reject(Long eventId, Long participantId) {
+
+    EventDao event = eventRepository.findById(eventId).get();
+    ParticipantDao participantData = participantRepository.findById(participantId).get();
+
+    final String emailMessage = mailRejectMessage(event, participantData);
+
+    //send message to all participants & guest
+    try {
+      MimeMessage messages = javaMailSender.createMimeMessage();
+
+      MimeMessageHelper messageHelper = new MimeMessageHelper(messages, true);
+
+      messageHelper.setTo(participantData.getEmail());
+      messageHelper.setCc(event.getEventOrganizer().getEmail());
+      messageHelper.setSubject("Payment Rejection - " + event.getName());
+      messageHelper.setText(emailMessage, true);
+
+      javaMailSender.send(messages);
+
+    } catch (Exception e) {
+      throw new ConflictException("Email gagal dikirim");
+    }
+
+  }
+
+  /**
+   * Generate Message for reject participant.
+   */
+  public String mailRejectMessage(EventDao eventData, ParticipantDao participantData) {
+
+    DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    String dateTime = sdf.format(eventData.getTimeEventStart());
+
+    final String emailMessage = "<html>\n" +
+        "<body>\n" +
+        "    <p>Kepada Bapak/Ibu,</p>\n" +
+        "    <p>Dengan email ini, kami ingin menginformasikan anda bahwa pembayaran berikut untuk Acara "+eventData.getName()+" telah Ditolak.</p>\n" +
+        "    <p>Nama: "+participantData.getName()+"</p>\n" +
+        "    <p>Email: "+participantData.getEmail()+"</p>\n" +
+        "    <p>No Telepon: "+participantData.getPhoneNumber()+"</p>\n" +
+        "    <p>Demikian informasi ini disampaikan, mohon menghubungi tim dari "+eventData.getEventOrganizer().getOrganizerName()+".</p>\n" +
+        "</body>\n" +
+        "</html>";
+
+    return emailMessage;
   }
 
 }
