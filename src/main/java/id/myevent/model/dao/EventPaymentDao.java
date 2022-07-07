@@ -20,7 +20,6 @@ import lombok.Data;
 public class EventPaymentDao {
 
   @Id
-  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
