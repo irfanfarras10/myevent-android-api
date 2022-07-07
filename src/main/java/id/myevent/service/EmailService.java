@@ -681,12 +681,12 @@ public class EmailService {
   /**
    * Reject Participant.
    */
-  public void reject(Long eventId, Long participantId) {
+  public void reject(Long eventId, Long participantId, CancelMessage message) {
 
     EventDao event = eventRepository.findById(eventId).get();
     ParticipantDao participantData = participantRepository.findById(participantId).get();
-
-    final String emailMessage = mailRejectMessage(event, participantData);
+    String valueMessage = message.getMessage();
+    final String emailMessage = mailRejectMessage(event, participantData, valueMessage);
 
     //send message to all participants & guest
     try {
@@ -710,15 +710,12 @@ public class EmailService {
   /**
    * Generate Message for reject participant.
    */
-  public String mailRejectMessage(EventDao eventData, ParticipantDao participantData) {
-
-    DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-    String dateTime = sdf.format(eventData.getTimeEventStart());
+  public String mailRejectMessage(EventDao eventData, ParticipantDao participantData, String message) {
 
     final String emailMessage = "<html>\n" +
         "<body>\n" +
         "    <p>Kepada Bapak/Ibu,</p>\n" +
-        "    <p>Dengan email ini, kami ingin menginformasikan anda bahwa pembayaran berikut untuk Acara "+eventData.getName()+" telah Ditolak.</p>\n" +
+        "    <p>Dengan email ini, kami ingin menginformasikan anda bahwa pembayaran berikut untuk Acara "+eventData.getName()+" telah Ditolak dengan alasan "+message+".</p>\n" +
         "    <p>Nama: "+participantData.getName()+"</p>\n" +
         "    <p>Email: "+participantData.getEmail()+"</p>\n" +
         "    <p>No Telepon: "+participantData.getPhoneNumber()+"</p>\n" +
