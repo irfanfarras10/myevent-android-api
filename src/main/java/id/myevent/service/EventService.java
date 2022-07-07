@@ -1,6 +1,7 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
+import id.myevent.model.apiresponse.DateEvent;
 import id.myevent.model.apiresponse.EventData;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
@@ -25,12 +26,19 @@ import id.myevent.util.GlobalUtil;
 import id.myevent.util.ImageUtil;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -550,6 +558,33 @@ public class EventService {
     log.warn("tanggal event selesai: " + endEventTime);
     passedEventTask.setEvent(event);
     taskScheduler.schedule(passedEventTask, endEventTime);
+  }
+
+  public DateEvent getListDate(Long eventId){
+    EventDao event = eventRepository.findById(eventId).get();
+
+    System.setProperty("net.fortuna.ical4j.timezone.cache.impl",
+        "net.fortuna.ical4j.util.MapTimeZoneCache");
+
+    LocalDate startDate = Instant.ofEpochMilli(event.getTimeEventStart())
+        .atZone(ZoneId.systemDefault()).toLocalDate();
+
+    LocalDate endDate = Instant.ofEpochMilli(event.getTimeEventEnd())
+        .atZone(ZoneId.systemDefault()).toLocalDate();
+
+    long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate)+1;
+
+    List<LocalDate> getDate = IntStream.iterate(0, i -> i + 1)
+        .limit(numOfDaysBetween)
+        .mapToObj(i -> startDate.plusDays(i))
+        .collect(Collectors.toList());
+
+    DateEvent dateEvent = new DateEvent();
+    dateEvent.setLocalDates(getDate);
+
+    log.warn(dateEvent.toString());
+
+    return dateEvent;
   }
 
 
