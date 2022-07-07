@@ -138,6 +138,7 @@ public class EmailService {
     final EventStatusDao cancelledEventStatus = eventStatusRepository.findById(5L).get();
     List<String> guests = new ArrayList<>();
     List<EventGuestDao> eventGuest = eventGuestRepository.findByEvent(id);
+    List<ParticipantDao> participants = participantRepository.findByEvent(id);
     String valueMessage = message.getMessage();
 
     final String emailMessage = mailCancelMessage(event, valueMessage);
@@ -148,13 +149,16 @@ public class EmailService {
 
       MimeMessageHelper messageHelper = new MimeMessageHelper(messages, true);
 
-      //TODO: get all data participants & guest
       //get multiple email guests
       for (int i = 0; i < eventGuest.size(); i++) {
         String email = eventGuest.get(i).getEmail();
         guests.add(email);
       }
       //get multiple email participants
+      for (int j = 0; j <participants.size(); j++){
+        String email = participants.get(j).getEmail();
+        guests.add(email);
+      }
       String[] mailsArray = guests.toArray(new String[0]);
       log.warn(String.valueOf(mailsArray));
       messageHelper.setTo(mailsArray);
