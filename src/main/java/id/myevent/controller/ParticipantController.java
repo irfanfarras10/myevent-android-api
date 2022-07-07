@@ -1,6 +1,7 @@
 package id.myevent.controller;
 
 import id.myevent.model.apiresponse.ApiResponse;
+import id.myevent.model.apiresponse.CancelMessage;
 import id.myevent.model.apiresponse.ViewEventParticipantApiResponse;
 import id.myevent.model.apiresponse.ViewEventParticipantListApiResponse;
 import id.myevent.model.dao.TicketParticipantDao;
@@ -130,8 +131,9 @@ public class ParticipantController {
   @PostMapping("/events/{eventId}/participant/{participantId}/reject")
   public ResponseEntity<ApiResponse> rejectPayment(
       @PathVariable("eventId") Long eventId,
-      @PathVariable("participantId") Long participantId) {
-    emailService.reject(eventId, participantId);
+      @PathVariable("participantId") Long participantId,
+      @RequestBody CancelMessage message) {
+    emailService.reject(eventId, participantId, message);
     return ResponseEntity.ok(new ApiResponse("Pembayaran Berhasil ditolak."));
   }
 }
