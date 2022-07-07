@@ -55,7 +55,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 /**
  * Email Service.

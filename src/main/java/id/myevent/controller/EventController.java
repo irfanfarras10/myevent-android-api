@@ -4,8 +4,10 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.CancelMessage;
 import id.myevent.model.apiresponse.CreateEventApiResponse;
+import id.myevent.model.apiresponse.DateEvent;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
+import id.myevent.model.apiresponse.ViewTicketApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dto.EventDto;
 import id.myevent.model.location.Location;
@@ -238,6 +240,11 @@ public class EventController {
                                                     @RequestBody CancelMessage message) {
     emailService.cancel(id, message);
     return ResponseEntity.ok(new ApiResponse("Event Berhasil di Cancel"));
+  }
+
+  @GetMapping("/events/{eventId}/dates")
+  public DateEvent getEventDate(@PathVariable("eventId") Long eventId) {
+    return eventService.getListDate(eventId);
   }
 
 }
