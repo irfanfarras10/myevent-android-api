@@ -1,11 +1,15 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
+import id.myevent.model.apiresponse.ViewEventCategoryApiResponse;
+import id.myevent.model.apiresponse.ViewEventPaymentApiResponse;
+import id.myevent.model.dao.EventCategoryDao;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dao.EventPaymentDao;
 import id.myevent.model.dto.EventPaymentDto;
 import id.myevent.repository.EventPaymentRepository;
 import id.myevent.repository.EventRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,5 +71,16 @@ public class EventPaymentService {
     } else {
       throw new ConflictException("Event harus di status Draft");
     }
+  }
+
+  /**
+   * Get List of Payment by Event.
+   */
+  public ViewEventPaymentApiResponse getEventPayments(Long eventId) {
+    List<EventPaymentDao> eventPayments =
+        (List<EventPaymentDao>) eventPaymentRepository.findByEvent(eventId);
+    ViewEventPaymentApiResponse viewEventPaymentApiResponse = new ViewEventPaymentApiResponse();
+    viewEventPaymentApiResponse.setEventPayments(eventPayments);
+    return viewEventPaymentApiResponse;
   }
 }
