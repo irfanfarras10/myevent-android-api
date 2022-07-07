@@ -2,6 +2,7 @@ package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
 import id.myevent.model.apiresponse.CancelMessage;
+import id.myevent.model.apiresponse.HtmlToImageApiResponse;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dao.EventGuestDao;
 import id.myevent.model.dao.EventStatusDao;
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.TimeZone;
 import javax.mail.internet.MimeMessage;
@@ -43,9 +45,15 @@ import net.fortuna.ical4j.util.UidGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
@@ -175,7 +183,25 @@ public class EmailService {
     TicketParticipantDao ticketParticipant =
         ticketParticipantRepository.findById(ticketParticipantId).get();
 
-    final String emailMessage = mailParticipant(event, participant, ticketParticipant);
+    String usernameColonPassword = "d2f83dca-182d-4d85-9e6f-7c6e9c697745:9711011a-8f20-4860-af2b-f787085cdb73";
+    String basicAuthPayload = "Basic " + Base64.getEncoder().encodeToString(usernameColonPassword.getBytes());
+
+    String url = "https://hcti.io/v1/image";
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    headers.add("Authorization", basicAuthPayload);
+    headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+
+    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+    body.add("html", ticketHtml(event, ticketParticipant, participant));
+    HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
+
+    log.warn(basicAuthPayload);
+    HtmlToImageApiResponse ticket = restTemplate.postForObject(url, request, HtmlToImageApiResponse.class);
+
+    log.warn(ticket.getUrl());
+    final String emailMessage = mailParticipant(event, ticket.getUrl());
 
     try {
       generateIcs(event);
@@ -209,348 +235,32 @@ public class EmailService {
   /**
    * Generate Message for participant.
    */
-  public String mailParticipant(EventDao eventData, ParticipantDao participantData,
-                                TicketParticipantDao ticketParticipantData) {
+  public String mailParticipant(EventDao eventData, String url) {
 
-    DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm");
-    String dateTime = sdf.format(ticketParticipantData.getEvent_date());
-
-    String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
-    String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
-
-    Location loc = getLocation(lat, lon);
-    String name = loc.features.get(0).properties.name;
-    String address_line2 = loc.features.get(0).properties.address_line2;
-
-//    final String emailMessage = "<!DOCTYPE html>\n" +
-//        "<html>\n" +
-//        "<head>\n" +
-//        "  <title>'Tiket'</title>\n" +
-//        "  <style type=\"text/css\">\n" +
-//        "    @import url('https://fonts.googleapis.com/css?family=Oswald');\n" +
-//        "  * {\n" +
-//        "    margin: 0;\n" +
-//        "    padding: 0;\n" +
-//        "    border: 0;\n" +
-//        "    box-sizing: border-box\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  body {\n" +
-//        "    background-color: #e8e9eb;\n" +
-//        "    font-family: arial\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .container {\n" +
-//        "  padding-top: 20px;\n" +
-//        "  padding-bottom: 20px;\n" +
-//        "  padding-right: 20px;\n" +
-//        "  padding-left: 20px;\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .fl-left {\n" +
-//        "    float: left\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .fl-right {\n" +
-//        "    float: right\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  h1 {\n" +
-//        "    text-transform: uppercase;\n" +
-//        "    font-weight: 900;\n" +
-//        "    border-left: 10px solid #fec500;\n" +
-//        "    padding-left: 10px;\n" +
-//        "    margin-bottom: 10px\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .information, p {\n" +
-//        "  padding-left: 20px,\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .row {\n" +
-//        "    overflow: hidden\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card {\n" +
-//        "    display: table-row;\n" +
-//        "    width: 49%;\n" +
-//        "    background-color: #fff;\n" +
-//        "    color: #989898;\n" +
-//        "    margin-bottom: 10px;\n" +
-//        "    font-family: 'Oswald', sans-serif;\n" +
-//        "    text-transform: uppercase;\n" +
-//        "    border-radius: 4px;\n" +
-//        "    position: relative\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card+.card {\n" +
-//        "    margin-left: 2%\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .date {\n" +
-//        "    display: table-cell;\n" +
-//        "    width: 25%;\n" +
-//        "    position: relative;\n" +
-//        "    text-align: center;\n" +
-//        "    border-right: 2px dashed #e8e9eb\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .date:before,\n" +
-//        "  .date:after {\n" +
-//        "    content: \"\";\n" +
-//        "    display: block;\n" +
-//        "    width: 30px;\n" +
-//        "    height: 30px;\n" +
-//        "    background-color: #e8e9eb;\n" +
-//        "    position: absolute;\n" +
-//        "    top: -15px;\n" +
-//        "    right: -15px;\n" +
-//        "    z-index: 1;\n" +
-//        "    border-radius: 50%\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .date:after {\n" +
-//        "    top: auto;\n" +
-//        "    bottom: -15px\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .date time {\n" +
-//        "    display: block;\n" +
-//        "    position: absolute;\n" +
-//        "    top: 50%;\n" +
-//        "    left: 50%;\n" +
-//        "    -webkit-transform: translate(-50%, -50%);\n" +
-//        "    -ms-transform: translate(-50%, -50%);\n" +
-//        "    transform: translate(-50%, -50%)\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .date time span {\n" +
-//        "    display: block\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .date time span:first-child {\n" +
-//        "    color: #2b2b2b;\n" +
-//        "    font-weight: 600;\n" +
-//        "    font-size: 250%\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .date time span:last-child {\n" +
-//        "    text-transform: uppercase;\n" +
-//        "    font-weight: 600;\n" +
-//        "    margin-top: -10px\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card-cont {\n" +
-//        "    display: table-cell;\n" +
-//        "    width: 75%;\n" +
-//        "    font-size: 85%;\n" +
-//        "    padding: 10px 10px 30px 50px\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card-cont h3 {\n" +
-//        "    color: #3C3C3C;\n" +
-//        "    font-size: 130%\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card-cont>div {\n" +
-//        "    display: table-row\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card-cont .even-date i,\n" +
-//        "  .card-cont .even-info i,\n" +
-//        "  .card-cont .even-date time,\n" +
-//        "  .card-cont .even-info p {\n" +
-//        "    display: table-cell\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card-cont .even-date i,\n" +
-//        "  .card-cont .even-info i {\n" +
-//        "    padding: 5% 5% 0 0\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card-cont .even-info p {\n" +
-//        "    padding: 30px 50px 0 0\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card-cont .even-date time span {\n" +
-//        "    display: block\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .card-cont a {\n" +
-//        "    display: block;\n" +
-//        "    text-decoration: none;\n" +
-//        "    width: 80px;\n" +
-//        "    height: 30px;\n" +
-//        "    background-color: #D8DDE0;\n" +
-//        "    color: #fff;\n" +
-//        "    text-align: center;\n" +
-//        "    line-height: 30px;\n" +
-//        "    border-radius: 2px;\n" +
-//        "    position: absolute;\n" +
-//        "    right: 10px;\n" +
-//        "    bottom: 10px\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .row:last-child .card:first-child .card-cont a {\n" +
-//        "    background-color: #037FDD\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  .row:last-child .card:last-child .card-cont a {\n" +
-//        "    background-color: #F8504C\n" +
-//        "  }\n" +
-//        "\n" +
-//        "  td {\n" +
-//        "            border: 1px solid black;\n" +
-//        "            padding: 10px;\n" +
-//        "         }\n" +
-//        "\n" +
-//        "  @media screen and (max-width: 860px) {\n" +
-//        "    .card {\n" +
-//        "        display: block;\n" +
-//        "        float: none;\n" +
-//        "        width: 100%;\n" +
-//        "        margin-bottom: 10px\n" +
-//        "    }\n" +
-//        "    .card+.card {\n" +
-//        "        margin-left: 0\n" +
-//        "    }\n" +
-//        "    .card-cont .even-date,\n" +
-//        "    .card-cont .even-info {\n" +
-//        "        font-size: 75%\n" +
-//        "    }\n" +
-//        "  }\n" +
-//        "  </style>\n" +
-//        "</head>\n" +
-//        "<body>\n" +
-//        "  <h1>Pembelian Tiket Berhasil</h1>\n" +
-//        "  <section class=\"container\">\n" +
-//        "    <!--event information-->\n" +
-//        "    <p>Detail Event</p>\n" +
-//        "    <table>\n" +
-//        "      <tr>\n" +
-//        "        <td>Nama</td>\n" +
-//        "        <td>Nama Peserta</td>\n" +
-//        "      </tr>\n" +
-//        "      <tr>\n" +
-//        "        <td>Tanggal Event</td>\n" +
-//        "        <td>2 Juni 2022</td>\n" +
-//        "      </tr>\n" +
-//        "    </table><br></br>\n" +
-//        "    <h1>Tiket</h1>\n" +
-//        "    <div class=\"row\">\n" +
-//        "      <article class=\"card fl-left\">\n" +
-//        "        <section class=\"date\">\n" +
-//        "          <time datetime=\"23th feb\"><!--jenis tiket-->\n" +
-//        "           Jenis Tiket</time>\n" +
-//        "        </section>\n" +
-//        "        <section class=\"card-cont\">\n" +
-//        "          <!--nama peserta-->\n" +
-//        "          <small>Nama Peserta</small> <!--nama event-->\n" +
-//        "          <h3>Nama Event</h3>\n" +
-//        "          <div class=\"even-date\">\n" +
-//        "             <span>Rabu, 10 Desember 2022</span> <!--waktu event-->\n" +
-//        "             <span>08:55 - 12:00</span>\n" +
-//        "          </div>\n" +
-//        "          <div class=\"even-info\">\n" +
-//        "            <p><!--lokasi event-->\n" +
-//        "             Lokasi Event</p>\n" +
-//        "          </div><a href=\"#\">booked</a>\n" +
-//        "        </section>\n" +
-//        "      </article>\n" +
-//        "    </div>\n" +
-//        "  </section>\n" +
-//        "</body>\n" +
-//        "</html>";
-
-//    final String emailMessage = "<html>\n" +
-//        "    <body>\n" +
-//        "        <h1>Hello Simple Solution</h1>\n" +
-//        "        <img width=\"140\" src=\"https://simplesolution.dev/images/Logo_S_v1.png\" />\n" +
-//        "     </body>\n" +
-//        "</html>";
-//
-//    generatePdf(emailMessage);
+    String ticketSrc =        "    <form action=\""+url+"\" style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "        <button class=\"gfg\" type=\"submit\" style=\"font-family: 'Inter', sans-serif;background-color: white;border: 2px solid black;padding: 5px 10px;text-align: center;display: inline-block;font-size: 20px;cursor: pointer;\">\n" +
+        "            Unduh Tiket\n" +
+        "        </button>\n" +
+        "    </form>\n";
 
     final String emailMessage = "<!DOCTYPE html>\n" +
-        "<html>\n" +
-        "  <head>\n" +
-        "    <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n" +
-        "    <title>'Tiket'</title>\n" +
-        "    <style>\n" +
-        "      .date:before{content:\"\";display:block;width:30px;height:30px;background-color:#e8e9eb;position:absolute;top:-15px;right:-15px;z-index:1;border-radius:50%}\n" +
-        "      .date:after{content:\"\";display:block;width:30px;height:30px;background-color:#e8e9eb;position:absolute;top:-15px;right:-15px;z-index:1;border-radius:50%}\n" +
-        "      .date:after{top:auto;bottom:-15px}\n" +
-        "    </style>\n" +
-        "    <style type=\"text/css\">\n" +
-        "      @import url('https://fonts.googleapis.com/css?family=Oswald');\n" +
-        "      @media screen and (max-width: 860px) {\n" +
-        "          .card {\n" +
-        "              display: block;\n" +
-        "              float: none;\n" +
-        "              width: 100%;\n" +
-        "              margin-bottom: 10px\n" +
-        "          }\n" +
-        "          .card+.card {\n" +
-        "              margin-left: 0\n" +
-        "          }\n" +
-        "          .card-cont .even-date,\n" +
-        "          .card-cont .even-info {\n" +
-        "              font-size: 75%\n" +
-        "          }\n" +
-        "      }\n" +
-        "    </style>\n" +
-        "  </head>\n" +
-        "  <body style=\"margin:0;padding:0;border:0;box-sizing:border-box;background-color:#e8e9eb;font-family:arial;\">\n" +
-        "    <h1 style=\"margin:0;padding:0;border:0;box-sizing:border-box;text-transform:uppercase;font-weight:900;border-left:10px solid #fec500;padding-left:10px;margin-bottom:10px;\">Pembelian Tiket Berhasil</h1>\n" +
-        "    <section class=\"container\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;padding-top:20px;padding-bottom:20px;padding-right:20px;padding-left:20px;\">\n" +
-        "      <!--event information-->\n" +
-        "      <p style=\"margin:0;padding:0;border:0;box-sizing:border-box;padding-left:20px,;\"> Detail Event </p>\n" +
-        "      <table style=\"margin:0;padding:0;border:0;box-sizing:border-box;\">\n" +
-        "        <tr style=\"margin:0;padding:0;border:0;box-sizing:border-box;\">\n" +
-        "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">Nama</td>\n" +
-        "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">"+participantData.getName()+"</td>\n" +
-        "        </tr>\n" +
-        "        <tr style=\"margin:0;padding:0;border:0;box-sizing:border-box;\">\n" +
-        "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">Tanggal Event</td>\n" +
-        "          <td style=\"margin:0;padding:0;border:0;box-sizing:border-box;border:1px solid black;padding:10px;\">"+dateTime+"</td>\n" +
-        "        </tr>\n" +
-        "      </table>\n" +
-        "      <br />\n" +
-        "      <h1 style=\"margin:0;padding:0;border:0;box-sizing:border-box;text-transform:uppercase;font-weight:900;border-left:10px solid #fec500;padding-left:10px;margin-bottom:10px;\">Tiket</h1>\n" +
-        "      <div class=\"row\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;overflow:hidden;\">\n" +
-        "        <article class=\"card fl-left\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;float:left;display:table-row;width:49%;background-color:#fff;color:#989898;margin-bottom:10px;font-family:'Oswald', sans-serif;text-transform:uppercase;border-radius:4px;position:relative;\">\n" +
-        "          <section class=\"date\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;width:25%;position:relative;text-align:center;border-right:2px dashed #e8e9eb;\">\n" +
-        "            <time datetime=\"23th feb\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:block;position:absolute;top:50%;left:50%;-webkit-transform:translate(-50%, -50%);-ms-transform:translate(-50%, -50%);transform:translate(-50%, -50%);\">\n" +
-        "              "+ticketParticipantData.getTicket().getName()+"\n" +
-        "        </time>\n" +
-        "          </section>\n" +
-        "          <section class=\"card-cont\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;width:75%;font-size:85%;padding:10px 10px 30px 50px;\">\n" +
-        "            <small style=\"margin:0;padding:0;border:0;box-sizing:border-box;\">"+participantData.getName()+"</small>\n" +
-        "            <h3 style=\"margin:0;padding:0;border:0;box-sizing:border-box;color:#3C3C3C;font-size:130%;\">"+eventData.getName()+"</h3>\n" +
-        "            <div class=\"even-date\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-row;\">\n" +
-        "              <i class=\"fa fa-calendar\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;padding:5% 5% 0 0;\"></i>\n" +
-        "              <time style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;\">\n" +
-        "                <!--tanggal event-->\n" +
-        "                <span style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:block;\">"+dateTime+"</span>\n" +
-        "                <!--waktu event-->\n" +
-        "                <span style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:block;\">08:55 - 12:00</span>\n" +
-        "              </time>\n" +
-        "            </div>\n" +
-        "            <div class=\"even-info\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-row;\">\n" +
-        "              <i class=\"fa fa-map-marker\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:table-cell;padding:5% 5% 0 0;\"></i>\n" +
-        "              <p style=\"margin:0;padding:0;border:0;box-sizing:border-box;padding-left:20px,;display:table-cell;padding:30px 50px 0 0;\">\n" +
-        "                <!--lokasi event-->\n" +
-        "                "+name+" "+address_line2+"\n" +
-        "          </p>\n" +
-        "            </div>\n" +
-        "            <a href=\"#\" style=\"margin:0;padding:0;border:0;box-sizing:border-box;display:block;text-decoration:none;width:80px;height:30px;background-color:#D8DDE0;color:#fff;text-align:center;line-height:30px;border-radius:2px;position:absolute;right:10px;bottom:10px;background-color:#037FDD;background-color:#F8504C;\">booked</a>\n" +
-        "          </section>\n" +
-        "        </article>\n" +
-        "      </div>\n" +
-        "    </section>\n" +
-        "  </body>\n" +
+        "<html style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "<head style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin style=\"font-family: 'Inter', sans-serif;\">\n" +
+        " \n" +
+        " \n" +
+        "    \n" +
+        "    </head>\n" +
+        "<body style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "    <h1 style=\"font-family: 'Inter', sans-serif;\">Registrasi Berhasil</h1>\n" +
+        "    <div style=\"font-family: 'Inter', sans-serif;\">Selamat! Registrasi Anda berhasil untuk mengikuti event "+eventData.getName()+"</div><br style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "    <div style=\"font-family: 'Inter', sans-serif;\">Silakan mengunduh file Tiket untuk menjadi bukti keikutsertaan Anda dalam mengikuti Event.</div>\n" +
+        "    <br style=\"font-family: 'Inter', sans-serif;\">\n" +
+        ""+ticketSrc+
+        "</body>\n" +
+        "\n" +
         "</html>";
-
 
     return emailMessage;
   }
@@ -712,14 +422,257 @@ public class EmailService {
     }
   }
 
-  public void generatePdf(String htmlContent){
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    ITextRenderer renderer = new ITextRenderer();
-    renderer.setDocumentFromString(htmlContent);
-    renderer.layout();
-    renderer.createPDF(outputStream, false);
-    renderer.finishPDF();
-    ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+  public String ticketHtml(EventDao eventData, TicketParticipantDao ticketData, ParticipantDao participantData){
+    DateFormat sdf = new SimpleDateFormat("EEEE, dd. MMMM yyyy HH:mm");
+    String dateTime = sdf.format(eventData.getTimeEventStart());
+
+    String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
+    String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
+
+    Location loc = getLocation(lat, lon);
+    String name = loc.features.get(0).properties.name;
+    String address_line2 = loc.features.get(0).properties.address_line2;
+
+    String ticketHtlm = "<!DOCTYPE html>\n" +
+        "<html>\n" +
+        "  <head>\n" +
+        "    <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" +
+        "    <title>'Tiket'</title>\n" +
+        "   <style type=\"text/css\">\n" +
+        "    @import url('https://fonts.googleapis.com/css?family=Oswald');\n" +
+        "* {\n" +
+        "    margin: 0;\n" +
+        "    padding: 0;\n" +
+        "    border: 0;\n" +
+        "    box-sizing: border-box\n" +
+        "}\n" +
+        "\n" +
+        "body {\n" +
+        "    background-color: #e8e9eb;\n" +
+        "    font-family: arial\n" +
+        "}\n" +
+        "\n" +
+        ".container {\n" +
+        "  padding-top: 20px;\n" +
+        "  padding-bottom: 20px;\n" +
+        "  padding-right: 20px;\n" +
+        "  padding-left: 20px;\n" +
+        "}\n" +
+        "\n" +
+        ".fl-left {\n" +
+        "    float: left\n" +
+        "}\n" +
+        "\n" +
+        ".fl-right {\n" +
+        "    float: right\n" +
+        "}\n" +
+        "\n" +
+        "h1 {\n" +
+        "    text-transform: uppercase;\n" +
+        "    font-weight: 900;\n" +
+        "    border-left: 10px solid #fec500;\n" +
+        "    padding-left: 10px;\n" +
+        "    margin-bottom: 10px\n" +
+        "}\n" +
+        "\n" +
+        ".information, p {\n" +
+        "  padding-left: 20px,\n" +
+        "}\n" +
+        "\n" +
+        ".row {\n" +
+        "    overflow: hidden\n" +
+        "}\n" +
+        "\n" +
+        ".card {\n" +
+        "    display: table-row;\n" +
+        "    width: 49%;\n" +
+        "    background-color: #fff;\n" +
+        "    color: #989898;\n" +
+        "    margin-bottom: 10px;\n" +
+        "    font-family: 'Oswald', sans-serif;\n" +
+        "    text-transform: uppercase;\n" +
+        "    border-radius: 4px;\n" +
+        "    position: relative\n" +
+        "}\n" +
+        "\n" +
+        ".card+.card {\n" +
+        "    margin-left: 2%\n" +
+        "}\n" +
+        "\n" +
+        ".date {\n" +
+        "    display: table-cell;\n" +
+        "    width: 25%;\n" +
+        "    position: relative;\n" +
+        "    text-align: center;\n" +
+        "    border-right: 2px dashed #e8e9eb\n" +
+        "}\n" +
+        "\n" +
+        ".date:before,\n" +
+        ".date:after {\n" +
+        "    content: \"\";\n" +
+        "    display: block;\n" +
+        "    width: 30px;\n" +
+        "    height: 30px;\n" +
+        "    background-color: #e8e9eb;\n" +
+        "    position: absolute;\n" +
+        "    top: -15px;\n" +
+        "    right: -15px;\n" +
+        "    z-index: 1;\n" +
+        "    border-radius: 50%\n" +
+        "}\n" +
+        "\n" +
+        ".date:after {\n" +
+        "    top: auto;\n" +
+        "    bottom: -15px\n" +
+        "}\n" +
+        "\n" +
+        ".date time {\n" +
+        "    display: block;\n" +
+        "    position: absolute;\n" +
+        "    top: 50%;\n" +
+        "    left: 50%;\n" +
+        "    -webkit-transform: translate(-50%, -50%);\n" +
+        "    -ms-transform: translate(-50%, -50%);\n" +
+        "    transform: translate(-50%, -50%)\n" +
+        "}\n" +
+        "\n" +
+        ".date time span {\n" +
+        "    display: block\n" +
+        "}\n" +
+        "\n" +
+        ".date time span:first-child {\n" +
+        "    color: #2b2b2b;\n" +
+        "    font-weight: 600;\n" +
+        "    font-size: 250%\n" +
+        "}\n" +
+        "\n" +
+        ".date time span:last-child {\n" +
+        "    text-transform: uppercase;\n" +
+        "    font-weight: 600;\n" +
+        "    margin-top: -10px\n" +
+        "}\n" +
+        "\n" +
+        ".card-cont {\n" +
+        "    display: table-cell;\n" +
+        "    width: 75%;\n" +
+        "    font-size: 85%;\n" +
+        "    padding: 10px 10px 30px 50px\n" +
+        "}\n" +
+        "\n" +
+        ".card-cont h3 {\n" +
+        "    color: #3C3C3C;\n" +
+        "    font-size: 130%\n" +
+        "}\n" +
+        "\n" +
+        ".card-cont>div {\n" +
+        "    display: table-row\n" +
+        "}\n" +
+        "\n" +
+        ".card-cont .even-date i,\n" +
+        ".card-cont .even-info i,\n" +
+        ".card-cont .even-date time,\n" +
+        ".card-cont .even-info p {\n" +
+        "    display: table-cell\n" +
+        "}\n" +
+        "\n" +
+        ".card-cont .even-date i,\n" +
+        ".card-cont .even-info i {\n" +
+        "    padding: 5% 5% 0 0\n" +
+        "}\n" +
+        "\n" +
+        ".card-cont .even-info p {\n" +
+        "    padding: 30px 50px 0 0\n" +
+        "}\n" +
+        "\n" +
+        ".card-cont .even-date time span {\n" +
+        "    display: block\n" +
+        "}\n" +
+        "\n" +
+        ".card-cont a {\n" +
+        "    display: block;\n" +
+        "    text-decoration: none;\n" +
+        "    width: 80px;\n" +
+        "    height: 30px;\n" +
+        "    background-color: #D8DDE0;\n" +
+        "    color: #fff;\n" +
+        "    text-align: center;\n" +
+        "    line-height: 30px;\n" +
+        "    border-radius: 2px;\n" +
+        "    position: absolute;\n" +
+        "    right: 10px;\n" +
+        "    bottom: 10px\n" +
+        "}\n" +
+        "\n" +
+        ".row:last-child .card:first-child .card-cont a {\n" +
+        "    background-color: #037FDD\n" +
+        "}\n" +
+        "\n" +
+        ".row:last-child .card:last-child .card-cont a {\n" +
+        "    background-color: #F8504C\n" +
+        "}\n" +
+        "\n" +
+        "td {\n" +
+        "            border: 1px solid black;\n" +
+        "            padding: 10px;\n" +
+        "         }\n" +
+        "\n" +
+        "@media screen and (max-width: 860px) {\n" +
+        "    .card {\n" +
+        "        display: block;\n" +
+        "        float: none;\n" +
+        "        width: 100%;\n" +
+        "        margin-bottom: 10px\n" +
+        "    }\n" +
+        "    .card+.card {\n" +
+        "        margin-left: 0\n" +
+        "    }\n" +
+        "    .card-cont .even-date,\n" +
+        "    .card-cont .even-info {\n" +
+        "        font-size: 75%\n" +
+        "    }\n" +
+        "}\n" +
+        "  </style>\n" +
+        "  </head>\n" +
+        "  <body>\n" +
+        "<h1>Tiket</h1>\n" +
+        "  <div class=\"row\">\n" +
+        "    <article class=\"card fl-left\">\n" +
+        "      <section class=\"date\">\n" +
+        "        <time datetime=\"23th feb\">\n" +
+        "          <!--jenis tiket-->\n" +
+        "          "+ticketData.getTicket().getName()+"\n" +
+        "        </time>\n" +
+        "      </section>\n" +
+        "      <section class=\"card-cont\">\n" +
+        "          <!--nama peserta-->\n" +
+        "        <small>"+participantData.getName()+"</small>\n" +
+        "         <!--nama event-->\n" +
+        "        <h3>"+eventData.getName()+"</h3>\n" +
+        "        <div class=\"even-date\">\n" +
+        "         <i class=\"fa fa-calendar\"></i>\n" +
+        "         <time>\n" +
+        "            <!--tanggal event-->\n" +
+        "           <span>"+dateTime+"</span>\n" +
+        "         </time>\n" +
+        "        </div>\n" +
+        "        <div class=\"even-info\">\n" +
+        "          <i class=\"fa fa-map-marker\"></i>\n" +
+        "          <p>\n" +
+        "            <!--lokasi event-->\n" +
+        "            "+name+" "+address_line2+"\n" +
+        "          </p>\n" +
+        "        </div>\n" +
+        "        <a href=\"#\">booked</a>\n" +
+        "      </section>\n" +
+        "    </article>\n" +
+        "\n" +
+        "  </div>\n" +
+        "</div>\n" +
+        "\n" +
+        "  </body>\n" +
+        "</html>";
+
+    return ticketHtlm;
   }
 
 }

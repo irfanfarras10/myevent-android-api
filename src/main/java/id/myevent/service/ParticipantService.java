@@ -101,7 +101,7 @@ public class ParticipantService {
       throw new ConflictException(exceptionMessage);
     }
     //TODO: send email
-    //emailService.sendMessage(eventId, participant.getId(), ticketParticipant.getId());
+    emailService.sendMessage(eventId, participant.getId(), ticketParticipant.getId());
   }
 
   private String generateUniqueImageName(String imageFormat) {
