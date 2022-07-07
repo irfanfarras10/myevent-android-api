@@ -26,5 +26,13 @@ public class WebController {
   public ViewEventApiResponse getDetailEvent(@PathVariable("id") Long id) {
     return eventService.getDetailEvent(id);
   }
+  
+   /**
+   * get event date.
+   */
+  @GetMapping("/events/{eventId}/dates")
+  public DateEvent getEventDate(@PathVariable("eventId") Long eventId) {
+    return eventService.getListDate(eventId);
+  }
 
 }
