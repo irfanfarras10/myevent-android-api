@@ -100,8 +100,10 @@ public class ParticipantService {
       String exceptionMessage = exception.getMostSpecificCause().getMessage();
       throw new ConflictException(exceptionMessage);
     }
-    //TODO: send email
-    emailService.sendMessage(eventId, participant.getId(), ticketParticipant.getId());
+    //send email if event is free
+    if(eventData.getEventPaymentCategory().getId() == 1){
+      emailService.sendMessage(eventId, participant.getId(), ticketParticipant.getId());
+    }
   }
 
   private String generateUniqueImageName(String imageFormat) {
