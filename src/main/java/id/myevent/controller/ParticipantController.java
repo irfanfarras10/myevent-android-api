@@ -1,13 +1,11 @@
 package id.myevent.controller;
 
 import id.myevent.model.apiresponse.ApiResponse;
-import id.myevent.model.apiresponse.ViewEventApiResponse;
-import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.apiresponse.ViewEventParticipantApiResponse;
 import id.myevent.model.apiresponse.ViewEventParticipantListApiResponse;
-import id.myevent.model.dao.EventDao;
 import id.myevent.model.dao.TicketParticipantDao;
 import id.myevent.model.dto.ParticipantDto;
+import id.myevent.service.EmailService;
 import id.myevent.service.ParticipantService;
 import id.myevent.util.ImageUtil;
 import java.io.IOException;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +35,9 @@ public class ParticipantController {
 
   @Autowired
   ParticipantService participantService;
+
+  @Autowired
+  EmailService emailService;
 
   /**
    * Participant Regist.
@@ -115,5 +117,21 @@ public class ParticipantController {
     return ResponseEntity.ok()
         .contentType(MediaType.valueOf(image.getPaymentPhotoType()))
         .body(ImageUtil.decompressImage(image.getPaymentPhotoProof()));
+  }
+
+  @PostMapping("/events/{eventId}/participant/{participantId}/confirm")
+  public ResponseEntity<ApiResponse> confirmPayment(
+      @PathVariable("eventId") Long eventId,
+      @PathVariable("participantId") Long participantId) {
+    participantService.confirm(eventId, participantId);
+    return ResponseEntity.ok(new ApiResponse("Pembayaran Berhasil dikonfirmasi."));
+  }
+
+  @PostMapping("/events/{eventId}/participant/{participantId}/reject")
+  public ResponseEntity<ApiResponse> rejectPayment(
+      @PathVariable("eventId") Long eventId,
+      @PathVariable("participantId") Long participantId) {
+    emailService.reject(eventId, participantId);
+    return ResponseEntity.ok(new ApiResponse("Pembayaran Berhasil ditolak."));
   }
 }

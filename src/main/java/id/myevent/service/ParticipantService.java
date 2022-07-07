@@ -97,13 +97,24 @@ public class ParticipantService {
 
     ticketParticipant.setEvent_date(participantData.getDateEvent());
     ticketParticipant.setPurchase_date(epochTime);
-    ticketParticipant.setStatus("Terbayar");
-    ticketParticipant.setPaymentPhotoProof(
-        ImageUtil.compressImage(participantData.getPaymentProofPhoto()));
-    ticketParticipant.setPaymentPhotoName(
-        generateUniqueImageName(participantData.getPaymentPhotoName()));
-    ticketParticipant.setPaymentPhotoType(participantData.getPaymentPhotoType());
-    ticketParticipant.setTicket(ticketData);
+    if (eventData.getEventPaymentCategory().getId() == 1) {
+      ticketParticipant.setStatus("Terbayar");
+    } else {
+      ticketParticipant.setStatus("Menunggu Konfirmasi");
+    }
+
+    if (participantData.getPaymentProofPhoto() != null) {
+      ticketParticipant.setPaymentPhotoProof(
+          ImageUtil.compressImage(participantData.getPaymentProofPhoto()));
+      ticketParticipant.setPaymentPhotoName(
+          generateUniqueImageName(participantData.getPaymentPhotoName()));
+      ticketParticipant.setPaymentPhotoType(participantData.getPaymentPhotoType());
+    } else {
+      ticketParticipant.setPaymentPhotoProof(null);
+      ticketParticipant.setPaymentPhotoType(null);
+      ticketParticipant.setPaymentPhotoName(null);
+    }
+
     if (participantData.getPaymentId() != null) {
       EventPaymentDao paymentData =
           eventPaymentRepository.findById(participantData.getPaymentId()).get();
@@ -111,6 +122,7 @@ public class ParticipantService {
     } else {
       ticketParticipant.setEventPayment(null);
     }
+    ticketParticipant.setTicket(ticketData);
     ticketParticipant.setParticipant(participant);
     try {
       ticketParticipantRepository.save(ticketParticipant);
@@ -204,8 +216,12 @@ public class ParticipantService {
     newParticipant.setEmail(participantData.get().getEmail());
     newParticipant.setPhoneNumber(participantData.get().getPhoneNumber());
     newParticipant.setTicket(ticketData.get().getTicket().getName());
-    newParticipant.setPaymentProofPhoto(
-        generateBannerPhotoUrl(ticketData.get().getPaymentPhotoName()));
+    if (ticketData.get().getPaymentPhotoProof() != null) {
+      newParticipant.setPaymentProofPhoto(
+          generateBannerPhotoUrl(ticketData.get().getPaymentPhotoName()));
+    } else {
+      newParticipant.setPaymentProofPhoto(null);
+    }
 
     return newParticipant;
   }
@@ -226,4 +242,23 @@ public class ParticipantService {
 
     return event.get();
   }
+
+  /**
+   * Confirmation.
+   */
+  public void confirm(Long eventId, Long participantId) {
+    EventDao eventData = eventRepository.findById(eventId).get();
+    ParticipantDao participantData = participantRepository.findById(participantId).get();
+    TicketParticipantDao ticketParticipant =
+        ticketParticipantRepository.findByParticipantId(participantId).get();
+    Long ticketParticipantId = ticketParticipant.getId();
+    //update status di participant
+    participantData.setStatus("Terkonfirmasi");
+    participantRepository.save(participantData);
+    //update status di ticket participant
+    ticketParticipant.setStatus("Terbayar");
+    ticketParticipantRepository.save(ticketParticipant);
+    emailService.sendMessage(eventId, participantId, ticketParticipantId);
+  }
+
 }

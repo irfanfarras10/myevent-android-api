@@ -678,4 +678,55 @@ public class EmailService {
     return ticketHtlm;
   }
 
+  /**
+   * Reject Participant.
+   */
+  public void reject(Long eventId, Long participantId) {
+
+    EventDao event = eventRepository.findById(eventId).get();
+    ParticipantDao participantData = participantRepository.findById(participantId).get();
+
+    final String emailMessage = mailRejectMessage(event, participantData);
+
+    //send message to all participants & guest
+    try {
+      MimeMessage messages = javaMailSender.createMimeMessage();
+
+      MimeMessageHelper messageHelper = new MimeMessageHelper(messages, true);
+
+      messageHelper.setTo(participantData.getEmail());
+      messageHelper.setCc(event.getEventOrganizer().getEmail());
+      messageHelper.setSubject("Payment Rejection - " + event.getName());
+      messageHelper.setText(emailMessage, true);
+
+      javaMailSender.send(messages);
+
+    } catch (Exception e) {
+      throw new ConflictException("Email gagal dikirim");
+    }
+
+  }
+
+  /**
+   * Generate Message for reject participant.
+   */
+  public String mailRejectMessage(EventDao eventData, ParticipantDao participantData) {
+
+    DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    String dateTime = sdf.format(eventData.getTimeEventStart());
+
+    final String emailMessage = "<html>\n" +
+        "<body>\n" +
+        "    <p>Kepada Bapak/Ibu,</p>\n" +
+        "    <p>Dengan email ini, kami ingin menginformasikan anda bahwa pembayaran berikut untuk Acara "+eventData.getName()+" telah Ditolak.</p>\n" +
+        "    <p>Nama: "+participantData.getName()+"</p>\n" +
+        "    <p>Email: "+participantData.getEmail()+"</p>\n" +
+        "    <p>No Telepon: "+participantData.getPhoneNumber()+"</p>\n" +
+        "    <p>Demikian informasi ini disampaikan, mohon menghubungi tim dari "+eventData.getEventOrganizer().getOrganizerName()+".</p>\n" +
+        "</body>\n" +
+        "</html>";
+
+    return emailMessage;
+  }
+
 }
