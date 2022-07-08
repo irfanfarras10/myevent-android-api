@@ -31,4 +31,8 @@ public interface ParticipantRepository extends CrudRepository<ParticipantDao, Lo
   @Query("SELECT participant FROM ParticipantDao participant WHERE participant.name LIKE %:name%")
   List<ParticipantDao> findByName(@Param("name") String name);
 
+  @Query("SELECT participant FROM ParticipantDao participant WHERE participant.email = :email "
+      + "and participant.event.id = :eventId ")
+  List<ParticipantDao> findByEmail(@Param("email") String email, @Param("eventId") Long eventId);
+
 }
