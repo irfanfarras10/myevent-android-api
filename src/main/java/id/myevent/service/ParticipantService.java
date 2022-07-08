@@ -2,7 +2,6 @@ package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
 import id.myevent.helper.ExcelHelper;
-import id.myevent.model.apiresponse.ParticipantPresentData;
 import id.myevent.model.apiresponse.ViewEventParticipantApiResponse;
 import id.myevent.model.apiresponse.ViewEventParticipantListApiResponse;
 import id.myevent.model.dao.EventDao;
