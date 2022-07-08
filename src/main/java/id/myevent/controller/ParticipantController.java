@@ -109,4 +109,17 @@ public class ParticipantController {
     return ResponseEntity.ok(new ApiResponse("Pembayaran Berhasil ditolak."));
   }
 
+  /**
+   * Download Participant List.
+   */
+  @GetMapping("/events/{eventId}/participants/download")
+  public ResponseEntity<Resource> getFile(@PathVariable("eventId") Long eventId) {
+    String filename = "participantList.xlsx";
+    InputStreamResource file = new InputStreamResource(participantService.load(eventId));
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+        .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+        .body(file);
+  }
+
 }
