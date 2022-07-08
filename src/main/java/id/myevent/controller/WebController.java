@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import id.myevent.model.apiresponse.DateEvent;
 
 @CrossOrigin
 @RestController
@@ -25,6 +26,14 @@ public class WebController {
   @GetMapping("events/{id}")
   public ViewEventApiResponse getDetailEvent(@PathVariable("id") Long id) {
     return eventService.getDetailEvent(id);
+  }
+  
+   /**
+   * get event date.
+   */
+  @GetMapping("/events/{eventId}/dates")
+  public DateEvent getEventDate(@PathVariable("eventId") Long eventId) {
+    return eventService.getListDate(eventId);
   }
 
 }
