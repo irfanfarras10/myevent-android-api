@@ -12,6 +12,9 @@ import id.myevent.util.ImageUtil;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,37 +42,6 @@ public class ParticipantController {
 
   @Autowired
   EmailService emailService;
-
-  /**
-   * Participant Regist.
-   */
-  @PostMapping("/events/{id}/participant/regist")
-  public ResponseEntity create(
-      @PathVariable("id") Long id,
-      @RequestParam("name") String name,
-      @RequestParam("email") String email,
-      @RequestParam("phoneNumber") String phoneNumber,
-      @RequestParam("ticketId") Long ticketId,
-      @RequestParam(value = "paymentId", required = false) Long paymentId,
-      @RequestParam("eventDate") Long eventDate,
-      @RequestParam(value = "paymentPhoto", required = false) MultipartFile paymentPhoto
-  ) throws IOException {
-    ParticipantDto createParticipant = new ParticipantDto();
-    createParticipant.setName(name);
-    createParticipant.setEmail(email);
-    createParticipant.setPhoneNumber(phoneNumber);
-    createParticipant.setTicketId(ticketId);
-    if (paymentId != null) {
-      createParticipant.setPaymentId(paymentId);
-    }
-    if (paymentPhoto != null) {
-      createParticipant.setPaymentProofPhoto(paymentPhoto.getBytes());
-      createParticipant.setPaymentPhotoType(paymentPhoto.getContentType());
-    }
-    createParticipant.setDateEvent(eventDate);
-    participantService.create(id, createParticipant);
-    return new ResponseEntity(new ApiResponse("Anda Berhasil Terdaftar"), HttpStatus.CREATED);
-  }
 
   @GetMapping("/events/{eventId}/participants/confirmed")
   public ViewEventParticipantListApiResponse getParticipantConfirmed(
@@ -135,5 +107,18 @@ public class ParticipantController {
       @RequestBody CancelMessage message) {
     emailService.reject(eventId, participantId, message);
     return ResponseEntity.ok(new ApiResponse("Pembayaran Berhasil ditolak."));
+  }
+
+  /**
+   * Download Participant List.
+   */
+  @GetMapping("/events/{eventId}/participants/download")
+  public ResponseEntity<Resource> getFile(@PathVariable("eventId") Long eventId) {
+    String filename = "participantList.xlsx";
+    InputStreamResource file = new InputStreamResource(participantService.load(eventId));
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+        .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+        .body(file);
   }
 }
