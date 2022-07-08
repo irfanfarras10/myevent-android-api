@@ -773,7 +773,7 @@ public class EmailService {
       }
       String[] mailsArray = guests.toArray(new String[0]);
       log.warn(String.valueOf(mailsArray));
-      messageHelper.setTo("alyannisa12@gmail.com");
+      messageHelper.setTo(mailsArray);
       messageHelper.setCc(eventData.getEventOrganizer().getEmail());
       messageHelper.setSubject(fileData.getJudul());
       messageHelper.setText(emailMessage, true);
