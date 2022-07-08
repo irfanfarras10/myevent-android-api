@@ -2,6 +2,7 @@ package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
 import id.myevent.helper.ExcelHelper;
+import id.myevent.model.apiresponse.ParticipantPresentData;
 import id.myevent.model.apiresponse.ViewEventParticipantApiResponse;
 import id.myevent.model.apiresponse.ViewEventParticipantListApiResponse;
 import id.myevent.model.dao.EventDao;
@@ -268,6 +269,41 @@ public class ParticipantService {
     List<ParticipantDao> participants = participantRepository.findByEvent(id);
     ByteArrayInputStream in = ExcelHelper.downloadExcel(participants);
     return in;
+  }
+
+  /**
+   * Check participant data by email and date.
+   */
+  public ParticipantPresentData getParticipantPresence(Long eventId, String email, Long dates) {
+    ParticipantPresentData newParticipant = new ParticipantPresentData();
+
+    List<ParticipantDao> participantData = participantRepository.findByEmail(email, eventId);
+
+    for (int i = 0; i < participantData.size(); i++) {
+      for (int j = 0; j < participantData.get(i).getTicketParticipants().size(); j++) {
+
+        if (participantData.get(i).getTicketParticipants().get(j).getEvent_date().equals(dates)) {
+          newParticipant.setId(participantData.get(i).getId());
+          newParticipant.setName(participantData.get(i).getName());
+          newParticipant.setEmail(participantData.get(i).getEmail());
+          newParticipant.setPhoneNumber(participantData.get(i).getPhoneNumber());
+          newParticipant.setStatus(participantData.get(i).getStatus());
+        }
+      }
+    }
+    return newParticipant;
+  }
+
+  /**
+   * Update status participant present.
+   */
+  public void presence(Long eventId, Long participantId) {
+    ParticipantDao participant = participantRepository.findById(participantId).get();
+
+    //update participant status
+    participant.setStatus("Hadir");
+    participantRepository.save(participant);
+
   }
 
 }
