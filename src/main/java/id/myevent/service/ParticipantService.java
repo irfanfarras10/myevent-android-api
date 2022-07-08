@@ -1,9 +1,8 @@
 package id.myevent.service;
 
 import id.myevent.exception.ConflictException;
-import id.myevent.model.apiresponse.EventData;
-import id.myevent.model.apiresponse.ViewEventApiResponse;
-import id.myevent.model.apiresponse.ViewEventListApiResponse;
+import id.myevent.helper.ExcelHelper;
+import id.myevent.model.apiresponse.ParticipantPresentData;
 import id.myevent.model.apiresponse.ViewEventParticipantApiResponse;
 import id.myevent.model.apiresponse.ViewEventParticipantListApiResponse;
 import id.myevent.model.dao.EventDao;
@@ -18,6 +17,7 @@ import id.myevent.repository.ParticipantRepository;
 import id.myevent.repository.TicketParticipantRepository;
 import id.myevent.repository.TicketRepository;
 import id.myevent.util.ImageUtil;
+import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +64,7 @@ public class ParticipantService {
 
     final EventDao eventData = eventRepository.findById(eventId).get();
     TicketDao ticketData = ticketRepository.findById(participantData.getTicketId()).get();
+
     // insert to participant data
     final ParticipantDao participant = new ParticipantDao();
     participant.setName(participantData.getName());
@@ -259,6 +260,15 @@ public class ParticipantService {
     ticketParticipant.setStatus("Terbayar");
     ticketParticipantRepository.save(ticketParticipant);
     emailService.sendMessage(eventId, participantId, ticketParticipantId);
+  }
+
+  /**
+   * Download Excel.
+   */
+  public ByteArrayInputStream load(long id) {
+    List<ParticipantDao> participants = participantRepository.findByEvent(id);
+    ByteArrayInputStream in = ExcelHelper.downloadExcel(participants);
+    return in;
   }
 
 }

@@ -3,6 +3,7 @@ package id.myevent.service;
 import id.myevent.exception.ConflictException;
 import id.myevent.model.apiresponse.CancelMessage;
 import id.myevent.model.apiresponse.HtmlToImageApiResponse;
+import id.myevent.model.apiresponse.ShareFileData;
 import id.myevent.model.dao.EventDao;
 import id.myevent.model.dao.EventGuestDao;
 import id.myevent.model.dao.EventStatusDao;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,8 +29,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import javax.activation.DataSource;
 import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.data.CalendarOutputter;
@@ -42,9 +46,11 @@ import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
 import net.fortuna.ical4j.util.RandomUidGenerator;
 import net.fortuna.ical4j.util.UidGenerator;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -155,7 +161,7 @@ public class EmailService {
         guests.add(email);
       }
       //get multiple email participants
-      for (int j = 0; j <participants.size(); j++){
+      for (int j = 0; j < participants.size(); j++) {
         String email = participants.get(j).getEmail();
         guests.add(email);
       }
@@ -186,22 +192,26 @@ public class EmailService {
     TicketParticipantDao ticketParticipant =
         ticketParticipantRepository.findById(ticketParticipantId).get();
 
-    String usernameColonPassword = "d2f83dca-182d-4d85-9e6f-7c6e9c697745:9711011a-8f20-4860-af2b-f787085cdb73";
-    String basicAuthPayload = "Basic " + Base64.getEncoder().encodeToString(usernameColonPassword.getBytes());
+    String usernameColonPassword =
+        "d2f83dca-182d-4d85-9e6f-7c6e9c697745:9711011a-8f20-4860-af2b-f787085cdb73";
+    String basicAuthPayload =
+        "Basic " + Base64.getEncoder().encodeToString(usernameColonPassword.getBytes());
 
     String url = "https://hcti.io/v1/image";
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     headers.add("Authorization", basicAuthPayload);
-    headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+    headers.add("user-agent",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
     body.add("html", ticketHtml(event, ticketParticipant, participant));
     HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
 
     log.warn(basicAuthPayload);
-    HtmlToImageApiResponse ticket = restTemplate.postForObject(url, request, HtmlToImageApiResponse.class);
+    HtmlToImageApiResponse ticket =
+        restTemplate.postForObject(url, request, HtmlToImageApiResponse.class);
 
     log.warn(ticket.getUrl());
     final String emailMessage = mailParticipant(event, ticket.getUrl());
@@ -240,11 +250,12 @@ public class EmailService {
    */
   public String mailParticipant(EventDao eventData, String url) {
 
-    String ticketSrc =        "    <form action=\""+url+"\" style=\"font-family: 'Inter', sans-serif;\">\n" +
-        "        <button class=\"gfg\" type=\"submit\" style=\"font-family: 'Inter', sans-serif;background-color: white;border: 2px solid black;padding: 5px 10px;text-align: center;display: inline-block;font-size: 20px;cursor: pointer;\">\n" +
-        "            Unduh Tiket\n" +
-        "        </button>\n" +
-        "    </form>\n";
+    String ticketSrc =
+        "    <form action=\"" + url + "\" style=\"font-family: 'Inter', sans-serif;\">\n" +
+            "        <button class=\"gfg\" type=\"submit\" style=\"font-family: 'Inter', sans-serif;background-color: white;border: 2px solid black;padding: 5px 10px;text-align: center;display: inline-block;font-size: 20px;cursor: pointer;\">\n" +
+            "            Unduh Tiket\n" +
+            "        </button>\n" +
+            "    </form>\n";
 
     final String emailMessage = "<!DOCTYPE html>\n" +
         "<html style=\"font-family: 'Inter', sans-serif;\">\n" +
@@ -257,10 +268,11 @@ public class EmailService {
         "    </head>\n" +
         "<body style=\"font-family: 'Inter', sans-serif;\">\n" +
         "    <h1 style=\"font-family: 'Inter', sans-serif;\">Registrasi Berhasil</h1>\n" +
-        "    <div style=\"font-family: 'Inter', sans-serif;\">Selamat! Registrasi Anda berhasil untuk mengikuti event "+eventData.getName()+"</div><br style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "    <div style=\"font-family: 'Inter', sans-serif;\">Selamat! Registrasi Anda berhasil untuk mengikuti event " +
+        eventData.getName() + "</div><br style=\"font-family: 'Inter', sans-serif;\">\n" +
         "    <div style=\"font-family: 'Inter', sans-serif;\">Silakan mengunduh file Tiket untuk menjadi bukti keikutsertaan Anda dalam mengikuti Event.</div>\n" +
         "    <br style=\"font-family: 'Inter', sans-serif;\">\n" +
-        ""+ticketSrc+
+        "" + ticketSrc +
         "</body>\n" +
         "\n" +
         "</html>";
@@ -425,7 +437,8 @@ public class EmailService {
     }
   }
 
-  public String ticketHtml(EventDao eventData, TicketParticipantDao ticketData, ParticipantDao participantData){
+  public String ticketHtml(EventDao eventData, TicketParticipantDao ticketData,
+                           ParticipantDao participantData) {
     DateFormat sdf = new SimpleDateFormat("EEEE, dd. MMMM yyyy HH:mm");
     String dateTime = sdf.format(eventData.getTimeEventStart());
 
@@ -643,26 +656,26 @@ public class EmailService {
         "      <section class=\"date\">\n" +
         "        <time datetime=\"23th feb\">\n" +
         "          <!--jenis tiket-->\n" +
-        "          "+ticketData.getTicket().getName()+"\n" +
+        "          " + ticketData.getTicket().getName() + "\n" +
         "        </time>\n" +
         "      </section>\n" +
         "      <section class=\"card-cont\">\n" +
         "          <!--nama peserta-->\n" +
-        "        <small>"+participantData.getName()+"</small>\n" +
+        "        <small>" + participantData.getName() + "</small>\n" +
         "         <!--nama event-->\n" +
-        "        <h3>"+eventData.getName()+"</h3>\n" +
+        "        <h3>" + eventData.getName() + "</h3>\n" +
         "        <div class=\"even-date\">\n" +
         "         <i class=\"fa fa-calendar\"></i>\n" +
         "         <time>\n" +
         "            <!--tanggal event-->\n" +
-        "           <span>"+dateTime+"</span>\n" +
+        "           <span>" + dateTime + "</span>\n" +
         "         </time>\n" +
         "        </div>\n" +
         "        <div class=\"even-info\">\n" +
         "          <i class=\"fa fa-map-marker\"></i>\n" +
         "          <p>\n" +
         "            <!--lokasi event-->\n" +
-        "            "+name+" "+address_line2+"\n" +
+        "            " + name + " " + address_line2 + "\n" +
         "          </p>\n" +
         "        </div>\n" +
         "        <a href=\"#\">booked</a>\n" +
@@ -710,20 +723,142 @@ public class EmailService {
   /**
    * Generate Message for reject participant.
    */
-  public String mailRejectMessage(EventDao eventData, ParticipantDao participantData, String message) {
+  public String mailRejectMessage(EventDao eventData, ParticipantDao participantData,
+                                  String message) {
 
     final String emailMessage = "<html>\n" +
         "<body>\n" +
         "    <p>Kepada Bapak/Ibu,</p>\n" +
-        "    <p>Dengan email ini, kami ingin menginformasikan anda bahwa pembayaran berikut untuk Acara "+eventData.getName()+" telah Ditolak dengan alasan "+message+".</p>\n" +
-        "    <p>Nama: "+participantData.getName()+"</p>\n" +
-        "    <p>Email: "+participantData.getEmail()+"</p>\n" +
-        "    <p>No Telepon: "+participantData.getPhoneNumber()+"</p>\n" +
-        "    <p>Demikian informasi ini disampaikan, mohon menghubungi tim dari "+eventData.getEventOrganizer().getOrganizerName()+".</p>\n" +
+        "    <p>Dengan email ini, kami ingin menginformasikan anda bahwa pembayaran berikut untuk Acara " +
+        eventData.getName() + " telah Ditolak dengan alasan " + message + ".</p>\n" +
+        "    <p>Nama: " + participantData.getName() + "</p>\n" +
+        "    <p>Email: " + participantData.getEmail() + "</p>\n" +
+        "    <p>No Telepon: " + participantData.getPhoneNumber() + "</p>\n" +
+        "    <p>Demikian informasi ini disampaikan, mohon menghubungi tim dari " +
+        eventData.getEventOrganizer().getOrganizerName() + ".</p>\n" +
         "</body>\n" +
         "</html>";
 
     return emailMessage;
+  }
+
+  public void sendFile(Long id, ShareFileData fileData) throws IOException {
+    final EventDao eventData = eventRepository.findById(id).get();
+    List<EventGuestDao> eventGuest = eventGuestRepository.findByEvent(id);
+    List<ParticipantDao> participants = participantRepository.findByEvent(id);
+    List<String> guests = new ArrayList<>();
+
+    String emailMessage = "";
+
+    if (fileData.getLink() != null) {
+      emailMessage = mailSharing(fileData.getMessage(), fileData.getLink());
+    } else {
+      emailMessage = mailSharing(fileData.getMessage(), null);
+    }
+
+
+    try {
+      MimeMessage message = javaMailSender.createMimeMessage();
+
+      MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
+
+      // get multiple email
+      for (int i = 0; i < eventGuest.size(); i++) {
+        String email = eventGuest.get(i).getEmail();
+        guests.add(email);
+      }
+      for (int j = 0; j < participants.size(); j++) {
+        String email = participants.get(j).getEmail();
+        guests.add(email);
+      }
+      String[] mailsArray = guests.toArray(new String[0]);
+      log.warn(String.valueOf(mailsArray));
+      messageHelper.setTo("alyannisa12@gmail.com");
+      messageHelper.setCc(eventData.getEventOrganizer().getEmail());
+      messageHelper.setSubject(fileData.getJudul());
+      messageHelper.setText(emailMessage, true);
+
+      Date today = java.util.Calendar.getInstance().getTime();
+      SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy");
+      String currentTime = sdf.format(today);
+
+      if (fileData.getFileShare() != null) {
+        String filePath =
+            new File("shared").getAbsolutePath() + "\\" + fileData.getFileName() + currentTime +
+                fileData.getFileShareType();
+        File targetFile = new File(filePath);
+
+        try (OutputStream os = new FileOutputStream(targetFile)) {
+          os.write(fileData.getFileShare());
+        }
+
+        FileSystemResource resource = new FileSystemResource(new File(filePath));
+
+        messageHelper.addAttachment("file_shared" + fileData.getFileShareType(), resource);
+      }
+
+      javaMailSender.send(message);
+
+    } catch (Exception e) {
+      throw new ConflictException("Email gagal dikirim");
+    }
+
+  }
+
+  /**
+   * Generate Message for Sharing File.
+   */
+  public String mailSharing(String message, String url) {
+
+    String ticketSrc =
+        "    <form action=\"" + url + "\" style=\"font-family: 'Inter', sans-serif;\">\n" +
+            "        <button class=\"gfg\" type=\"submit\" style=\"font-family: 'Inter', sans-serif;background-color: white;border: 2px solid black;padding: 5px 10px;text-align: center;display: inline-block;font-size: 20px;cursor: pointer;\">\n" +
+            "            Buka\n" +
+            "        </button>\n" +
+            "    </form>\n";
+
+    final String emailMessage1 = "<!DOCTYPE html>\n" +
+        "<html style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "<head style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin style=\"font-family: 'Inter', sans-serif;\">\n" +
+        " \n" +
+        " \n" +
+        "    \n" +
+        "    </head>\n" +
+        "<body style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "    <h1 style=\"font-family: 'Inter', sans-serif;\">Acara Telah Selesai.</h1>\n" +
+        "    <div style=\"font-family: 'Inter', sans-serif;\">Terima kasih telah mengikuti acara hingga selesai.</div><br style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "    <div style=\"font-family: 'Inter', sans-serif;\">" + message + "</div>\n" +
+        "    <br style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "" + ticketSrc +
+        "</body>\n" +
+        "\n" +
+        "</html>";
+
+    final String emailMessage2 = "<!DOCTYPE html>\n" +
+        "<html style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "<head style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin style=\"font-family: 'Inter', sans-serif;\">\n" +
+        " \n" +
+        " \n" +
+        "    \n" +
+        "    </head>\n" +
+        "<body style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "    <h1 style=\"font-family: 'Inter', sans-serif;\">Acara Telah Selesai.</h1>\n" +
+        "    <div style=\"font-family: 'Inter', sans-serif;\">Terima kasih telah mengikuti acara hingga selesai.</div><br style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "    <div style=\"font-family: 'Inter', sans-serif;\">" + message + "</div>\n" +
+        "    <br style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "</body>\n" +
+        "\n" +
+        "</html>";
+
+    if (url != null) {
+      return emailMessage1;
+    } else {
+      return emailMessage2;
+    }
   }
 
 }

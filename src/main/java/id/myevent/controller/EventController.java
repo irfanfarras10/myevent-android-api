@@ -5,6 +5,7 @@ import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.CancelMessage;
 import id.myevent.model.apiresponse.CreateEventApiResponse;
 import id.myevent.model.apiresponse.DateEvent;
+import id.myevent.model.apiresponse.ShareFileData;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
 import id.myevent.model.apiresponse.ViewEventListApiResponse;
 import id.myevent.model.apiresponse.ViewTicketApiResponse;
@@ -207,7 +208,7 @@ public class EventController {
     eventUpdate.setTimeEventStart(timeEventStart);
     eventUpdate.setTimeEventEnd(timeEventEnd);
     eventUpdate.setVenue(location);
-    if(bannerPhoto != null){
+    if (bannerPhoto != null) {
       eventUpdate.setBannerPhoto(bannerPhoto.getBytes());
       eventUpdate.setBannerPhotoType(bannerPhoto.getContentType());
     }
@@ -247,4 +248,32 @@ public class EventController {
     return eventService.getListDate(eventId);
   }
 
+  /**
+   * Share File Data.
+   */
+  @PostMapping("/events/{id}/share")
+  public ResponseEntity shareFile(
+      @PathVariable("id") Long id,
+      @RequestParam("judul") String judul,
+      @RequestParam(value = "fileShare", required = false) MultipartFile fileShare,
+      @RequestParam(value = "link", required = false) String link,
+      @RequestParam("message") String message
+  ) throws IOException {
+    ShareFileData shareFileData = new ShareFileData();
+    shareFileData.setJudul(judul);
+    if (fileShare != null) {
+      shareFileData.setFileShare(fileShare.getBytes());
+      String[] fileFrags = fileShare.getOriginalFilename().split("\\.");
+      String extension = "." + fileFrags[fileFrags.length - 1];
+      shareFileData.setFileShareType(extension);
+      shareFileData.setFileName(fileFrags[0]);
+    }
+    if (link != null) {
+      shareFileData.setLink(link);
+    }
+    shareFileData.setMessage(message);
+    emailService.sendFile(id, shareFileData);
+    return new ResponseEntity(new ApiResponse("File Berhasil dikirim melalui E-mail."),
+        HttpStatus.CREATED);
+  }
 }
