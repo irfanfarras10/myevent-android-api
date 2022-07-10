@@ -231,9 +231,9 @@ public class EventController {
 
   @RequestMapping("/send-notification")
   @ResponseBody
-  public String sendNotification(@RequestBody NotificationData note, @RequestParam String token)
+  public String sendNotification(@RequestBody NotificationData note, @RequestParam String topic)
       throws FirebaseMessagingException {
-    return notificationService.sendNotification(note, token);
+    return notificationService.sendNotification(note, topic);
   }
 
   @PostMapping("/events/{id}/cancel")

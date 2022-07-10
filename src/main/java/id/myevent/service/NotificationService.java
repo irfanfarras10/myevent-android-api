@@ -13,7 +13,7 @@ public class NotificationService {
   @Autowired
   FirebaseMessaging firebaseMessaging;
 
-  public String sendNotification(NotificationData notificationData, String token)
+  public String sendNotification(NotificationData notificationData, String topic)
       throws FirebaseMessagingException {
 
     Notification notification = Notification
@@ -24,7 +24,7 @@ public class NotificationService {
 
     Message message = Message
         .builder()
-        .setToken(token)
+        .setTopic(topic)
         .setNotification(notification)
         .putAllData(notificationData.getData())
         .build();
