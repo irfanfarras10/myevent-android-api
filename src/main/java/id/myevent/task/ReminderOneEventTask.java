@@ -35,10 +35,10 @@ public class ReminderOneEventTask implements Runnable {
     Map<String, String> notificationData = new HashMap<>();
     notificationData.put("eventId", String.valueOf(event.getId()));
     notification.setSubject("Event " + event.getName() + "1 hari lagi akan dilaksanakan");
-    notification.setContent("Jangan lewatkan event " + event.getId() + " yang akan dilaksanakan 1 hari lagi");
+    notification.setContent("Jangan lewatkan event " + event.getName() + " yang akan dilaksanakan 1 hari lagi");
     notification.setData(notificationData);
     try {
-      notificationService.sendNotification(notification, event.getEventOrganizer().getUsername());
+      notificationService.sendNotification(notification, String.valueOf(event.getEventOrganizer().getId()));
     } catch (FirebaseMessagingException e) {
       throw new RuntimeException(e);
     }
