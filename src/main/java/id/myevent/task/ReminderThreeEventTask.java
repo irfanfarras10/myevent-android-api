@@ -35,7 +35,7 @@ public class ReminderThreeEventTask implements Runnable {
     NotificationData notification = new NotificationData();
     Map<String, String> notificationData = new HashMap<>();
     notificationData.put("eventId", String.valueOf(event.getId()));
-    notification.setSubject("Event " + event.getName() + "3 hari lagi akan dilaksanakan");
+    notification.setSubject("Event " + event.getName() + " 3 hari lagi akan dilaksanakan");
     notification.setContent("Jangan lewatkan event " + event.getName() + " yang akan dilaksanakan 3 hari lagi");
     notification.setData(notificationData);
     try {
