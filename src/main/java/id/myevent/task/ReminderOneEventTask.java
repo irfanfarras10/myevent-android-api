@@ -34,8 +34,8 @@ public class ReminderOneEventTask implements Runnable {
     NotificationData notification = new NotificationData();
     Map<String, String> notificationData = new HashMap<>();
     notificationData.put("eventId", String.valueOf(event.getId()));
-    notification.setSubject("Event " + event.getName() + " 1 hari lagi akan dilaksanakan");
-    notification.setContent("Jangan lewatkan event " + event.getName() + " yang akan dilaksanakan 1 hari lagi");
+    notification.setSubject("Event " + event.getName() + " sebentar lagi akan dilaksanakan");
+    notification.setContent("Jangan lewatkan event " + event.getName() + " yang akan dilaksanakan sebentar lagi");
     notification.setData(notificationData);
     try {
       notificationService.sendNotification(notification, String.valueOf(event.getEventOrganizer().getId()));
