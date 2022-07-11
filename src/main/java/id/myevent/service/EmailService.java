@@ -813,7 +813,7 @@ public class EmailService {
     String ticketSrc =
         "    <form action=\"" + url + "\" style=\"font-family: 'Inter', sans-serif;\">\n" +
             "        <button class=\"gfg\" type=\"submit\" style=\"font-family: 'Inter', sans-serif;background-color: white;border: 2px solid black;padding: 5px 10px;text-align: center;display: inline-block;font-size: 20px;cursor: pointer;\">\n" +
-            "            Buka\n" +
+            "            Buka Link\n" +
             "        </button>\n" +
             "    </form>\n";
 
@@ -827,8 +827,7 @@ public class EmailService {
         "    \n" +
         "    </head>\n" +
         "<body style=\"font-family: 'Inter', sans-serif;\">\n" +
-        "    <h1 style=\"font-family: 'Inter', sans-serif;\">Acara Telah Selesai.</h1>\n" +
-        "    <div style=\"font-family: 'Inter', sans-serif;\">Terima kasih telah mengikuti acara hingga selesai.</div><br style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "    <h1 style=\"font-family: 'Inter', sans-serif;\">Lampiran File/Link.</h1>\n" +
         "    <div style=\"font-family: 'Inter', sans-serif;\">" + message + "</div>\n" +
         "    <br style=\"font-family: 'Inter', sans-serif;\">\n" +
         "" + ticketSrc +
@@ -846,8 +845,7 @@ public class EmailService {
         "    \n" +
         "    </head>\n" +
         "<body style=\"font-family: 'Inter', sans-serif;\">\n" +
-        "    <h1 style=\"font-family: 'Inter', sans-serif;\">Acara Telah Selesai.</h1>\n" +
-        "    <div style=\"font-family: 'Inter', sans-serif;\">Terima kasih telah mengikuti acara hingga selesai.</div><br style=\"font-family: 'Inter', sans-serif;\">\n" +
+        "    <h1 style=\"font-family: 'Inter', sans-serif;\">Lampiran File/Link.</h1>\n" +
         "    <div style=\"font-family: 'Inter', sans-serif;\">" + message + "</div>\n" +
         "    <br style=\"font-family: 'Inter', sans-serif;\">\n" +
         "</body>\n" +
