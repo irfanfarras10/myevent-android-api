@@ -322,6 +322,7 @@ public class EmailService {
       Location loc = getLocation(lat, lon);
       location = loc.features.get(0).properties.name;
       location += loc.features.get(0).properties.address_line2;
+
     } else {
       location = eventData.getVenue();
     }
