@@ -79,18 +79,6 @@ public class ParticipantController {
     return participantService.getParticipantByName(name);
   }
 
-  /**
-   * get image participant.
-   */
-  @GetMapping(path = {"/events/participant/image/{name}"})
-  public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
-
-    TicketParticipantDao image = participantService.getImage(name);
-
-    return ResponseEntity.ok()
-        .contentType(MediaType.valueOf(image.getPaymentPhotoType()))
-        .body(ImageUtil.decompressImage(image.getPaymentPhotoProof()));
-  }
 
   @PostMapping("/events/{eventId}/participant/{participantId}/confirm")
   public ResponseEntity<ApiResponse> confirmPayment(

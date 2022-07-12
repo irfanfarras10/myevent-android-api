@@ -4,13 +4,16 @@ import id.myevent.model.apiresponse.ApiResponse;
 import id.myevent.model.apiresponse.DateEvent;
 import id.myevent.model.apiresponse.ParticipantPresentData;
 import id.myevent.model.apiresponse.ViewEventApiResponse;
+import id.myevent.model.dao.TicketParticipantDao;
 import id.myevent.model.dto.ParticipantDto;
 import id.myevent.service.EventService;
 import id.myevent.service.ParticipantService;
+import id.myevent.util.ImageUtil;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -106,6 +109,19 @@ public class WebController {
     participantService.presence(id, participantId);
     return new ResponseEntity(new ApiResponse("Anda Berhasil Melakukan Presensi."),
         HttpStatus.CREATED);
+  }
+
+  /**
+   * get image participant.
+   */
+  @GetMapping(path = {"/events/participant/image/{name}"})
+  public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
+
+    TicketParticipantDao image = participantService.getImage(name);
+
+    return ResponseEntity.ok()
+        .contentType(MediaType.valueOf(image.getPaymentPhotoType()))
+        .body(ImageUtil.decompressImage(image.getPaymentPhotoProof()));
   }
 
 }

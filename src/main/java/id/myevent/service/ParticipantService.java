@@ -230,7 +230,7 @@ public class ParticipantService {
   private String generateBannerPhotoUrl(String filename) {
     String url = "";
     url = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-    url += "/api/events/participant/image/" + filename;
+    url += "/web/events/participant/image/" + filename;
     return url;
   }
 
