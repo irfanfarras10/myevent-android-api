@@ -24,6 +24,7 @@ import id.myevent.task.ReminderOneEventTask;
 import id.myevent.task.ReminderThreeEventTask;
 import id.myevent.util.GlobalUtil;
 import id.myevent.util.ImageUtil;
+import id.myevent.util.JwtTokenUtil;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -49,6 +50,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
@@ -62,6 +65,8 @@ public class EventService {
   @Autowired
   EventCategoryRepository eventCategoryRepository;
 
+  @Autowired
+  JwtTokenUtil jwtTokenUtil;
   @Autowired
   EventVenueCategoryRepository eventVenueCategoryRepository;
   @Autowired
@@ -151,12 +156,23 @@ public class EventService {
     }
   }
 
+  private String getUserId() {
+    String tokenHeader =
+        ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+            .getRequest()
+            .getHeader("Authorization");
+
+    String id = jwtTokenUtil.getSubjectFromToken(globalUtil.parseToken(tokenHeader));
+    return id;
+  }
+
   /**
    * View Event Data.
    */
   public ViewEventListApiResponse getEvents() {
 
-    List<EventDao> eventDraft = (List<EventDao>) eventRepository.findAllByOrderByIdAsc();
+    Long eventOrganizerId = Long.parseLong(getUserId());
+    List<EventDao> eventDraft = (List<EventDao>) eventRepository.findAllByOrderByIdAsc(eventOrganizerId);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
@@ -190,7 +206,8 @@ public class EventService {
    */
   public ViewEventListApiResponse getDraftEvent() {
 
-    List<EventDao> eventDraft = eventRepository.findByStatus(1L);
+    Long eventOrganizerId = Long.parseLong(getUserId());
+    List<EventDao> eventDraft = eventRepository.findByStatus(1L, eventOrganizerId);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
@@ -224,7 +241,8 @@ public class EventService {
    */
   public ViewEventListApiResponse getPublisedEvent() {
 
-    List<EventDao> event = eventRepository.findByStatus(2L);
+    Long eventOrganizerId = Long.parseLong(getUserId());
+    List<EventDao> event = eventRepository.findByStatus(2L, eventOrganizerId);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
@@ -257,7 +275,8 @@ public class EventService {
    */
   public ViewEventListApiResponse getLiveEvent() {
 
-    List<EventDao> event = eventRepository.findByStatus(3L);
+    Long eventOrganizerId = Long.parseLong(getUserId());
+    List<EventDao> event = eventRepository.findByStatus(3L, eventOrganizerId);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
@@ -289,7 +308,9 @@ public class EventService {
    * View Event Passed Data.
    */
   public ViewEventListApiResponse getPassedEvent() {
-    List<EventDao> event = eventRepository.findByStatus(4L);
+
+    Long eventOrganizerId = Long.parseLong(getUserId());
+    List<EventDao> event = eventRepository.findByStatus(4L, eventOrganizerId);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
@@ -321,7 +342,9 @@ public class EventService {
    * View Event Cancel Data.
    */
   public ViewEventListApiResponse getCancelEvent() {
-    List<EventDao> event = eventRepository.findByStatus(5L);
+
+    Long eventOrganizerId = Long.parseLong(getUserId());
+    List<EventDao> event = eventRepository.findByStatus(5L, eventOrganizerId);
     List<EventData> newEventData = new ArrayList<>();
     ViewEventListApiResponse newEvent = new ViewEventListApiResponse();
 
