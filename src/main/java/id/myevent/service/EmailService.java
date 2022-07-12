@@ -317,9 +317,15 @@ public class EmailService {
     String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
     String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
 
-    Location loc = getLocation(lat, lon);
-    String name = loc.features.get(0).properties.name;
-    String address_line2 = loc.features.get(0).properties.address_line2;
+    String location;
+    if (eventData.getEventVenueCategory().getId() == 1) {
+      Location loc = getLocation(lat, lon);
+      location = loc.features.get(0).properties.name;
+      location += loc.features.get(0).properties.address_line2;
+    } else {
+      location = eventData.getVenue();
+    }
+
 
     String imgSrc =
         "<img src=\"https://myevent-android-api.herokuapp.com/api/events/image/"
@@ -339,9 +345,7 @@ public class EmailService {
             + dateTime
             + "</p>\n"
             + "    <p><b>Tempat:</b> "
-            + name
-            + " "
-            + address_line2
+            + location
             + "</p>\n"
             + "    <p>Demikian undangan ini disampaikan, kami berharap kedatangan Bapak/Ibu pada "
             + "acara kami.</p>\n"
@@ -396,16 +400,21 @@ public class EmailService {
             TimeZone.getDefault().toZoneId());
 
     String eventSummary = eventData.getName();
-    String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
-    String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
-    Location loc = getLocation(lat, lon);
+    String location;
+    if (eventData.getEventVenueCategory().getId() == 1) {
+      String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
+      String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
+      Location loc = getLocation(lat, lon);
+      location = loc.features.get(0).properties.name;
+      location += loc.features.get(0).properties.address_line2;
+    } else {
+      location = eventData.getVenue();
+    }
 
-    String name = loc.features.get(0).properties.name;
-    String address_line2 = loc.features.get(0).properties.address_line2;
 
     VEvent event = new VEvent(start, end, eventSummary);
     event.add(new Description(eventData.getDescription()));
-    event.add(new net.fortuna.ical4j.model.property.Location(name + " " + address_line2));
+    event.add(new net.fortuna.ical4j.model.property.Location(location));
     try {
       event.add(new Organizer(eventData.getEventOrganizer().getEmail()));
     } catch (URISyntaxException e) {
@@ -445,9 +454,15 @@ public class EmailService {
     String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
     String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
 
-    Location loc = getLocation(lat, lon);
-    String name = loc.features.get(0).properties.name;
-    String address_line2 = loc.features.get(0).properties.address_line2;
+    String location;
+    if (eventData.getEventVenueCategory().getId() == 1) {
+      Location loc = getLocation(lat, lon);
+      location = loc.features.get(0).properties.name;
+      location += loc.features.get(0).properties.address_line2;
+    } else {
+      location = eventData.getVenue();
+    }
+
 
     String ticketHtlm = "<!DOCTYPE html>\n" +
         "<html>\n" +
@@ -675,7 +690,7 @@ public class EmailService {
         "          <i class=\"fa fa-map-marker\"></i>\n" +
         "          <p>\n" +
         "            <!--lokasi event-->\n" +
-        "            " + name + " " + address_line2 + "\n" +
+        "            " + location + "\n" +
         "          </p>\n" +
         "        </div>\n" +
         "        <a href=\"#\">booked</a>\n" +
