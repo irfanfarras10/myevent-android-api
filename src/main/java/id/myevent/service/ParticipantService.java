@@ -123,6 +123,12 @@ public class ParticipantService {
     } else {
       ticketParticipant.setEventPayment(null);
     }
+    
+    //reduce ticket quota if free event
+    if(eventData.getEventPaymentCategory().getId() == 1){
+      ticketData.setQuotaTotal(ticketData.getQuotaTotal() - 1);
+    }
+    
     ticketParticipant.setTicket(ticketData);
     ticketParticipant.setParticipant(participant);
     try {
@@ -258,6 +264,12 @@ public class ParticipantService {
     participantRepository.save(participantData);
     //update status di ticket participant
     ticketParticipant.setStatus("Terbayar");
+    
+    //reduce ticket quota
+    TicketDao ticketData = ticketParticipant.getTicket();
+    ticketData.setQuotaTotal(ticketParticipant.getTicket().getQuotaTotal() - 1);
+    ticketParticipant.setTicket(ticketData);
+    
     ticketParticipantRepository.save(ticketParticipant);
     emailService.sendMessage(eventId, participantId, ticketParticipantId);
   }
