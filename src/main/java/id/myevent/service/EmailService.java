@@ -452,14 +452,18 @@ public class EmailService {
     DateFormat sdf = new SimpleDateFormat("EEEE, dd. MMMM yyyy HH:mm");
     sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
     String dateTime;
-    
-    //set date time for daily event 
+    String date;
+    String time;
+
+    //set date time for daily event
     if(eventData.getEventTicket().get(0).getQuotaPerDay() > 0){
-      dateTime = sdf.format(ticketData.getEvent_date());
+      date = dateFormat.format(ticketData.getEvent_date());
+      time = timeFormat.format(eventData.getTimeEventStart());
+      dateTime = date + ", " + time;
     }
-    //set date time for non daily event 
+    //set date time for non daily event
     else{
-      dateTime = sdf.format(eventData.getTimeEventStart());
+      dateTime = dateFormat.format(eventData.getTimeEventStart());
     }
 
     String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
