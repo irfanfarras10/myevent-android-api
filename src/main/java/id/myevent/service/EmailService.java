@@ -27,6 +27,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -394,11 +395,11 @@ public class EmailService {
     /* Create the event */
     LocalDateTime start =
         LocalDateTime.ofInstant(Instant.ofEpochMilli(eventData.getTimeEventStart()),
-            TimeZone.getDefault().toZoneId());
+            ZoneOffset.UTC);
 
     LocalDateTime end =
         LocalDateTime.ofInstant(Instant.ofEpochMilli(eventData.getTimeEventEnd()),
-            TimeZone.getDefault().toZoneId());
+            ZoneOffset.UTC);
 
     String eventSummary = eventData.getName();
     String location;
@@ -450,6 +451,7 @@ public class EmailService {
   public String ticketHtml(EventDao eventData, TicketParticipantDao ticketData,
                            ParticipantDao participantData) {
     DateFormat sdf = new SimpleDateFormat("EEEE, dd. MMMM yyyy HH:mm");
+    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
     String dateTime = sdf.format(eventData.getTimeEventStart());
 
     String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
