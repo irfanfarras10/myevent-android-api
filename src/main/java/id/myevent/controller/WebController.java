@@ -67,7 +67,7 @@ public class WebController {
       @RequestParam("phoneNumber") String phoneNumber,
       @RequestParam("ticketId") Long ticketId,
       @RequestParam(value = "paymentId", required = false) Long paymentId,
-      @RequestParam("eventDate") Long eventDate,
+      @RequestParam(value = "eventDate", required = false) Long eventDate,
       @RequestParam(value = "paymentPhoto", required = false) MultipartFile paymentPhoto
   ) throws IOException {
     ParticipantDto createParticipant = new ParticipantDto();
