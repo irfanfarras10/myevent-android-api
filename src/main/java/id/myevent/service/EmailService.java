@@ -461,11 +461,13 @@ public class EmailService {
     if(eventData.getEventTicket().get(0).getQuotaPerDay() > 0){
       date = dateFormat.format(ticketData.getEvent_date());
       time = timeFormat.format(eventData.getTimeEventStart());
-      dateTime = date + ", " + time;
+      dateTime = date + " " + time;
     }
     //set date time for non daily event
     else{
-      dateTime = dateFormat.format(eventData.getTimeEventStart());
+      date = dateFormat.format(eventData.getDateEventStart());
+      time = timeFormat.format(eventData.getTimeEventStart());
+      dateTime = date + " " + time;
     }
 
     String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
