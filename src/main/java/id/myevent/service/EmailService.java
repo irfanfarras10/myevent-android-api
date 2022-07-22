@@ -27,13 +27,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
-import javax.activation.DataSource;
 import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.data.CalendarOutputter;
@@ -395,11 +393,11 @@ public class EmailService {
     /* Create the event */
     LocalDateTime start =
         LocalDateTime.ofInstant(Instant.ofEpochMilli(eventData.getTimeEventStart()),
-            ZoneOffset.UTC);
+           ZoneId.of("Asia/Jakarta"));
 
     LocalDateTime end =
         LocalDateTime.ofInstant(Instant.ofEpochMilli(eventData.getTimeEventEnd()),
-            ZoneOffset.UTC);
+           ZoneId.of("Asia/Jakarta"));
 
     String eventSummary = eventData.getName();
     String location;
