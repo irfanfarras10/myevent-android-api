@@ -286,6 +286,7 @@ public class EmailService {
   public String mailCancelMessage(EventDao eventData, String message) {
 
     DateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
     String dateTime = sdf.format(eventData.getTimeEventStart());
 
     final String emailMessage = "<html>\n"
@@ -312,9 +313,9 @@ public class EmailService {
   public String mailMessage(EventDao eventData) {
 
     DateFormat sdf = new SimpleDateFormat("EEEE, dd. MMMM yyyy HH:mm");
-    String dateTime = sdf.format(eventData.getTimeEventStart());
     sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
-
+    String dateTime = sdf.format(eventData.getTimeEventStart());
+    
     String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
     String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
 
