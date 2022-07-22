@@ -313,6 +313,7 @@ public class EmailService {
 
     DateFormat sdf = new SimpleDateFormat("EEEE, dd. MMMM yyyy HH:mm");
     String dateTime = sdf.format(eventData.getTimeEventStart());
+    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
 
     String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
     String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
