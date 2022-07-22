@@ -193,7 +193,7 @@ public class EmailService {
         ticketParticipantRepository.findById(ticketParticipantId).get();
 
     String usernameColonPassword =
-        "d2f83dca-182d-4d85-9e6f-7c6e9c697745:9711011a-8f20-4860-af2b-f787085cdb73";
+        "ae0aefe2-d862-42fa-a2cb-0c41e8dbaea7:d9bdd454-b154-41ab-9ad7-b07029a3df43";
     String basicAuthPayload =
         "Basic " + Base64.getEncoder().encodeToString(usernameColonPassword.getBytes());
 
