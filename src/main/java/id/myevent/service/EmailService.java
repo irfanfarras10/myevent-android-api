@@ -217,8 +217,8 @@ public class EmailService {
     final String emailMessage = mailParticipant(event, ticket.getUrl());
 
     try {
-      generateIcs(event);
-    } catch (IOException e) {
+      generateIcsForRegisterParticipant(event, ticketParticipant);
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
 
@@ -380,6 +380,89 @@ public class EmailService {
 
     return loc;
   }
+  
+  
+  private void generateIcsForRegisterParticipant(EventDao eventData, TicketParticipantDao ticketParticipantData){
+    System.setProperty("net.fortuna.ical4j.timezone.cache.impl",
+            "net.fortuna.ical4j.util.MapTimeZoneCache");
+    System.setProperty("-Dical4j.validation.relaxed", "true");
+
+    // Generate a UID for the event..
+    UidGenerator ug = new RandomUidGenerator();
+    Uid uid = ug.generateUid();
+    
+    //event date time 
+    LocalDateTime start;
+    LocalDateTime end;
+
+    //date time for daily event
+    if(eventData.getEventTicket().get(0).getQuotaPerDay() > 0){
+      LocalDateTime dateEvent = LocalDateTime.ofInstant(Instant.ofEpochMilli(ticketParticipantData.getEvent_date()), ZoneId.of("Asia/Jakarta"));
+      LocalDateTime timeEventStart = LocalDateTime.ofInstant(Instant.ofEpochMilli(eventData.getTimeEventStart()),
+              ZoneId.of("Asia/Jakarta"));
+      LocalDateTime timeEventEnd = LocalDateTime.ofInstant(Instant.ofEpochMilli(eventData.getTimeEventEnd()),
+              ZoneId.of("Asia/Jakarta"));
+      start = LocalDateTime.of(dateEvent.getYear(), dateEvent.getMonth(), dateEvent.getDayOfMonth(), timeEventStart.getHour(), timeEventStart.getMinute());
+      end = LocalDateTime.of(dateEvent.getYear(), dateEvent.getMonth(), dateEvent.getDayOfMonth(), timeEventEnd.getHour(), timeEventEnd.getMinute());
+    }
+    //date time for non daily event
+    else{
+      start = LocalDateTime.ofInstant(Instant.ofEpochMilli(eventData.getTimeEventStart()),
+            ZoneId.of("Asia/Jakarta"));
+
+      end = LocalDateTime.ofInstant(Instant.ofEpochMilli(eventData.getTimeEventEnd()),
+                ZoneId.of("Asia/Jakarta"));
+    }
+
+    String eventSummary = eventData.getName();
+    String location;
+    if (eventData.getEventVenueCategory().getId() == 1) {
+      String lat = StringUtils.substringBefore(eventData.getVenue(), "|");
+      String lon = StringUtils.substringAfter(eventData.getVenue(), "|");
+      Location loc = getLocation(lat, lon);
+      location = loc.features.get(0).properties.name;
+      location += loc.features.get(0).properties.address_line2;
+    } else {
+      location = eventData.getVenue();
+    }
+
+
+    VEvent event = new VEvent(start, end, eventSummary);
+    event.add(new Description(eventData.getDescription()));
+    event.add(new net.fortuna.ical4j.model.property.Location(location));
+    try {
+      event.add(new Organizer(eventData.getEventOrganizer().getEmail()));
+    } catch (URISyntaxException e) {
+      throw new RuntimeException(e);
+    }
+    event.add(uid);
+
+    //create calendar
+    Calendar calendar = new Calendar();
+    calendar.add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
+    calendar.add(Version.VERSION_2_0);
+    calendar.add(CalScale.GREGORIAN);
+
+    /* Add event to calendar */
+    calendar.add(event);
+
+    String filePath = new File("calendar").getAbsolutePath() + "\\" + eventData.getName()
+            + eventData.getTimeEventStart() + ".ics";
+    FileOutputStream fout = null;
+
+    try {
+
+      fout = new FileOutputStream(filePath);
+      CalendarOutputter outputter = new CalendarOutputter();
+      outputter.output(calendar, fout);
+
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
 
   private void generateIcs(EventDao eventData) throws IOException {
 
