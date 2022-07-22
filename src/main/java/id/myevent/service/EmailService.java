@@ -449,8 +449,10 @@ public class EmailService {
 
   public String ticketHtml(EventDao eventData, TicketParticipantDao ticketData,
                            ParticipantDao participantData) {
-    DateFormat sdf = new SimpleDateFormat("EEEE, dd. MMMM yyyy HH:mm");
-    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
+    DateFormat dateFormat = new SimpleDateFormat("EEEE, dd. MMMM yyyy");
+    DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
+    timeFormat.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
     String dateTime;
     String date;
     String time;
