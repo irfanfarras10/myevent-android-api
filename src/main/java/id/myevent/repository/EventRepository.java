@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EventRepository extends CrudRepository<EventDao, Long> {
 
-  @Query("SELECT event FROM EventDao event where event.eventStatus.id = :statusId and event.eventOrganizer.id = :organizerId order by event.id asc")
+  @Query("SELECT event FROM EventDao event where event.eventStatus.id = :statusId and event.eventOrganizer.id = :organizerId order by event.timeEventStart asc")
   List<EventDao> findByStatus(@Param("statusId") Long statusId,
                               @Param("organizerId") Long organizerId);
 
