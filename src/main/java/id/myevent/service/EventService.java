@@ -554,7 +554,7 @@ public class EventService {
 
     // run schedule for set event status to live
     Date scheduleTime = new Date(event.getTimeEventStart());
-    log.warn("tanggal event mulai: " + scheduleTime);
+    log.warn("tanggal event selesai untuk event dengan nama: " + event.getName() + " " + scheduleTime.toLocaleString());
     liveEventTask.setEvent(event);
     taskScheduler.schedule(liveEventTask, scheduleTime);
 
@@ -578,7 +578,7 @@ public class EventService {
 
     // run schedule for set event status to pass
     Date endEventTime = new Date(event.getTimeEventEnd());
-    log.warn("tanggal event selesai: " + endEventTime);
+    log.warn("tanggal event selesai untuk event dengan nama: " + event.getName() + " " + endEventTime.toLocaleString());
     passedEventTask.setEvent(event);
     taskScheduler.schedule(passedEventTask, endEventTime);
   }
