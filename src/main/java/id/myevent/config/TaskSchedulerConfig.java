@@ -20,6 +20,7 @@ public class TaskSchedulerConfig {
     ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
     threadPoolTaskScheduler.setPoolSize(20);
     threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
+    threadPoolTaskScheduler.setWaitForTasksToCompleteOnShutdown(true);
     return threadPoolTaskScheduler;
   }
 }
